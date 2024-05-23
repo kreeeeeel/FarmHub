@@ -1,0 +1,47 @@
+{
+  "name": "中國人",
+  "file": "chinese.png",
+  "text": {
+    "closeSection": "按 'ESC' 关闭此窗口。",
+    "description": "控制面板",
+    "welcome": "欢迎！",
+    "choosePointMenu": "从菜单中选择一个项目",
+    "menu": {
+      "basic": "基本",
+      "other": "其他",
+      "accounts": "账户",
+      "farm": "游戏中的农场",
+      "sell": "出售物品",
+      "subscribe": "订阅",
+      "cloud": "云端",
+      "settings": "设置"
+    },
+    "accounts": {
+      "name": "账户",
+      "search": "搜索账户",
+      "import": "导入",
+      "maFile": {
+        "name": "处理 .maFile 文件",
+        "drag": "将文件拖放到此区域",
+        "file": "选择文件",
+        "hint": "将扩展名为 .maFile 的文件上传到此区域，或点击按钮选择文件"
+      }
+    },
+    "farm": {
+      "name": "游戏中的农场"
+    },
+    "sell": {
+      "name": "出售物品"
+    },
+    "subscribe": {
+      "name": "订阅"
+    },
+    "cloud": {
+      "name": "云端"
+    },
+    "settings": {
+      "name": "当前设置",
+      "langApp": "应用语言"
+    }
+  }
+}

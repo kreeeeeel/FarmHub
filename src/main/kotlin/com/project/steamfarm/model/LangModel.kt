@@ -1,0 +1,95 @@
+package com.project.steamfarm.model
+
+const val DEFAULT_LANGUAGE = "default"
+
+data class LangModel(
+    var code: String = DEFAULT_LANGUAGE,
+    var name: String = "Default",
+    var file: String? = null,
+    var text: Text = Text()
+)
+
+data class Text(
+    var closeSection: String = "Press 'ESC' to close this window.",
+    var description: String = "Control Panel",
+    var welcome: String = "Welcome!",
+    var choosePointMenu: String = "Select an item from the menu",
+    var menu: Menu = Menu(),
+    var accounts: Accounts = Accounts(),
+    var farm: Farm = Farm(),
+    var sell: Sell = Sell(),
+    var subscribe: Subscribe = Subscribe(),
+    var cloud: Cloud = Cloud(),
+    var settings: Settings = Settings(),
+    var success: Success = Success(),
+    var failure: Failure = Failure()
+)
+
+data class Menu(
+    var basic: String = "Basic",
+    var other: String = "Other",
+    var accounts: String = "Accounts",
+    var farm: String = "Farm in game",
+    var sell: String = "Sell items",
+    var subscribe: String = "Subscribe",
+    var cloud: String = "Cloud",
+    var settings: String = "Settings",
+)
+
+data class Accounts(
+    var name: String = "Accounts",
+    var search: String = "Search account",
+    var import: String = "Import",
+    var maFile: MaFile = MaFile(),
+    var passwordFile: PasswordFile = PasswordFile(),
+    var authorization: Authorization = Authorization(),
+)
+
+data class Farm(
+    var name: String = "Farm in games",
+)
+
+data class Sell(
+    var name: String = "Sell items",
+)
+
+data class Subscribe(
+    var name: String = "Subscribe",
+)
+
+data class Cloud(
+    var name: String = "Cloud",
+)
+
+data class Settings(
+    var name: String = "Current Settings",
+    var langApp: String = "Application language"
+)
+
+data class MaFile(
+    var name: String = "Working with .maFile",
+    var drag: String = "Drag and drop files into this field",
+    var file: String = "Select files",
+    var hint: String = "Upload files with the extension .maFile to this field, or select a file by clicking on the button"
+)
+
+data class PasswordFile(
+    var name: String = "Setting a password",
+    var hint: String = "You can upload a file with passwords, the contents of which should be in the format login:password",
+    var keyboard: String = "Manual input",
+)
+
+data class Failure (
+    var name: String = "An error has occurred",
+    var maFile: String = "The files you selected are not .maFile, please select other files"
+)
+
+data class Success (
+    var name: String = "Success",
+    var maFile: String = "Now you need to set a password for your accounts, please select an action in this window",
+)
+
+data class Authorization(
+    var name: String = "Authorization",
+    var wait: String = "Please wait.."
+)

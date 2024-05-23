@@ -1,0 +1,47 @@
+{
+  "name": "English",
+  "file": "english.png",
+  "text": {
+    "closeSection": "Press 'ESC' to close this window.",
+    "description": "Control Panel",
+    "welcome": "Welcome!",
+    "choosePointMenu": "Select an item from the menu",
+    "menu": {
+      "basic": "Basic",
+      "other": "Other",
+      "accounts": "Accounts",
+      "farm": "Farm in game",
+      "sell": "Sell items",
+      "subscribe": "Subscribe",
+      "cloud": "Cloud",
+      "settings": "Settings"
+    },
+    "accounts": {
+      "name": "Accounts",
+      "search": "Search account",
+      "import": "Import",
+      "maFile": {
+        "name": "Working with .maFile",
+        "drag": "Drag and drop files into this field",
+        "file": "Select files",
+        "hint": "Upload files with the extension .maFile to this field, or select a file by clicking on the button"
+      }
+    },
+    "farm": {
+      "name": "Farm in games"
+    },
+    "sell": {
+      "name": "Sell items"
+    },
+    "subscribe": {
+      "name": "Subscribe"
+    },
+    "cloud": {
+      "name": "Cloud"
+    },
+    "settings": {
+      "name": "Current Settings",
+      "langApp": "Application language"
+    }
+  }
+}
