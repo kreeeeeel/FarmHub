@@ -4,9 +4,13 @@ import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.service.background.AuthBackground
+import com.project.steamfarm.service.background.impl.DefaultAuthBackground
 import com.project.steamfarm.service.import.PasswordImport
 import com.project.steamfarm.service.import.impl.DefaultPasswordImport
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
+import com.project.steamfarm.ui.view.notify.NotifyView
+import com.project.steamfarm.ui.view.section.AccountSectionView
 import com.project.steamfarm.ui.view.window.DefaultWindow
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -18,7 +22,8 @@ import javafx.stage.Stage
 import java.io.File
 
 class PasswordFileWindow(
-    private val maFiles: List<File>
+    private val maFiles: List<File>,
+    private val sectionView: AccountSectionView
 ): DefaultWindow() {
 
     private val block = Pane().also {
@@ -82,8 +87,11 @@ class PasswordFileWindow(
         it.layoutY = 330.0
     }
 
+    private val notifyView = NotifyView()
+
     private val passwordImport: PasswordImport = DefaultPasswordImport()
     private val userRepository: Repository<UserModel> = UserRepository()
+    private val authBackground: AuthBackground = DefaultAuthBackground()
 
     override fun show() {
         dragFiles()
@@ -139,8 +147,20 @@ class PasswordFileWindow(
 
     private fun filterFileAndAuth(file: File) {
 
-        passwordImport.getPasswordsFromFile(file, maFiles).forEach {
-            userRepository.save(it)
+        val userModels = passwordImport.getPasswordsFromFile(file, maFiles)
+        if (userModels.isEmpty()) {
+            notifyView.failure(langApplication.text.failure.passwordsNotFound)
+
+        } else {
+            userModels.forEach { userRepository.save(it) }
+
+            root.children.remove(window)
+            if (userModels.size != maFiles.size) {
+                notifyView.warning(langApplication.text.warning.notAllAccount)
+            } else notifyView.success(langApplication.text.success.import)
+
+            sectionView.refreshUi(userRepository.findAll())
+            userModels.forEach{ authBackground.authenticate(it.username, it.password) }
         }
 
     }

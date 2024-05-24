@@ -45,8 +45,9 @@ class NotifyView {
 
     fun success(value: String) = show(true, value)
     fun failure(value: String) = show(false, value)
+    fun warning(value: String) = show(null, value)
 
-    private fun show(isSuccess: Boolean, value: String) {
+    private fun show(isSuccess: Boolean?, value: String) {
 
         Platform.runLater {
             root.children.removeIf { it.id == pane.id }
@@ -61,10 +62,20 @@ class NotifyView {
             icon.layoutY = if (text.layoutBounds.height >= 30) 17.0 else 7.0
             pane.layoutY = if (text.layoutBounds.height >= 30) 516.0 else 536.0
 
-            pane.id = if (isSuccess) "notifySuccess" else "notifyFailure"
-            icon.id = if (isSuccess) "success" else "error"
+            pane.id = when(isSuccess) {
+                true -> "notifySuccess"
+                false -> "notifyFailure"
+                null -> "notifyWarning"
+            }
 
-            title.text = if (isSuccess) langApplication.text.success.name else langApplication.text.failure.name
+            icon.id = if (isSuccess == true) "success" else "error"
+
+            title.text = when(isSuccess) {
+                true -> langApplication.text.success.name
+                false -> langApplication.text.failure.name
+                null -> langApplication.text.warning.name
+            }
+
             description.text = value
 
             val firstAnim = TranslateTransition(Duration.millis(430.0), pane)

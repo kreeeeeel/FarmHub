@@ -22,6 +22,7 @@ data class Text(
     var cloud: Cloud = Cloud(),
     var settings: Settings = Settings(),
     var success: Success = Success(),
+    var warning: Warning = Warning(),
     var failure: Failure = Failure()
 )
 
@@ -81,12 +82,21 @@ data class PasswordFile(
 
 data class Failure (
     var name: String = "An error has occurred",
-    var maFile: String = "The files you selected are not .maFile, please select other files"
+    var maFile: String = "The files you selected are not .maFile, please select other files",
+    var passwordsNotFound: String = "No passwords were found in this file for the accounts you are importing.",
+    var auth: String = "An error occurred while authorizing account '%s'! You may have entered the wrong password.."
+)
+
+data class Warning(
+    var name: String = "Warning!",
+    var notAllAccount: String = "Not all accounts had a password found in the file you provided.",
 )
 
 data class Success (
     var name: String = "Success",
     var maFile: String = "Now you need to set a password for your accounts, please select an action in this window",
+    var import: String = "Accounts successfully imported! Wait while background authorization and account validation occurs",
+    var auth: String = "Account '%s' has been successfully authorized! The user is available to work."
 )
 
 data class Authorization(

@@ -118,6 +118,12 @@
     -fx-background-radius: 18px;
 }
 
+#notifyWarning {
+    -fx-pref-width: 440px;
+    -fx-background-color: #c36c02;
+    -fx-background-radius: 18px;
+}
+
 #notifyFailure {
     -fx-pref-width: 440px;
     -fx-background-color: darkred;

@@ -3,6 +3,12 @@ package com.project.steamfarm.ui.controller
 import com.project.steamfarm.Runner
 import com.project.steamfarm.model.ConfigModel
 import com.project.steamfarm.model.LangModel
+import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.model.UserType
+import com.project.steamfarm.repository.Repository
+import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.service.background.AuthBackground
+import com.project.steamfarm.service.background.impl.DefaultAuthBackground
 import com.project.steamfarm.ui.view.DefaultView
 import com.project.steamfarm.ui.view.menu.MenuView
 import com.project.steamfarm.ui.view.section.DefaultSectionView
@@ -16,6 +22,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import java.util.concurrent.CompletableFuture
 import kotlin.system.exitProcess
 
 const val NAME_APPLICATION = "Steam Farm"
@@ -108,6 +115,11 @@ open class BaseController: Application() {
             startSection.initialize()
 
             view.forEach { v -> v.initialize() }
+
+            val userRepository: Repository<UserModel> = UserRepository()
+            val authBackground: AuthBackground = DefaultAuthBackground()
+            userRepository.findAll().filter { u -> u.userType == UserType.WAIT_AUTH }
+                .forEach { u -> authBackground.authenticate(u.username, u.password) }
         }
     }
 

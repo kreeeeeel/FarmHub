@@ -2,7 +2,12 @@ package com.project.steamfarm.ui.view.section
 
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.ConfigModel
+import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.repository.Repository
+import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.view.SectionType
+import com.project.steamfarm.ui.view.block.accounts.AccountTableView
+import com.project.steamfarm.ui.view.block.accounts.AccountView
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
@@ -13,6 +18,8 @@ import javafx.scene.layout.Pane
 
 private const val VIEW_ID = "view"
 private const val VIEW_DISABLED_ID = "viewDisable"
+
+const val CONTENT_HEIGHT = 435.0
 
 class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
@@ -69,15 +76,23 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private val list = userView(true)
     private val table = userView(false)
 
+    private val content = AnchorPane().also { ap ->
+        ap.prefWidth = 505.0
+        ap.prefHeight = CONTENT_HEIGHT
+    }
+
     private val scroll = ScrollPane().also {
+        it.id = "accounts"
         it.layoutY = 85.0
         it.prefWidth = 520.0
         it.prefHeight = 437.0
-        it.content = AnchorPane().also { ap ->
-            ap.prefWidth = 505.0
-            ap.prefHeight = 435.0
-        }
+        it.content = content
     }
+
+    private var accountView: AccountView = if (config.userViewIsList) AccountTableView(content) else AccountTableView(content)
+
+    private val userRepository: Repository<UserModel> = UserRepository()
+    private var users: List<UserModel> = userRepository.findAll()
 
     override fun refreshLanguage() {
         search.promptText = langApplication.text.accounts.search
@@ -91,7 +106,16 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         section.children.removeIf { it.id == block.id }
         section.children.addAll(block, list, table, scroll)
 
-        import.setOnMouseClicked { _ -> MaFileWindow().show() }
+        search.textProperty().addListener { _, _, newValue -> accountView.search(newValue)}
+        import.setOnMouseClicked { _ -> MaFileWindow(this).show() }
+
+        accountView.view(users)
+
+    }
+
+    fun refreshUi(users: List<UserModel>) {
+        this.users = users
+        accountView.view(users)
     }
 
     private fun userView(isList: Boolean) = Pane().also {

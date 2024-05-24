@@ -12,24 +12,28 @@ class DefaultPasswordImport: PasswordImport {
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     override fun getPasswordsFromFile(file: File, maFiles: List<File>): List<UserModel> {
+        try {
+            val users = maFiles.mapNotNull { getDataFromFile(it) }
+                .associateBy { it.accountName }
 
-        val users = maFiles.mapNotNull { getDataFromFile(it) }
-            .associateBy { it.accountName }
+            FileReader(file).use { reader ->
+                reader.readLines().forEach {
+                    val split = it.split(":")
 
-        FileReader(file).use { reader ->
-            reader.readLines().forEach {
-                val split = it.split(":")
+                    val login = split[0]
+                    val password = split[1]
 
-                val login = split[0]
-                val password = split[1]
-
-                if (split.size == 2 && users.containsKey(login)) {
-                    users[login]?.password = password
+                    if (split.size == 2 && users.containsKey(login)) {
+                        users[login]?.password = password
+                    }
                 }
             }
-        }
 
-        return users.values.map { UserModel(username = it.accountName, password = it.password) }.toList()
+            return users.values.filter { it.password != null }
+                .map { UserModel(username = it.accountName, password = it.password) }
+                .toList()
+
+        } catch (e: Exception) { return emptyList() }
     }
 
     private fun getDataFromFile(file: File): SteamData? {
