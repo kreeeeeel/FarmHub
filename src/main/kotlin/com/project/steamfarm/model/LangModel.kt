@@ -100,6 +100,5 @@ data class Success (
 )
 
 data class Authorization(
-    var name: String = "Authorization",
-    var wait: String = "Please wait.."
+    var name: String = "Authorization to account",
 )

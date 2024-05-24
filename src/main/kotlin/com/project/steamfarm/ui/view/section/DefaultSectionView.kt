@@ -1,5 +1,7 @@
 package com.project.steamfarm.ui.view.section
 
+import com.project.steamfarm.data.TimerData
+import com.project.steamfarm.data.TimerType
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
@@ -13,6 +15,27 @@ private const val SECTION_LAYOUT_X = 280.0
 abstract class DefaultSectionView(
     private var sectionType: SectionType,
 ) {
+
+    companion object {
+        private var tasks: MutableList<TimerData> = mutableListOf()
+
+        fun startTask(data: TimerData) {
+            tasks.add(data)
+        }
+
+        fun finishTask(value: String, type: TimerType) {
+            tasks.filter { it.value == value && it.type == type }.forEach {
+                it.timer.cancel()
+                tasks.remove(it)
+            }
+        }
+
+        fun finishAllTask() {
+            tasks.forEach { it.timer.cancel() }
+            tasks.clear()
+        }
+
+    }
 
     val section = Pane().also {
         it.id = "section"
@@ -35,6 +58,8 @@ abstract class DefaultSectionView(
     abstract fun refreshLanguage()
 
     open fun initialize() {
+
+        finishAllTask()
 
         refreshLanguage()
         sectionLang()

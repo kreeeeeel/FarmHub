@@ -6,6 +6,7 @@ data class UserModel(
     var name: String? = null,
     var photo: String? = null,
     var password: String,
+    var time: Long = System.currentTimeMillis(),
 )
 
 enum class UserType {

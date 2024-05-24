@@ -375,23 +375,30 @@
     -fx-background-radius: 14px;
 }
 
+#userAuthTable {
+    -fx-pref-width: 230px;
+    -fx-pref-height: 85px;
+    -fx-background-color: #131417;
+    -fx-background-radius: 10px;
+}
+
 #time { -fx-image: url("images/time.png") }
 
-#userAuth {
+#authTime {
     -fx-text-fill: #f2f2f2;
     -fx-font-size: 16px;
 }
 
 #userAuthName {
-    -fx-pref-width: 240px;
+    -fx-pref-width: 230px;
     -fx-alignment: center;
     -fx-text-fill: #f2f2f2;
     -fx-font-size: 17px;
 }
 
-#userAuthWait {
-    -fx-pref-width: 240px;
+#userAuth {
+    -fx-pref-width: 230px;
     -fx-alignment: center;
-    -fx-text-fill: #757575;
-    -fx-font-size: 13px;
+    -fx-text-fill: #909090;
+    -fx-font-size: 14px;
 }
