@@ -28,9 +28,8 @@ class SettingsSectionView(menu: MenuView): DefaultSectionView(SectionType.SETTIN
     }
 
     override fun initialize() {
-        super.initialize()
-
         content.children.clear()
+
         var value = 14.0
         settingsBlock.forEach {
 
@@ -44,6 +43,8 @@ class SettingsSectionView(menu: MenuView): DefaultSectionView(SectionType.SETTIN
         section.children.add(scroll)
 
         settingsBlock.first { it.id == LANGUAGE_ID }.blockView = settingsBlock
+
+        super.initialize()
     }
 
 }

@@ -33,8 +33,6 @@ class LangRepository: Repository<LangModel> {
         return gson.fromJson(FileReader(lang), LangModel::class.java)
     }
 
-    override fun save(data: LangModel) {
-        TODO("Not used")
-    }
+    override fun save(data: LangModel) {}
 
 }

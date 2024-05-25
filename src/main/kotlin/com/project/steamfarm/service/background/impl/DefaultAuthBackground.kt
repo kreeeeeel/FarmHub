@@ -24,6 +24,11 @@ class DefaultAuthBackground: AuthBackground {
 
                 val isLogin = clientSteam.authentication(username, password)
                 it.userType = if (isLogin) UserType.AUTH_COMPLETED else UserType.BAD_AUTH
+
+                clientSteam.getProfileData()?.let { s ->
+                    it.photo = s.avatar
+                }
+
                 userRepository.save(it)
             }
         }

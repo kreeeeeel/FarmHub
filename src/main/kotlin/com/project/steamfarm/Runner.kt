@@ -11,7 +11,6 @@ import com.project.steamfarm.service.background.AuthBackground
 import com.project.steamfarm.service.background.impl.DefaultAuthBackground
 import com.project.steamfarm.ui.controller.MainController
 import javafx.application.Application
-import java.util.concurrent.CompletableFuture
 
 lateinit var langApplication: LangModel
 
@@ -20,6 +19,11 @@ class Runner
 fun main() {
 
     val configModel: ConfigModel = ConfigModel().fromFile()
+
+    val userRepository: Repository<UserModel> = UserRepository()
+    val authBackground: AuthBackground = DefaultAuthBackground()
+    userRepository.findAll().filter { u -> u.userType == UserType.WAIT_AUTH }
+        .forEach { u -> authBackground.authenticate(u.username, u.password) }
 
     val langRepository = LangRepository()
     langApplication = langRepository.findById(configModel.langApp) ?: LangModel()

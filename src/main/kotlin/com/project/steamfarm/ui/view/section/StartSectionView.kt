@@ -35,8 +35,9 @@ class StartSectionView: DefaultSectionView(SectionType.START) {
     }
 
     override fun initialize() {
-        super.initialize()
+        section.children.clear()
         section.children.addAll(robot, welcome, choosePointMenu)
+        super.initialize()
     }
 
     fun isStartSection() : Boolean {

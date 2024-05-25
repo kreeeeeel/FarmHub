@@ -5,10 +5,12 @@ import com.project.steamfarm.data.TimerType
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
-import com.project.steamfarm.ui.view.menu.MenuView
 import javafx.scene.control.Label
-import javafx.scene.input.KeyCode
 import javafx.scene.layout.Pane
+
+const val SECTION_ID = "section"
+const val SECTION_NAME_ID = "sectionName"
+const val SECTION_CLOSE_ID = "sectionClose"
 
 private const val SECTION_LAYOUT_X = 280.0
 
@@ -37,20 +39,20 @@ abstract class DefaultSectionView(
 
     }
 
-    val section = Pane().also {
-        it.id = "section"
+    protected val section = Pane().also {
+        it.id = SECTION_ID
         it.layoutX = SECTION_LAYOUT_X
         it.layoutY = 55.0
     }
 
     private val sectionName = Label().also {
-        it.id = "sectionName"
+        it.id = SECTION_NAME_ID
         it.layoutX = 310.0
         it.layoutY = 24.0
     }
 
     private val sectionClose = Label().also {
-        it.id = "sectionClose"
+        it.id = SECTION_CLOSE_ID
         it.layoutX = 310.0
         it.layoutY = 42.0
     }
@@ -59,35 +61,16 @@ abstract class DefaultSectionView(
 
     open fun initialize() {
 
+        root.children.removeIf { it.id == section.id || it.id == sectionName.id || it.id == sectionClose.id }
+        root.children.add(section)
+
         finishAllTask()
 
         refreshLanguage()
         sectionLang()
 
-        root.children.removeIf { it.id == section.id || it.id == sectionName.id || it.id == sectionClose.id }
-        root.children.add(section)
-
-        section.children.clear()
-
         if (sectionType != SectionType.START) {
             root.children.addAll(sectionName, sectionClose)
-        }
-
-        root.scene.setOnKeyReleased { event ->
-            val menuView = MenuView()
-            val startSectionView = StartSectionView()
-
-            if (!startSectionView.isStartSection() && event.code == KeyCode.ESCAPE) {
-                root.children.remove(section)
-                root.children.removeIf { it.id == "window" }
-                if (sectionType != SectionType.START) {
-                    root.children.removeAll(sectionName, sectionClose)
-                }
-
-                startSectionView.initialize()
-                menuView.enablePrevActivePoint()
-            }
-
         }
     }
 

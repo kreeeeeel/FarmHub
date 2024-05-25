@@ -74,6 +74,9 @@ class MenuView: DefaultView {
         )
         root.children.add(menu)
 
+        accounts.setOnMouseClicked { clickOnMenu(ACCOUNT_ID, accounts) }
+        settings.setOnMouseClicked { clickOnMenu(SETTINGS_ID, settings) }
+
         animation(menu)
     }
 
@@ -138,22 +141,22 @@ class MenuView: DefaultView {
             l.layoutY = 10.0
         }
 
+        it.children.addAll(img, label)
+    }
+
+    private fun clickOnMenu(imgId: String, pane: Pane) {
         val section: DefaultSectionView = when(imgId) {
             SETTINGS_ID -> SettingsSectionView(this)
             ACCOUNT_ID -> AccountSectionView()
             else -> StartSectionView()
         }
 
-        it.setOnMouseClicked { _ ->
+        enablePrevActivePoint()
 
-            enablePrevActivePoint()
+        pane.isDisable = true
+        pane.id = "pointMenuDisable"
 
-            it.isDisable = true
-            it.id = "pointMenuDisable"
-
-            section.initialize()
-        }
-        it.children.addAll(img, label)
+        section.initialize()
     }
 
 }

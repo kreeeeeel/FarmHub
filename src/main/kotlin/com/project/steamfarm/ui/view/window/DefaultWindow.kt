@@ -6,10 +6,12 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.Pane
 import javafx.util.Duration
 
+const val WINDOW_ID = "window"
+
 abstract class DefaultWindow {
 
     protected val window = Pane().also {
-        it.id = "window"
+        it.id = WINDOW_ID
 
         val close = Pane().also { p ->
             p.id = "footerRight"

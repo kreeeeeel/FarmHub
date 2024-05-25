@@ -1,28 +1,22 @@
 package com.project.steamfarm.ui.controller
 
 import com.project.steamfarm.Runner
-import com.project.steamfarm.model.ConfigModel
-import com.project.steamfarm.model.LangModel
-import com.project.steamfarm.model.UserModel
-import com.project.steamfarm.model.UserType
-import com.project.steamfarm.repository.Repository
-import com.project.steamfarm.repository.impl.UserRepository
-import com.project.steamfarm.service.background.AuthBackground
-import com.project.steamfarm.service.background.impl.DefaultAuthBackground
-import com.project.steamfarm.ui.view.DefaultView
 import com.project.steamfarm.ui.view.menu.MenuView
-import com.project.steamfarm.ui.view.section.DefaultSectionView
+import com.project.steamfarm.ui.view.section.SECTION_CLOSE_ID
+import com.project.steamfarm.ui.view.section.SECTION_ID
+import com.project.steamfarm.ui.view.section.SECTION_NAME_ID
 import com.project.steamfarm.ui.view.section.StartSectionView
+import com.project.steamfarm.ui.view.window.WINDOW_ID
 import javafx.application.Application
 import javafx.scene.Cursor
 import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
-import java.util.concurrent.CompletableFuture
 import kotlin.system.exitProcess
 
 const val NAME_APPLICATION = "Steam Farm"
@@ -73,9 +67,8 @@ open class BaseController: Application() {
 
     }
 
-    private val view: List<DefaultView> = mutableListOf(
-        MenuView()
-    )
+    private val menuView = MenuView()
+    private val startSection = StartSectionView()
 
     private var offsetX: Double = 0.0
     private var offsetY: Double = 0.0
@@ -107,19 +100,24 @@ open class BaseController: Application() {
                 primaryStage.y = event.screenY + offsetY
             }
             it.scene.setOnMouseReleased { _ -> it.scene.cursor = Cursor.DEFAULT }
+            it.scene.setOnKeyReleased { event ->
+
+                if (!startSection.isStartSection() && event.code == KeyCode.ESCAPE) {
+                    root.children.removeIf { node ->
+                        node.id == SECTION_ID || node.id == SECTION_NAME_ID || node.id == SECTION_CLOSE_ID || node.id == WINDOW_ID
+                    }
+
+                    startSection.initialize()
+                    menuView.enablePrevActivePoint()
+                }
+
+            }
 
             it.show()
             it.toFront()
 
-            val startSection: DefaultSectionView = StartSectionView()
             startSection.initialize()
-
-            view.forEach { v -> v.initialize() }
-
-            val userRepository: Repository<UserModel> = UserRepository()
-            val authBackground: AuthBackground = DefaultAuthBackground()
-            userRepository.findAll().filter { u -> u.userType == UserType.WAIT_AUTH }
-                .forEach { u -> authBackground.authenticate(u.username, u.password) }
+            menuView.initialize()
         }
     }
 

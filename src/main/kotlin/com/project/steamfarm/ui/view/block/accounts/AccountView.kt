@@ -8,7 +8,7 @@ abstract class AccountView(
     val content: AnchorPane
 ) {
 
-    protected var nodes: List<Pane> = emptyList()
+    protected var nodes: MutableList<Pane> = mutableListOf()
 
     abstract fun view(users: List<UserModel>)
     abstract fun search(prefix: String)

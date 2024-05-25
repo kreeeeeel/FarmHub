@@ -1,12 +1,21 @@
 package com.project.steamfarm.model
 
+import java.time.LocalDateTime
+
 data class UserModel(
     var username: String,
     var userType: UserType = UserType.WAIT_AUTH,
-    var name: String? = null,
+    var steamId: String? = null,
     var photo: String? = null,
     var password: String,
     var time: Long = System.currentTimeMillis(),
+    var gameStat: GameStat = GameStat()
+)
+
+data class GameStat(
+    var dotaHour: Int? = null,
+    var csDropped: Boolean = true,
+    var csDropDate: LocalDateTime? = LocalDateTime.of(2024, 5, 24, 5, 23)
 )
 
 enum class UserType {

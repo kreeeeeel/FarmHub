@@ -41,6 +41,10 @@ data class Accounts(
     var name: String = "Accounts",
     var search: String = "Search account",
     var import: String = "Import",
+    var login: String = "Account login",
+    var notFound: String = "Nothing found..",
+    var hintToImport: String = "To import accounts, click 'Import'",
+    var hour: String = "h.",
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
     var authorization: Authorization = Authorization(),
@@ -101,4 +105,5 @@ data class Success (
 
 data class Authorization(
     var name: String = "Authorization to account",
+    var badAuth: String = "The account is not authorized! Check the information provided!",
 )

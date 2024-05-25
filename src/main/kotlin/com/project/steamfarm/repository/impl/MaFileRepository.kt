@@ -14,7 +14,7 @@ class MaFileRepository: Repository<SteamData> {
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     override fun findAll(): List<SteamData> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override fun findById(id: String): SteamData? {

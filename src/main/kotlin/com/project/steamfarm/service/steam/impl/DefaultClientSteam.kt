@@ -1,16 +1,26 @@
 package com.project.steamfarm.service.steam.impl
 
 import com.project.steamfarm.repository.impl.MaFileRepository
-import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.retrofit.api.Profile
+import com.project.steamfarm.retrofit.response.SteamProfileResponse
 import com.project.steamfarm.service.steam.AuthSteam
 import com.project.steamfarm.service.steam.ClientSteam
+import retrofit2.Retrofit
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 class DefaultClientSteam: ClientSteam {
 
-    var steamCookie: String? = null
-    var steamId: String? = null
+    private var steamCookie: String? = null
+    private var steamId: String? = null
 
-    var isLoggedIn: Boolean = false
+    private var isLoggedIn: Boolean = false
+
+    private val clientXml = Retrofit.Builder()
+        .baseUrl("https://steamcommunity.com/")
+        .addConverterFactory(SimpleXmlConverterFactory.create())
+        .build()
+
+    private val apiXml = clientXml.create(Profile::class.java)
 
     private val steamAuthClient: AuthSteam = DefaultAuthSteam()
 
@@ -51,4 +61,10 @@ class DefaultClientSteam: ClientSteam {
 
         return true
     }
+
+    override fun getProfileData(): SteamProfileResponse? {
+        if (!isLoggedIn || steamId == null) return null
+        return apiXml.getProfile(steamId!!).execute().body()
+    }
+
 }

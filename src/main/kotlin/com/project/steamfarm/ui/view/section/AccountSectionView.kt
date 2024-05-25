@@ -101,9 +101,6 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     override fun initialize() {
-        super.initialize()
-
-        section.children.removeIf { it.id == block.id }
         section.children.addAll(block, list, table, scroll)
 
         search.textProperty().addListener { _, _, newValue -> accountView.search(newValue)}
@@ -111,6 +108,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
         accountView.view(users)
 
+        super.initialize()
     }
 
     fun refreshUi(users: List<UserModel>) {

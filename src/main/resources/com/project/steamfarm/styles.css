@@ -375,7 +375,7 @@
     -fx-background-radius: 14px;
 }
 
-#userAuthTable {
+#userTableBlock {
     -fx-pref-width: 230px;
     -fx-pref-height: 85px;
     -fx-background-color: #131417;
@@ -401,4 +401,56 @@
     -fx-alignment: center;
     -fx-text-fill: #909090;
     -fx-font-size: 14px;
+}
+
+#userCompletedName {
+    -fx-pref-width: 150px;
+    -fx-alignment: center;
+    -fx-text-fill: #f2f2f2;
+    -fx-font-size: 17px;
+}
+
+#userCompletedLogin {
+    -fx-pref-width: 150px;
+    -fx-alignment: center;
+    -fx-text-fill: #909090;
+    -fx-font-size: 14px;
+}
+
+#cs { -fx-image: url("images/cs.png") }
+#dota { -fx-image: url("images/dota.png") }
+#cross { -fx-image: url("images/cross.png") }
+
+#userTableBadBlock {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 95px;
+    -fx-background-color: darkred;
+    -fx-background-radius: 14px;
+}
+
+#userBadAuthName {
+    -fx-text-fill: #f2f2f2;
+    -fx-font-size: 17px;
+}
+
+#userBadAuth {
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-pref-width: 220px;
+    -fx-text-fill: #909090;
+    -fx-font-size: 14px;
+}
+
+#404 { -fx-image: url("images/404.png") }
+
+#notFound {
+    -fx-pref-width: 485px;
+    -fx-alignment: center;
+    -fx-font-size: 21px;
+}
+#notFoundHint {
+    -fx-pref-width: 485px;
+    -fx-alignment: center;
+    -fx-text-fill: #909090;
 }
