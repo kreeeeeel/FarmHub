@@ -83,6 +83,7 @@ class AccountTableView(content: AnchorPane): AccountView(content) {
 
             content.children.addAll(nodes)
             content.prefHeight = max(CONTENT_HEIGHT, DEFAULT_LAYOUT_Y + 106 * countVertical)
+            animateSequentially(content.children)
         } else {
             val notFoundView = NotFoundView(content)
             notFoundView.view()

@@ -369,6 +369,7 @@
 #list { -fx-image: url("images/list.png") }
 
 #userTable {
+    -fx-opacity: 0.0;
     -fx-pref-width: 240px;
     -fx-pref-height: 95px;
     -fx-background-color: #2a2d33;
@@ -422,6 +423,7 @@
 #cross { -fx-image: url("images/cross.png") }
 
 #userTableBadBlock {
+    -fx-opacity: 0.0;
     -fx-pref-width: 240px;
     -fx-pref-height: 95px;
     -fx-background-color: darkred;
