@@ -13,6 +13,8 @@ data class UserModel(
 )
 
 data class GameStat(
+    var farmDota: Boolean = false,
+    var farmCs: Boolean = false,
     var dotaHour: Int? = null,
     var csDropped: Boolean = true,
     var csDropDate: LocalDateTime? = LocalDateTime.of(2024, 5, 24, 5, 23)

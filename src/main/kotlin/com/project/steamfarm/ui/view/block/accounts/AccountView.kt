@@ -1,11 +1,15 @@
 package com.project.steamfarm.ui.view.block.accounts
 
+import com.project.steamfarm.Runner
 import com.project.steamfarm.model.UserModel
 import javafx.animation.FadeTransition
 import javafx.scene.Node
+import javafx.scene.image.Image
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
+
+val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/photo.png")!!.toURI().toString())
 
 abstract class AccountView(
     val content: AnchorPane
@@ -22,13 +26,14 @@ abstract class AccountView(
         val firstNode = nodes.first()
         val remainingNodes = nodes.drop(1)
 
-        val transition = FadeTransition(Duration(150.0), firstNode).also {
+        val transition = FadeTransition(Duration(50.0), firstNode).also {
             it.fromValue = 0.0
             it.toValue = 1.0
             it.isAutoReverse = true
         }
 
         transition.setOnFinished {
+            firstNode.opacity = 1.0
             animateSequentially(remainingNodes)
         }
         transition.playFromStart()

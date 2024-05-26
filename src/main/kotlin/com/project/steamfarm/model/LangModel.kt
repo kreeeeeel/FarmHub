@@ -14,6 +14,7 @@ data class Text(
     var description: String = "Control Panel",
     var welcome: String = "Welcome!",
     var choosePointMenu: String = "Select an item from the menu",
+    var readData: String = "Reading data..",
     var menu: Menu = Menu(),
     var accounts: Accounts = Accounts(),
     var farm: Farm = Farm(),
@@ -48,6 +49,7 @@ data class Accounts(
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
     var authorization: Authorization = Authorization(),
+    var action: AccountAction = AccountAction()
 )
 
 data class Farm(
@@ -106,4 +108,10 @@ data class Success (
 data class Authorization(
     var name: String = "Authorization to account",
     var badAuth: String = "The account is not authorized! Check the information provided!",
+)
+
+data class AccountAction(
+    var useFarm: String = "Add for farming",
+    var unusedFarm: String = "Remove from farm",
+    var remove: String = "Delete account"
 )

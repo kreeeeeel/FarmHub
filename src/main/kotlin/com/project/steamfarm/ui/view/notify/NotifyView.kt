@@ -50,7 +50,7 @@ class NotifyView {
     private fun show(isSuccess: Boolean?, value: String) {
 
         Platform.runLater {
-            root.children.removeIf { it.id == pane.id }
+            root.children.filtered { it.id == pane.id }.forEach { root.children.remove(it) }
             root.children.add(pane)
 
             val text = Text(value).also {

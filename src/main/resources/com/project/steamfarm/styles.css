@@ -369,9 +369,15 @@
 #list { -fx-image: url("images/list.png") }
 
 #userTable {
-    -fx-opacity: 0.0;
     -fx-pref-width: 240px;
     -fx-pref-height: 95px;
+    -fx-background-color: #2a2d33;
+    -fx-background-radius: 14px;
+}
+
+#userTableActive {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 215px;
     -fx-background-color: #2a2d33;
     -fx-background-radius: 14px;
 }
@@ -383,6 +389,39 @@
     -fx-background-radius: 10px;
 }
 
+#userTableButton {
+    -fx-pref-width: 230px;
+    -fx-pref-height: 35px;
+    -fx-background-color: #131417;
+    -fx-background-radius: 10px;
+}
+
+#userTableButton:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #111213;
+}
+
+#userTableRemoveButton {
+    -fx-pref-width: 230px;
+    -fx-pref-height: 35px;
+    -fx-background-color: darkred;
+    -fx-background-radius: 10px;
+}
+
+#userTableRemoveButton:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #680101;
+}
+
+#userTableButtonText {
+    -fx-pref-width: 185px;
+    -fx-alignment: center;
+    -fx-text-fill: #f5f2f2;
+    -fx-font-size: 15px;
+}
+
+#passwordWhite { -fx-image: url("images/passwordWhite.png") }
+#bag { -fx-image: url("images/bag.png") }
 #time { -fx-image: url("images/time.png") }
 
 #authTime {
@@ -423,9 +462,15 @@
 #cross { -fx-image: url("images/cross.png") }
 
 #userTableBadBlock {
-    -fx-opacity: 0.0;
     -fx-pref-width: 240px;
     -fx-pref-height: 95px;
+    -fx-background-color: darkred;
+    -fx-background-radius: 14px;
+}
+
+#userTableBadActive {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 135px;
     -fx-background-color: darkred;
     -fx-background-radius: 14px;
 }
@@ -456,3 +501,14 @@
     -fx-alignment: center;
     -fx-text-fill: #909090;
 }
+
+#question { -fx-image: url("images/question.png") }
+#file { -fx-image: url("images/file.png") }
+
+#readData {
+    -fx-pref-width: 485px;
+    -fx-alignment: center;
+    -fx-font-size: 21px;
+}
+
+#done { -fx-image: url("images/done.png") }
