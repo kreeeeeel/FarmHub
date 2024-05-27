@@ -141,9 +141,8 @@ abstract class AccountView(
             it.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 52.0 else 13.0
         }
 
-        if (!pane.children.contains(icon)) pane.children.add(icon)
-        if (!pane.children.contains(name)) pane.children.add(name)
-        if (!pane.children.contains(status)) pane.children.add(status)
+        pane.children.removeIf { it.id == icon.id || it.id == name.id || it.id == status.id }
+        pane.children.addAll(icon, name, status)
     }
 
     fun initCs(pane: Pane, value: Boolean?) = Platform.runLater {
@@ -179,6 +178,7 @@ abstract class AccountView(
             it.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 52.0 else 13.0
         }
 
+        pane.children.removeIf { it.id == icon.id || it.id == name.id || it.id == status.id }
         pane.children.addAll(icon, name, status)
     }
 
