@@ -118,13 +118,13 @@ class AccountListView(
             l.layoutY = 25.0
         }
 
-        super.initDota(it, user.gameStat.dotaHour)
-        super.initCs(it, user.gameStat.csDropped)
+        super.initDota(block, user.gameStat.dotaHour)
+        super.initCs(block, user.gameStat.csDropped)
 
         val edit = Pane().also { p ->
             p.isVisible = false
             p.layoutX = 445.0
-            p.layoutY = 15.0
+            p.layoutY = 13.0
             p.prefWidth = 24.0
             p.prefHeight = 24.0
             p.cursor = Cursor.HAND
@@ -169,7 +169,7 @@ class AccountListView(
         val bag = Pane().also { p ->
             p.isVisible = false
             p.layoutX = 445.0
-            p.layoutY = 15.0
+            p.layoutY = 13.0
             p.prefWidth = 24.0
             p.prefHeight = 24.0
             p.cursor = Cursor.HAND
@@ -185,7 +185,7 @@ class AccountListView(
         it.setOnMouseEntered { bag.isVisible = true }
         it.setOnMouseExited { bag.isVisible = false }
 
-        block.children.addAll(username, hint)
+        block.children.addAll(username, hint, bag)
         it.children.addAll(block)
     }
 

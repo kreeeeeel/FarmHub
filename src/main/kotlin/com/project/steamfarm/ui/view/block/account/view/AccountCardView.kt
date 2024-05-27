@@ -125,13 +125,13 @@ class AccountCardView(
             l.layoutY = 28.0
         }
 
-        super.initDota(it, user.gameStat.dotaHour)
-        super.initCs(it, user.gameStat.csDropped)
-
         block.children.addAll(photo, username, login)
         it.children.add(block)
 
         it.setOnMouseClicked { _ -> setPrevActiveUser(it, user) }
+
+        super.initDota(block, user.gameStat.dotaHour)
+        super.initCs(block, user.gameStat.csDropped)
     }
 
     override fun getUserBadAuth(user: UserModel) = Pane().also {

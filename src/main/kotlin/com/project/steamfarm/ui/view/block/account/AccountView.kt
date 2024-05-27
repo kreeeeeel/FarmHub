@@ -119,14 +119,14 @@ abstract class AccountView(
             img.id = "dota"
             img.fitWidth = 24.0
             img.fitHeight = 24.0
-            img.layoutX = if (pane.id == USER_CARD_ID) 24.0 else 228.0
-            img.layoutY = if (pane.id == USER_CARD_ID) 58.0 else 18.0
+            img.layoutX = if (pane.id == USER_CARD_BLOCK_ID) 18.0 else 228.0
+            img.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 53.0 else 13.0
         }
 
         val name = Label("Dota 2").also {
             it.id = "dotaName"
-            it.layoutX = if (pane.id == USER_CARD_ID) 52.0 else 254.0
-            it.layoutY = if (pane.id == USER_CARD_ID) 69.0 else 29.0
+            it.layoutX = if (pane.id == USER_CARD_BLOCK_ID) 46.0 else 254.0
+            it.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 66.0 else 26.0
         }
 
         val status = Label().also {
@@ -137,13 +137,13 @@ abstract class AccountView(
             it.text = if (value == null) "-"
             else "$value ${langApplication.text.hour}"
 
-            it.layoutX = if (pane.id == USER_CARD_ID) 52.0 else 254.0
-            it.layoutY = if (pane.id == USER_CARD_ID) 55.0 else 16.0
+            it.layoutX = if (pane.id == USER_CARD_BLOCK_ID) 46.0 else 254.0
+            it.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 52.0 else 13.0
         }
 
-        pane.children.add(icon)
-        pane.children.add(name)
-        pane.children.add(status)
+        if (!pane.children.contains(icon)) pane.children.add(icon)
+        if (!pane.children.contains(name)) pane.children.add(name)
+        if (!pane.children.contains(status)) pane.children.add(status)
     }
 
     fun initCs(pane: Pane, value: Boolean?) = Platform.runLater {
@@ -152,14 +152,14 @@ abstract class AccountView(
             img.id = "cs"
             img.fitWidth = 24.0
             img.fitHeight = 24.0
-            img.layoutX = if (pane.id == USER_CARD_ID) 115.0 else 320.0
-            img.layoutY = if (pane.id == USER_CARD_ID) 58.0 else 18.0
+            img.layoutX = if (pane.id == USER_CARD_BLOCK_ID) 115.0 else 320.0
+            img.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 54.0 else 13.0
         }
 
         val name = Label("Counter Strike 2").also {
             it.id = "csName"
-            it.layoutX = if (pane.id == USER_CARD_ID) 145.0 else 348.0
-            it.layoutY = if (pane.id == USER_CARD_ID) 70.0 else 31.0
+            it.layoutX = if (pane.id == USER_CARD_BLOCK_ID) 145.0 else 348.0
+            it.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 66.0 else 26.0
         }
 
         val status = Label().also {
@@ -175,8 +175,8 @@ abstract class AccountView(
                 null -> langApplication.text.accounts.unknown
             }
 
-            it.layoutX = if (pane.id == USER_CARD_ID) 145.0 else 348.0
-            it.layoutY = if (pane.id == USER_CARD_ID) 56.0 else 18.0
+            it.layoutX = if (pane.id == USER_CARD_BLOCK_ID) 145.0 else 348.0
+            it.layoutY = if (pane.id == USER_CARD_BLOCK_ID) 52.0 else 13.0
         }
 
         pane.children.addAll(icon, name, status)
