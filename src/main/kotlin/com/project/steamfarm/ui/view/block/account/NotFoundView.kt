@@ -1,4 +1,4 @@
-package com.project.steamfarm.ui.view.block.accounts
+package com.project.steamfarm.ui.view.block.account
 
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.view.section.CONTENT_HEIGHT

@@ -32,6 +32,13 @@ abstract class DefaultSectionView(
             }
         }
 
+        fun finishTask(type: TimerType) {
+            tasks.filter { it.type == type }.forEach {
+                it.timer.cancel()
+                tasks.remove(it)
+            }
+        }
+
         fun finishAllTask() {
             tasks.forEach { it.timer.cancel() }
             tasks.clear()

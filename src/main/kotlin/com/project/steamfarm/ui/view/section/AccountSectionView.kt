@@ -1,13 +1,15 @@
 package com.project.steamfarm.ui.view.section
 
+import com.project.steamfarm.data.TimerType
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.ConfigModel
 import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.view.SectionType
-import com.project.steamfarm.ui.view.block.accounts.AccountCardView
-import com.project.steamfarm.ui.view.block.accounts.AccountView
+import com.project.steamfarm.ui.view.block.account.view.AccountCardView
+import com.project.steamfarm.ui.view.block.account.view.AccountListView
+import com.project.steamfarm.ui.view.block.account.AccountView
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
@@ -107,7 +109,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     private var accountView: AccountView = if (config.userViewIsList) {
-        AccountCardView(scroll, content)
+        AccountListView(content)
     }
     else AccountCardView(scroll, content)
 
@@ -158,6 +160,14 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
                 it.id = VIEW_DISABLED_ID
                 it.isDisable = true
+            }
+
+            accountView = if (isList) AccountListView(content) else AccountCardView(scroll, content)
+            CompletableFuture.supplyAsync {
+                finishTask(TimerType.WAIT_AUTH)
+
+                accountView.view(users)
+                if (search.text.isNotEmpty()) accountView.search(search.text)
             }
         }
         it.children.add(icon)

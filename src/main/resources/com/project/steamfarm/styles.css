@@ -375,6 +375,10 @@
     -fx-background-radius: 14px;
 }
 
+#userTable:hover {
+    -fx-cursor: hand;
+}
+
 #userTableActive {
     -fx-pref-width: 240px;
     -fx-pref-height: 215px;
@@ -512,3 +516,56 @@
 }
 
 #done { -fx-image: url("images/done.png") }
+
+#userList {
+    -fx-pref-width: 490px;
+    -fx-pref-height: 60px;
+    -fx-background-color: #2a2d33;
+    -fx-background-radius: 14px;
+}
+
+#userListBlock {
+    -fx-pref-width: 480px;
+    -fx-pref-height: 50px;
+    -fx-background-color: #131417;
+    -fx-background-radius: 10px;
+}
+
+#userListBadBlock {
+    -fx-pref-width: 490px;
+    -fx-pref-height: 60px;
+    -fx-background-color: darkred;
+    -fx-background-radius: 14px;
+}
+
+#userBadAuthList {
+    -fx-alignment: center;
+    -fx-pref-width: 485px;
+    -fx-text-fill: #909090;
+    -fx-font-size: 14px;
+}
+
+#userBadAuthNameList {
+    -fx-pref-width: 150px;
+    -fx-alignment: center;
+    -fx-text-fill: #f2f2f2;
+    -fx-font-size: 17px;
+}
+
+#dotaName { -fx-text-fill: #b2b1b1;-fx-font-size: 10px; }
+#badValueDota { -fx-text-fill: #bf0101;-fx-font-size: 15px; }
+#okayValueDota { -fx-text-fill: darkorange; -fx-font-size: 15px; }
+#goodValueDota { -fx-text-fill: darkgreen;-fx-font-size: 15px; }
+
+#csName { -fx-text-fill: #b2b1b1;-fx-font-size: 10px; }
+#badValueCs { -fx-text-fill: #bf0101;-fx-font-size: 15px; }
+#okayValueCs { -fx-text-fill: darkorange; -fx-font-size: 15px; }
+#goodValueCs { -fx-text-fill: darkgreen;-fx-font-size: 15px; }
+
+#pencil { -fx-image: url("images/pencil.png") }
+#editMenu {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 125px;
+    -fx-background-color: #303033;
+    -fx-background-radius: 14px;
+}

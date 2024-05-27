@@ -15,6 +15,7 @@ data class Text(
     var welcome: String = "Welcome!",
     var choosePointMenu: String = "Select an item from the menu",
     var readData: String = "Reading data..",
+    var hour: String = "h.",
     var menu: Menu = Menu(),
     var accounts: Accounts = Accounts(),
     var farm: Farm = Farm(),
@@ -49,7 +50,10 @@ data class Accounts(
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
     var authorization: Authorization = Authorization(),
-    var action: AccountAction = AccountAction()
+    var action: AccountAction = AccountAction(),
+    val unknown: String = "Unknown",
+    var available: String = "Available",
+    var received: String = "Received"
 )
 
 data class Farm(
