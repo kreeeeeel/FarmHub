@@ -19,7 +19,7 @@ class DefaultAuthBackground: AuthBackground {
 
             userRepository.findById(username)?.let {
 
-                it.time = System.currentTimeMillis()
+                it.createdTs = System.currentTimeMillis()
                 userRepository.save(it)
 
                 val isLogin = clientSteam.authentication(username, password)

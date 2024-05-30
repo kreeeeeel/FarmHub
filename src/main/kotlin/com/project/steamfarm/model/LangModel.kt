@@ -111,7 +111,8 @@ data class Success (
 
 data class Authorization(
     var name: String = "Authorization to account",
-    var badAuth: String = "The account is not authorized! Check the information provided!",
+    var description: String = "Your data will not be used by third parties, actions will take place with your data ONLY in this application",
+    var badAuth: String = "Check the correctness of your data!",
 )
 
 data class AccountAction(

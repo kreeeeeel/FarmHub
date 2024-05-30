@@ -66,7 +66,7 @@ class UserRepository: Repository<UserModel> {
     }
 
     private fun getDropCs(userModel: UserModel) {
-        userModel.gameStat.csDropDate?.let {
+        userModel.gameStat.lastDropCsDate?.let {
 
         }
     }

@@ -347,154 +347,14 @@
     -fx-background-color: #0b0c0e;
 }
 
-#view {
-    -fx-pref-height: 24px;
-    -fx-pref-width: 24px;
-    -fx-opacity: 0.8;
-}
-
-#view:hover {
-    -fx-cursor: hand;
-    -fx-opacity: 1.0;
-}
-
-#viewDisable {
-    -fx-pref-height: 24px;
-    -fx-pref-width: 24px;
-    -fx-opacity: 0.4;
-}
-
-
-#table { -fx-image: url("images/table.png") }
-#list { -fx-image: url("images/list.png") }
-
-#userTable {
-    -fx-pref-width: 240px;
-    -fx-pref-height: 95px;
-    -fx-background-color: #2a2d33;
-    -fx-background-radius: 14px;
-}
-
-#userTable:hover {
-    -fx-cursor: hand;
-}
-
-#userTableActive {
-    -fx-pref-width: 240px;
-    -fx-pref-height: 215px;
-    -fx-background-color: #2a2d33;
-    -fx-background-radius: 14px;
-}
-
-#userTableBlock {
-    -fx-pref-width: 230px;
-    -fx-pref-height: 85px;
-    -fx-background-color: #131417;
-    -fx-background-radius: 10px;
-}
-
-#userTableButton {
-    -fx-pref-width: 230px;
-    -fx-pref-height: 35px;
-    -fx-background-color: #131417;
-    -fx-background-radius: 10px;
-}
-
-#userTableButton:hover {
-    -fx-cursor: hand;
-    -fx-background-color: #111213;
-}
-
-#userTableRemoveButton {
-    -fx-pref-width: 230px;
-    -fx-pref-height: 35px;
-    -fx-background-color: darkred;
-    -fx-background-radius: 10px;
-}
-
-#userTableRemoveButton:hover {
-    -fx-cursor: hand;
-    -fx-background-color: #680101;
-}
-
-#userTableButtonText {
-    -fx-pref-width: 185px;
-    -fx-alignment: center;
-    -fx-text-fill: #f5f2f2;
-    -fx-font-size: 15px;
-}
-
-#passwordWhite { -fx-image: url("images/passwordWhite.png") }
 #bag { -fx-image: url("images/bag.png") }
 #time { -fx-image: url("images/time.png") }
-
-#authTime {
-    -fx-text-fill: #f2f2f2;
-    -fx-font-size: 16px;
-}
-
-#userAuthName {
-    -fx-pref-width: 230px;
-    -fx-alignment: center;
-    -fx-text-fill: #f2f2f2;
-    -fx-font-size: 17px;
-}
-
-#userAuth {
-    -fx-pref-width: 230px;
-    -fx-alignment: center;
-    -fx-text-fill: #909090;
-    -fx-font-size: 14px;
-}
-
-#userCompletedName {
-    -fx-pref-width: 150px;
-    -fx-alignment: center;
-    -fx-text-fill: #f2f2f2;
-    -fx-font-size: 17px;
-}
-
-#userCompletedLogin {
-    -fx-pref-width: 150px;
-    -fx-alignment: center;
-    -fx-text-fill: #909090;
-    -fx-font-size: 14px;
-}
 
 #cs { -fx-image: url("images/cs.png") }
 #dota { -fx-image: url("images/dota.png") }
 #cross { -fx-image: url("images/cross.png") }
 
-#userTableBadBlock {
-    -fx-pref-width: 240px;
-    -fx-pref-height: 95px;
-    -fx-background-color: darkred;
-    -fx-background-radius: 14px;
-}
-
-#userTableBadActive {
-    -fx-pref-width: 240px;
-    -fx-pref-height: 135px;
-    -fx-background-color: darkred;
-    -fx-background-radius: 14px;
-}
-
-#userBadAuthName {
-    -fx-text-fill: #f2f2f2;
-    -fx-font-size: 17px;
-}
-
-#userBadAuth {
-    -fx-wrap-text: true;
-    -fx-text-alignment: center;
-    -fx-alignment: center;
-    -fx-pref-width: 220px;
-    -fx-text-fill: #909090;
-    -fx-font-size: 14px;
-}
-
 #404 { -fx-image: url("images/404.png") }
-
 #notFound {
     -fx-pref-width: 485px;
     -fx-alignment: center;
@@ -517,55 +377,87 @@
 
 #done { -fx-image: url("images/done.png") }
 
-#userList {
-    -fx-pref-width: 490px;
-    -fx-pref-height: 60px;
+#userDefaultView {
     -fx-background-color: #2a2d33;
     -fx-background-radius: 14px;
+    -fx-pref-width: 240px;
+    -fx-pref-height: 120px;
 }
 
-#userListBlock {
-    -fx-pref-width: 480px;
-    -fx-pref-height: 50px;
-    -fx-background-color: #131417;
-    -fx-background-radius: 10px;
-}
-
-#userListBadBlock {
-    -fx-pref-width: 490px;
-    -fx-pref-height: 60px;
+#userFailureView {
     -fx-background-color: darkred;
     -fx-background-radius: 14px;
-}
-
-#userBadAuthList {
-    -fx-alignment: center;
-    -fx-pref-width: 485px;
-    -fx-text-fill: #909090;
-    -fx-font-size: 14px;
-}
-
-#userBadAuthNameList {
-    -fx-pref-width: 150px;
-    -fx-alignment: center;
-    -fx-text-fill: #f2f2f2;
-    -fx-font-size: 17px;
-}
-
-#dotaName { -fx-text-fill: #b2b1b1;-fx-font-size: 10px; }
-#badValueDota { -fx-text-fill: #bf0101;-fx-font-size: 15px; }
-#okayValueDota { -fx-text-fill: darkorange; -fx-font-size: 15px; }
-#goodValueDota { -fx-text-fill: darkgreen;-fx-font-size: 15px; }
-
-#csName { -fx-text-fill: #b2b1b1;-fx-font-size: 10px; }
-#badValueCs { -fx-text-fill: #bf0101;-fx-font-size: 15px; }
-#okayValueCs { -fx-text-fill: darkorange; -fx-font-size: 15px; }
-#goodValueCs { -fx-text-fill: darkgreen;-fx-font-size: 15px; }
-
-#pencil { -fx-image: url("images/pencil.png") }
-#editMenu {
     -fx-pref-width: 240px;
-    -fx-pref-height: 125px;
-    -fx-background-color: #303033;
+    -fx-pref-height: 120px;
+}
+
+#userBlockView {
+    -fx-background-color: #131417;
+    -fx-background-radius: 10px;
+    -fx-pref-width: 230px;
+    -fx-pref-height: 110px;
+}
+
+#userTimer {
+    -fx-font-size: 17px;
+    -fx-text-fill: #f5f2f2;
+}
+
+#userAuthUsername {
+    -fx-font-size: 17px;
+    -fx-text-fill: #f5f2f2;
+    -fx-alignment: center;
+    -fx-pref-width: 230px;
+}
+
+#userAuthAuthorization {
+    -fx-font-size: 14px;
+    -fx-text-fill: #909090;
+    -fx-alignment: center;
+    -fx-pref-width: 230px;
+}
+
+#userFailure {
+    -fx-font-size: 15px;
+    -fx-text-fill: #f5f2f2;
+}
+
+#userFailureComment {
+    -fx-font-size: 12px;
+    -fx-text-fill: #5e5d5d;
+    -fx-wrap-text: true;
+    -fx-pref-width: 230px;
+    -fx-pref-height: 32px;
+    -fx-alignment: center;
+}
+
+#userCompletedName {
+    -fx-font-size: 17px;
+    -fx-text-fill: #f5f2f2;
+}
+
+#userCompletedLogin {
+    -fx-font-size: 14px;
+    -fx-text-fill: #909090;
+}
+
+#dotaView {
+    -fx-pref-width: 110px;
+    -fx-pref-height: 30px;
     -fx-background-radius: 14px;
+    -fx-background-color: #2a2d33;
+}
+
+#dotaValue {
+    -fx-font-size: 15px;
+    -fx-text-fill: #f5f2f2;
+    -fx-alignment: center;
+    -fx-pref-width: 57px;
+}
+
+#csView {
+    -fx-pref-width: 72px;
+    -fx-pref-height: 30px;
+    -fx-background-radius: 14px;
+    -fx-background-color: #2a2d33;
 }
