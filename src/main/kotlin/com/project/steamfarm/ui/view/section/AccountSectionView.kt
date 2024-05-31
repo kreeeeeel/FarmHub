@@ -9,11 +9,15 @@ import com.project.steamfarm.model.UserType
 import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.PhotoRepository
 import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
+import com.project.steamfarm.ui.view.block.account.AccountMenuView
 import com.project.steamfarm.ui.view.block.account.NotFoundView
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
 import javafx.animation.FadeTransition
+import javafx.animation.ScaleTransition
 import javafx.application.Platform
+import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
@@ -120,6 +124,9 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         it.prefWidth = 520.0
         it.prefHeight = 458.0
         it.content = content
+
+        it.vvalueProperty().addListener { _, _, _ -> closePrevMenu() }
+        it.hvalueProperty().addListener { _, _, _ -> closePrevMenu() }
     }
 
     private val notFoundView = NotFoundView(content)
@@ -128,6 +135,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private val userRepository: Repository<UserModel> = UserRepository()
 
     private var nodes: MutableList<Pane> = mutableListOf()
+    private var prevMenu: Pane? = null
 
     override fun refreshLanguage() {
         search.promptText = langApplication.text.accounts.search
@@ -162,13 +170,14 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             } ?: return@filter false
 
             val username = node as Label
-            return@filter username.text.startsWith(prefix)
+            username.text.contains(prefix)
         }
         viewUsers(values)
     }
 
     private fun viewUsers(nodes: List<Pane>, isAnimation: Boolean = false) = Platform.runLater {
 
+        closePrevMenu()
         content.children.clear()
         if (nodes.isNotEmpty()) {
 
@@ -282,6 +291,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
     private fun viewUserCompleted(user: UserModel): Pane = Pane().also { pane ->
         pane.id = USER_DEFAULT_VIEW
+        pane.cursor = Cursor.HAND
 
         val block = Pane().also { b ->
             b.id = USER_BLOCK_VIEW
@@ -315,6 +325,9 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         block.children.addAll(photo, username, login, dota, cs)
         pane.children.add(block)
 
+        pane.setOnMouseClicked { event ->
+            viewMenu(user, pane.layoutX, event.sceneY)
+        }
     }
 
     private fun viewDota(user: UserModel): Pane = Pane().also { pane ->
@@ -388,6 +401,39 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         transition.playFromStart()
     }
 
+    private fun viewMenu(user: UserModel, offsetX: Double, offsetY: Double) {
+
+        prevMenu?.let { root.children.remove(it) }
+        prevMenu = null
+
+        val menu = AccountMenuView().view(user).also {
+            it.layoutX = section.layoutX + offsetX - it.boundsInLocal.width - 5.0
+            it.layoutY = if(offsetY + it.boundsInLocal.height > root.scene.window.height) {
+                root.scene.window.height - it.boundsInLocal.height - 10.0
+            } else offsetY
+            it.scaleX = 0.1
+            it.scaleY = 0.1
+
+            root.children.add(it)
+        }
+
+        val scaleTransition = ScaleTransition(Duration.millis(150.0), menu).also {
+            it.fromX = 0.1
+            it.fromY = 0.1
+            it.toX = 1.0
+            it.toY = 1.0
+        }
+        scaleTransition.play()
+        prevMenu = menu
+
+        menu.setOnMouseExited { closePrevMenu() }
+    }
+
+    private fun closePrevMenu() = prevMenu?.let {
+        root.children.remove(it)
+        prevMenu = null
+    }
+
     inner class UpdateTime(
         private val timer: Label,
         private val userView: Pane,
@@ -408,11 +454,15 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
                 v.layoutY = userView.layoutY
             }
 
-            nodes.removeAt(indexOfNodes)
-            nodes.add(newUserView)
+            if (indexOfNodes != -1) {
+                nodes.removeAt(indexOfNodes)
+                nodes.add(newUserView)
+            }
 
-            content.children.removeAt(indexOfContent)
-            content.children.add(newUserView)
+            if (indexOfContent != -1) {
+                content.children.removeAt(indexOfContent)
+                content.children.add(newUserView)
+            }
 
             finishTask(user.username, TimerType.WAIT_AUTH)
         }

@@ -87,7 +87,6 @@ data class MaFile(
 data class PasswordFile(
     var name: String = "Setting a password",
     var hint: String = "You can upload a file with passwords, the contents of which should be in the format login:password",
-    var keyboard: String = "Manual input",
 )
 
 data class Failure (
@@ -116,7 +115,8 @@ data class Authorization(
 )
 
 data class AccountAction(
-    var useFarm: String = "Add for farming",
-    var unusedFarm: String = "Remove from farm",
-    var remove: String = "Delete account"
+    var chooseHero: String = "Choose hero",
+    var enableFarmGame: String = "Add for farming",
+    var disableFarmGame: String = "Remove from farm",
+    var dropAccount: String = "Delete account"
 )

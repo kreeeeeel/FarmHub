@@ -29,7 +29,7 @@ class PasswordFileWindow(
     private val block = Pane().also {
         it.id = "passwordFile"
         it.layoutX = 273.0
-        it.layoutY = 113.0
+        it.layoutY = 135.0
 
         val icon = ImageView().also { img ->
             img.id = "password"
@@ -81,12 +81,6 @@ class PasswordFileWindow(
         it.layoutY = 154.0
     }
 
-    private val keyboard = Button(langApplication.text.accounts.passwordFile.keyboard).also {
-        it.id = "chooseKeyboard"
-        it.layoutX = 13.0
-        it.layoutY = 330.0
-    }
-
     private val notifyView = NotifyView()
 
     private val passwordImport: PasswordImport = DefaultPasswordImport()
@@ -99,7 +93,7 @@ class PasswordFileWindow(
         file.setOnMouseClicked { selectFile() }
 
         drag.children.addAll(file)
-        block.children.addAll(drag, keyboard)
+        block.children.addAll(drag)
         window.children.addAll(block)
 
         super.show(false)
