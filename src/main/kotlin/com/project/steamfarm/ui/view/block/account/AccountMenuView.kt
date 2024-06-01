@@ -3,6 +3,8 @@ package com.project.steamfarm.ui.view.block.account
 import com.project.steamfarm.Runner
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.repository.Repository
+import com.project.steamfarm.repository.impl.UserRepository
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -16,7 +18,9 @@ private val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/Alchemi
 
 class AccountMenuView {
 
-    fun view(user: UserModel) = Pane().also { pane ->
+    private val userRepository: Repository<UserModel> = UserRepository()
+
+    fun view(user: UserModel, userView: Pane) = Pane().also { pane ->
         pane.id = MENU_ID
 
         val block = getBlockMenu(user)
@@ -34,9 +38,13 @@ class AccountMenuView {
 
         farmingDotaGame.setOnMouseClicked {
             user.gameStat.enableDota = updateUserStat(block, user.gameStat.enableDota, farmingDotaGame, ButtonType.DOTA)
+            updateUserView(userView, user)
+            userRepository.save(user)
         }
         farmingCsGame.setOnMouseClicked {
             user.gameStat.enableCs = updateUserStat(block, user.gameStat.enableCs, farmingCsGame, ButtonType.CS)
+            updateUserView(userView, user)
+            userRepository.save(user)
         }
         pane.children.addAll(block, changeHero, line, farmingDotaGame, farmingCsGame, dropUser)
     }
@@ -148,7 +156,16 @@ class AccountMenuView {
                 false -> langApplication.text.accounts.action.enableFarmGame
             }
         }
+
+
         return !value
+    }
+
+    private fun updateUserView(userView: Pane, user: UserModel) {
+        /*userView.id = if (user.gameStat.enableCs && user.gameStat.enableDota) USER_ALL_VIEW
+        else if (user.gameStat.enableDota) USER_DOTA_VIEW
+        else if (user.gameStat.enableCs) USER_CS_VIEW
+        else USER_DEFAULT_VIEW*/
     }
 
     private enum class ButtonType {

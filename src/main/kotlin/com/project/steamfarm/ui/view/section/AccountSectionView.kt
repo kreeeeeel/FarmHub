@@ -1,51 +1,48 @@
 package com.project.steamfarm.ui.view.section
 
 import com.project.steamfarm.Runner
-import com.project.steamfarm.data.TimerData
-import com.project.steamfarm.data.TimerType
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.model.UserType
-import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.PhotoRepository
 import com.project.steamfarm.repository.impl.UserRepository
-import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
-import com.project.steamfarm.ui.view.block.account.AccountMenuView
 import com.project.steamfarm.ui.view.block.account.NotFoundView
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
 import javafx.animation.FadeTransition
-import javafx.animation.ScaleTransition
 import javafx.application.Platform
-import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextField
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
-import javafx.scene.paint.ImagePattern
-import javafx.scene.shape.Circle
 import javafx.util.Duration
-import java.util.*
 import java.util.concurrent.CompletableFuture
-
-
-const val CONTENT_HEIGHT = 456.0
 
 val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/photo.png")!!.toURI().toString())
 
-private const val USER_DEFAULT_VIEW = "userDefaultView"
-private const val USER_FAILURE_VIEW = "userFailureView"
-private const val USER_BLOCK_VIEW = "userBlockView"
+private const val USER_VIEW_ID = "userView"
+private const val USER_CHECKBOX_EMPTY = "checkBox"
+private const val USER_CHECKBOX_SELECTED = "selectedCheckBox"
+private const val USER_NAME_ID = "userViewName"
+private const val USER_MODE_ID = "userViewMode"
+private const val USER_GAME_STATUS_ID = "userViewGameStatus"
+private const val GAME_DOTA_ID = "dota"
+private const val GAME_CS_ID = "cs"
+private const val USER_VIEW_EDIT_ID = "userViewEdit"
+private const val SELECT_ALL_ID = "selectAll"
+private const val REMOVE_ALL_ID = "removeAll"
+private const val EDIT_ID = "pencil"
+private const val TRASH_ID = "bag"
 
-private const val DOTA_VIEW = "dotaView"
-private const val CS_VIEW = "csView"
+private const val DOTA_NAME = "Dota 2"
+private const val CS_NAME = "Counter-Strike 2"
 
-private const val USERNAME_FIELD_AUTH = "userAuthUsername"
-private const val USERNAME_FIELD_COMPLETED = "userCompletedName"
+private const val USER_VIEW_Y = 60.0
 
 class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
@@ -97,9 +94,45 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         block.children.add(it)
     }
 
+    private val sorting = Pane().also {
+        it.layoutX = 24.0
+        it.layoutY = 60.0
+
+        val icon = ImageView().also { img ->
+            img.id = "filter"
+            img.fitWidth = 16.0
+            img.fitHeight = img.fitWidth
+            img.layoutY = 4.0
+        }
+
+        val text = Label().also { l ->
+            l.id = USER_NAME_ID
+            l.text = langApplication.text.accounts.sorting
+            l.layoutX = 24.0
+            l.layoutY = 2.0
+        }
+
+        it.children.addAll(icon, text)
+    }
+
+    private val selected = Label().also {
+        it.id = USER_MODE_ID
+        it.text = "${langApplication.text.accounts.selected} 0"
+        it.layoutX = 26.0
+        it.layoutY = 84.0
+    }
+
+    private val selectAll = viewEdit(SELECT_ALL_ID).also {
+        it.setOnMouseClicked { _ ->
+            if (it.children[0].id == SELECT_ALL_ID) selectAllUser() else removeAllUser()
+        }
+    }
+    private val edit = viewEdit(EDIT_ID)
+    private val trash = viewEdit(TRASH_ID)
+
     private val content = AnchorPane().also { ap ->
         ap.prefWidth = 505.0
-        ap.prefHeight = CONTENT_HEIGHT
+        ap.prefHeight = 424.0
 
         val icon = ImageView().also {
             it.id = "file"
@@ -120,22 +153,24 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
     private val scroll = ScrollPane().also {
         it.id = "accounts"
-        it.layoutY = 85.0
+        it.layoutY = 100.0
         it.prefWidth = 520.0
-        it.prefHeight = 458.0
+        it.prefHeight = 425.0
         it.content = content
 
-        it.vvalueProperty().addListener { _, _, _ -> closePrevMenu() }
-        it.hvalueProperty().addListener { _, _, _ -> closePrevMenu() }
+        //it.vvalueProperty().addListener { _, _, _ -> closePrevMenu() }
+        //it.hvalueProperty().addListener { _, _, _ -> closePrevMenu() }
     }
+
+    private val userRepository = UserRepository()
+    private val photoRepository = PhotoRepository()
 
     private val notFoundView = NotFoundView(content)
 
-    private val photoRepository: Repository<Image> = PhotoRepository()
-    private val userRepository: Repository<UserModel> = UserRepository()
+    private var users: MutableList<UserModel> = mutableListOf()
+    private var userNodes: MutableList<Pane> = mutableListOf()
 
-    private var nodes: MutableList<Pane> = mutableListOf()
-    private var prevMenu: Pane? = null
+    private var selectedUser: MutableMap<UserModel, Pane> = HashMap()
 
     override fun refreshLanguage() {
         search.promptText = langApplication.text.accounts.search
@@ -144,242 +179,127 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     override fun initialize() {
-        section.children.addAll(block, scroll)
+        section.children.addAll(block, scroll, sorting, selected, selectAll, edit, trash)
 
         search.textProperty().addListener { _, _, newValue -> search(newValue)}
         import.setOnMouseClicked { _ -> MaFileWindow(this).show() }
 
         CompletableFuture.supplyAsync {
-            nodes = userRepository.findAll().map { viewUser(it) }.toMutableList()
-            viewUsers(nodes, true)
+            users = userRepository.findByType(UserType.AUTH_COMPLETED).toMutableList()
+            userNodes = users.map { viewUser(it) }.toMutableList()
+            viewUsers(userNodes, true)
         }
 
         super.initialize()
     }
 
-    fun refreshUi(users: List<UserModel>) {
-        this.nodes = users.map { viewUser(it) }.toMutableList()
-        viewUsers(this.nodes)
-    }
-
     private fun search(prefix: String) {
-        val values = nodes.filter {
-            val block = it.children[0] as Pane
-            val node = block.children.firstOrNull { n ->
-                n.id == USERNAME_FIELD_AUTH || n.id == USERNAME_FIELD_COMPLETED
-            } ?: return@filter false
-
+        val users = userNodes.filter {
+            val node = it.children.firstOrNull { n -> n.id == USER_NAME_ID } ?: return@filter false
             val username = node as Label
             username.text.contains(prefix)
         }
-        viewUsers(values)
+
+        viewUsers(users)
     }
 
-    private fun viewUsers(nodes: List<Pane>, isAnimation: Boolean = false) = Platform.runLater {
-
-        closePrevMenu()
+    private fun viewUsers(users: List<Pane>, isAnimate: Boolean = false) = Platform.runLater {
         content.children.clear()
-        if (nodes.isNotEmpty()) {
-
+        if (users.isNotEmpty()) {
             var vertical = 0
-            var horizontal = 0
+            users.forEach { it.layoutY = USER_VIEW_Y * vertical++ }
 
-            val result = nodes.map {
-                it.also { u ->
-                    u.layoutX = 14.0 + 250 * horizontal++
-                    u.layoutY = 7.0 + 128 * vertical
-                    u.opacity = if (isAnimation) 0.0 else 1.0
-
-                    if (horizontal == 2) {
-                        horizontal = 0
-                        vertical++
-                    }
-                }
-            }
-            content.children.addAll(result)
-            if (isAnimation) animateSequentially(nodes)
+            content.children.addAll(users)
+            if (isAnimate) animateSequentially(users)
         } else notFoundView.view()
     }
 
-    private fun viewUser(user: UserModel): Pane = when(user.userType) {
-        UserType.WAIT_AUTH -> viewUserWithTimer(user)
-        UserType.BAD_AUTH -> viewUserFailure(user)
-        UserType.AUTH_COMPLETED -> viewUserCompleted(user)
-    }
+    private fun viewUser(userModel: UserModel) = Pane().also { pane ->
 
-    private fun viewUserWithTimer(user: UserModel): Pane = Pane().also { pane ->
-        pane.id = USER_DEFAULT_VIEW
-        val block = Pane().also { b ->
-            b.id = USER_BLOCK_VIEW
-            b.layoutX = 5.0
-            b.layoutY = 5.0
+        pane.id = USER_VIEW_ID
+        pane.opacity = 0.1
+        pane.layoutX = 25.0
+
+        val select = ImageView().also {
+            it.id = USER_CHECKBOX_EMPTY
+            it.layoutX = 14.0
+            it.layoutY = 18.0
         }
 
-        val icon = ImageView().also { img ->
-            img.id = "time"
-            img.layoutX = 74.0
-            img.layoutY = 14.0
+        val photo = ImageView().also {
+            it.image = photoRepository.findById(userModel.username) ?: DEFAULT_PHOTO
+            it.layoutX = 60.0
+            it.layoutY = 12.0
+            it.fitWidth = 36.0
+            it.fitHeight = it.fitWidth
         }
 
-        val timer = Label().also {
-            it.text = getTime(user.createdTs)
-            it.id = "userTimer"
-            it.layoutX = 100.0
-            it.layoutY = 16.0
+        val username = Label(userModel.username).also {
+            it.id = USER_NAME_ID
+            it.layoutX = 105.0
+            it.layoutY = 14.0
         }
 
-        val username = Label(user.username).also {
-            it.id = "userAuthUsername"
-            it.layoutY = 55.0
+        val mode = Label().also {
+            it.id = USER_MODE_ID
+            it.text = getEnabledMode(userModel.gameStat.enableDota, userModel.gameStat.enableCs)
+            it.layoutX = 105.0
+            it.layoutY = 32.0
         }
 
-        val authorization = Label(langApplication.text.accounts.authorization.name).also {
-            it.id = "userAuthAuthorization"
-            it.layoutY = 75.0
+        val dotaStatus = viewGameStatus(GAME_DOTA_ID, userModel.gameStat.currentPlayedDota >= 100).also {
+            it.layoutX = 325.0
         }
 
-        block.children.addAll(icon, timer, username, authorization)
-        pane.children.add(block)
-
-        val currentTimer = Timer()
-        val currentTimerTask = UpdateTime(timer, pane, user)
-        val currentTimerData = TimerData(currentTimer, user.username, TimerType.WAIT_AUTH)
-
-        currentTimer.schedule(currentTimerTask, 1000, 1000)
-        startTask(currentTimerData)
-    }
-
-    private fun viewUserFailure(user: UserModel): Pane = Pane().also { pane ->
-        pane.id = USER_FAILURE_VIEW
-
-        val block = Pane().also { b ->
-            b.id = USER_BLOCK_VIEW
-            b.layoutX = 5.0
-            b.layoutY = 5.0
+        val csStatus = viewGameStatus(GAME_CS_ID, userModel.gameStat.currentDroppedCs).also {
+            it.layoutX = 400.0
         }
-
-        val cross = ImageView().also { img ->
-            img.id = "cross"
-            img.layoutX = 8.0
-            img.layoutY = 8.0
-        }
-
-        val failure = Label(langApplication.text.failure.name).also {
-            it.id = "userFailure"
-            it.layoutX = 36.0
-            it.layoutY = 11.0
-        }
-
-        val username = Label(user.username).also {
-            it.id = "userAuthUsername"
-            it.layoutY = 42.0
-        }
-
-        val authorization = Label(langApplication.text.accounts.login).also {
-            it.id = "userAuthAuthorization"
-            it.layoutY = 58.0
-        }
-
-        val comment = Label(langApplication.text.accounts.authorization.badAuth).also {
-            it.id = "userFailureComment"
-            it.layoutY = 80.0
-        }
-
-        block.children.addAll(cross, failure, username, authorization, comment)
-        pane.children.add(block)
-    }
-
-    private fun viewUserCompleted(user: UserModel): Pane = Pane().also { pane ->
-        pane.id = USER_DEFAULT_VIEW
-        pane.cursor = Cursor.HAND
-
-        val block = Pane().also { b ->
-            b.id = USER_BLOCK_VIEW
-            b.layoutX = 5.0
-            b.layoutY = 5.0
-        }
-
-        val image = photoRepository.findById(user.username) ?: DEFAULT_PHOTO
-        val photo = Circle().also {
-            it.radius = 24.0
-            it.fill = ImagePattern(image)
-            it.layoutX = 38.0
-            it.layoutY = 38.0
-        }
-
-        val username = Label(user.username).also {
-            it.id = "userCompletedName"
-            it.layoutX = 73.0
-            it.layoutY = 20.0
-        }
-
-        val login = Label(langApplication.text.accounts.login).also {
-            it.id = "userCompletedLogin"
-            it.layoutX = 73.0
-            it.layoutY = 38.0
-        }
-
-        val dota = viewDota(user)
-        val cs = viewCs(user)
-
-        block.children.addAll(photo, username, login, dota, cs)
-        pane.children.add(block)
 
         pane.setOnMouseClicked { event ->
-            viewMenu(user, pane.layoutX, event.sceneY)
-        }
-    }
-
-    private fun viewDota(user: UserModel): Pane = Pane().also { pane ->
-        pane.id = DOTA_VIEW
-        pane.isDisable = user.gameStat.enableDota != true
-        pane.layoutX = 18.0
-        pane.layoutY = 70.0
-
-        val icon = ImageView().also { img ->
-            img.id = "dota"
-            img.layoutX = 10.0
-            img.layoutY = 3.0
-        }
-
-        val value = Label().also {
-            it.id = "dotaValue"
-            it.text = "${user.gameStat.currentPlayedDota} ${langApplication.text.hour}"
-            it.layoutX = 40.0
-            it.layoutY = 6.0
-        }
-
-        pane.children.addAll(icon, value)
-    }
-
-    private fun viewCs(user: UserModel): Pane = Pane().also { pane ->
-        pane.id = CS_VIEW
-        pane.isDisable = user.gameStat.enableCs != true
-        pane.layoutX = 132.0
-        pane.layoutY = 70.0
-
-        val icon = ImageView().also { img ->
-            img.id = "cs"
-            img.layoutX = 10.0
-            img.layoutY = 3.0
-        }
-
-        val value = ImageView().also { img ->
-            img.id = when(user.gameStat.currentDroppedCs) {
-                true -> "done"
-                false -> "cross"
+            if (event.button == MouseButton.PRIMARY) {
+                selectUser(userModel, pane)
             }
-            img.layoutX = 40.0
-            img.layoutY = 3.0
+
+            if (event.button == MouseButton.SECONDARY) {
+                println("пкм")
+            }
         }
-        pane.children.addAll(icon, value)
+
+        pane.children.addAll(select, photo, username, mode, dotaStatus, csStatus)
     }
 
-    private fun getTime(time: Long): String {
-        val avg = (System.currentTimeMillis() - time) / 1000
-        val minutes = avg / 60
-        val seconds = avg % 60
-        return String.format("%02d:%02d", minutes, seconds)
+    private fun getEnabledMode(isDotaEnabled: Boolean, isCsEnabled: Boolean): String {
+
+        if (!isDotaEnabled && !isCsEnabled) {
+            return langApplication.text.accounts.unused
+        }
+
+        val stringBuilder = StringBuilder()
+        if (isDotaEnabled) stringBuilder.append(DOTA_NAME)
+        if (isCsEnabled) {
+            if (stringBuilder.isNotEmpty()) stringBuilder.append(" | ")
+            stringBuilder.append(CS_NAME)
+        }
+        return stringBuilder.toString()
+    }
+
+    private fun viewGameStatus(imgId: String, value: Boolean) = Pane().also { pane ->
+        pane.id = USER_GAME_STATUS_ID
+        pane.layoutY = 15.0
+
+        val icon = ImageView().also {
+            it.id = imgId
+            it.layoutX = 4.0
+            it.layoutY = 3.0
+        }
+
+        val status = ImageView().also {
+            it.id = if (value) "done" else "cross"
+            it.layoutX = 30.0
+            it.layoutY = if (value) 2.0 else 3.0
+        }
+
+        pane.children.addAll(icon, status)
     }
 
     private fun animateSequentially(nodes: List<Node>) {
@@ -391,7 +311,6 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         val transition = FadeTransition(Duration(50.0), firstNode).also {
             it.fromValue = 0.0
             it.toValue = 1.0
-            it.isAutoReverse = true
         }
 
         transition.setOnFinished {
@@ -401,72 +320,63 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         transition.playFromStart()
     }
 
-    private fun viewMenu(user: UserModel, offsetX: Double, offsetY: Double) {
-
-        prevMenu?.let { root.children.remove(it) }
-        prevMenu = null
-
-        val menu = AccountMenuView().view(user).also {
-            it.layoutX = section.layoutX + offsetX - it.boundsInLocal.width - 5.0
-            it.layoutY = if(offsetY + it.boundsInLocal.height > root.scene.window.height) {
-                root.scene.window.height - it.boundsInLocal.height - 10.0
-            } else offsetY
-            it.scaleX = 0.1
-            it.scaleY = 0.1
-
-            root.children.add(it)
+    private fun viewEdit(imdId: String) = Pane().also { pane ->
+        pane.id = USER_VIEW_EDIT_ID
+        pane.layoutY = 70.0
+        pane.layoutX = when(imdId) {
+            SELECT_ALL_ID -> 415.0
+            EDIT_ID -> 445.0
+            else -> 470.0
         }
 
-        val scaleTransition = ScaleTransition(Duration.millis(150.0), menu).also {
-            it.fromX = 0.1
-            it.fromY = 0.1
-            it.toX = 1.0
-            it.toY = 1.0
+        val icon = ImageView().also {
+            it.id = imdId
         }
-        scaleTransition.play()
-        prevMenu = menu
 
-        menu.setOnMouseExited { closePrevMenu() }
+        pane.children.add(icon)
     }
 
-    private fun closePrevMenu() = prevMenu?.let {
-        root.children.remove(it)
-        prevMenu = null
+    private fun selectUser(userModel: UserModel, pane: Pane) {
+        val isSelected = selectedUser[userModel] != null
+        if (isSelected) selectedUser.remove(userModel) else selectedUser[userModel] = pane
+
+        pane.children.firstOrNull { it.id == USER_CHECKBOX_SELECTED || it.id == USER_CHECKBOX_EMPTY }?.let {
+            it.id = if (isSelected) USER_CHECKBOX_EMPTY else USER_CHECKBOX_SELECTED
+        }
+        changeIdSelect()
     }
 
-    inner class UpdateTime(
-        private val timer: Label,
-        private val userView: Pane,
-        private val currentUser: UserModel
-    ): TimerTask() {
+    private fun selectAllUser() {
+        userNodes.forEach {
 
-        override fun run() = Platform.runLater {
-            timer.text = getTime(currentUser.createdTs)
-            userRepository.findById(currentUser.username)?.let { if (it.userType != UserType.WAIT_AUTH) replace(it) }
+            it.children.firstOrNull { n -> n.id == USER_CHECKBOX_SELECTED || n.id == USER_CHECKBOX_EMPTY }?.let { i ->
+                i.id = USER_CHECKBOX_SELECTED
+            }
+
+            val node = it.children.firstOrNull { n -> n.id == USER_NAME_ID }
+            val username = node as Label
+
+            val userModel = users.firstOrNull { u -> u.username == username.text }
+            if (userModel != null) {
+                selectedUser[userModel] = it
+            }
         }
+        changeIdSelect()
+    }
 
-        private fun replace(user: UserModel) {
-            val indexOfNodes = nodes.indexOf(userView)
-            val indexOfContent = content.children.indexOf(userView)
-
-            val newUserView = viewUser(user).also { v ->
-                v.layoutX = userView.layoutX
-                v.layoutY = userView.layoutY
+    private fun removeAllUser() {
+        selectedUser.entries.forEach {
+            it.value.children.firstOrNull { n -> n.id == USER_CHECKBOX_SELECTED }?.let { i ->
+                i.id = USER_CHECKBOX_EMPTY
             }
-
-            if (indexOfNodes != -1) {
-                nodes.removeAt(indexOfNodes)
-                nodes.add(newUserView)
-            }
-
-            if (indexOfContent != -1) {
-                content.children.removeAt(indexOfContent)
-                content.children.add(newUserView)
-            }
-
-            finishTask(user.username, TimerType.WAIT_AUTH)
         }
+        selectedUser.clear()
+        changeIdSelect()
+    }
 
+    private fun changeIdSelect() = Platform.runLater {
+        selected.text = "${langApplication.text.accounts.selected} ${selectedUser.size}"
+        selectAll.children[0].id = if (selectedUser.size == users.size) REMOVE_ALL_ID else SELECT_ALL_ID
     }
 
 }

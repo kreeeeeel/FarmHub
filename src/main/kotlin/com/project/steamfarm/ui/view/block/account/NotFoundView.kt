@@ -1,7 +1,6 @@
 package com.project.steamfarm.ui.view.block.account
 
 import com.project.steamfarm.langApplication
-import com.project.steamfarm.ui.view.section.CONTENT_HEIGHT
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.layout.AnchorPane
@@ -32,7 +31,6 @@ class NotFoundView(
 
     fun view() {
         content.children.addAll(logo, title, hint)
-        content.prefHeight = CONTENT_HEIGHT
     }
 
 }

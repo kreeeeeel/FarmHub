@@ -3,6 +3,7 @@ package com.project.steamfarm.repository.impl
 import com.google.gson.GsonBuilder
 import com.project.steamfarm.adapter.LocalDateTimeAdapter
 import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.model.UserType
 import com.project.steamfarm.repository.Repository
 import java.io.File
 import java.io.FileReader
@@ -64,6 +65,8 @@ class UserRepository: Repository<UserModel> {
             writer.flush()
         }
     }
+
+    fun findByType(type: UserType): List<UserModel> = findAll().filter { it.userType == type }
 
     private fun getDropCs(userModel: UserModel) {
         userModel.gameStat.lastDropCsDate?.let {

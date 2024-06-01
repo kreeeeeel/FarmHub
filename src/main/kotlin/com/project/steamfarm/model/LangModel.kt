@@ -15,7 +15,6 @@ data class Text(
     var welcome: String = "Welcome!",
     var choosePointMenu: String = "Select an item from the menu",
     var readData: String = "Reading data..",
-    var hour: String = "h.",
     var menu: Menu = Menu(),
     var accounts: Accounts = Accounts(),
     var farm: Farm = Farm(),
@@ -43,17 +42,14 @@ data class Accounts(
     var name: String = "Accounts",
     var search: String = "Search account",
     var import: String = "Import",
-    var login: String = "Account login",
+    var sorting: String = "Sorting",
+    var selected: String = "Selected accounts: ",
     var notFound: String = "Nothing found..",
     var hintToImport: String = "To import accounts, click 'Import'",
-    var hour: String = "h.",
+    var unused: String = "User not used",
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
-    var authorization: Authorization = Authorization(),
     var action: AccountAction = AccountAction(),
-    val unknown: String = "Unknown",
-    var available: String = "Available",
-    var received: String = "Received"
 )
 
 data class Farm(
@@ -106,12 +102,6 @@ data class Success (
     var maFile: String = "Now you need to set a password for your accounts, please select an action in this window",
     var import: String = "Accounts successfully imported! Wait while background authorization and account validation occurs",
     var auth: String = "Account '%s' has been successfully authorized! The user is available to work."
-)
-
-data class Authorization(
-    var name: String = "Authorization to account",
-    var description: String = "Your data will not be used by third parties, actions will take place with your data ONLY in this application",
-    var badAuth: String = "Check the correctness of your data!",
 )
 
 data class AccountAction(

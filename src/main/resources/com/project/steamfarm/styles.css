@@ -362,91 +362,6 @@
 
 #done { -fx-image: url("images/done.png") }
 
-#userDefaultView {
-    -fx-background-color: #2a2d33;
-    -fx-background-radius: 14px;
-    -fx-pref-width: 240px;
-    -fx-pref-height: 120px;
-}
-
-#userFailureView {
-    -fx-background-color: darkred;
-    -fx-background-radius: 14px;
-    -fx-pref-width: 240px;
-    -fx-pref-height: 120px;
-}
-
-#userBlockView {
-    -fx-background-color: #131417;
-    -fx-background-radius: 10px;
-    -fx-pref-width: 230px;
-    -fx-pref-height: 110px;
-}
-
-#userTimer {
-    -fx-font-size: 17px;
-    -fx-text-fill: #f5f2f2;
-}
-
-#userAuthUsername {
-    -fx-font-size: 17px;
-    -fx-text-fill: #f5f2f2;
-    -fx-alignment: center;
-    -fx-pref-width: 230px;
-}
-
-#userAuthAuthorization {
-    -fx-font-size: 14px;
-    -fx-text-fill: #909090;
-    -fx-alignment: center;
-    -fx-pref-width: 230px;
-}
-
-#userFailure {
-    -fx-font-size: 15px;
-    -fx-text-fill: #f5f2f2;
-}
-
-#userFailureComment {
-    -fx-font-size: 12px;
-    -fx-text-fill: #5e5d5d;
-    -fx-wrap-text: true;
-    -fx-pref-width: 230px;
-    -fx-pref-height: 32px;
-    -fx-alignment: center;
-}
-
-#userCompletedName {
-    -fx-font-size: 17px;
-    -fx-text-fill: #f5f2f2;
-}
-
-#userCompletedLogin {
-    -fx-font-size: 14px;
-    -fx-text-fill: #909090;
-}
-
-#dotaView {
-    -fx-pref-width: 110px;
-    -fx-pref-height: 30px;
-    -fx-background-radius: 14px;
-    -fx-background-color: #2a2d33;
-}
-
-#dotaValue {
-    -fx-font-size: 15px;
-    -fx-text-fill: #f5f2f2;
-    -fx-alignment: center;
-    -fx-pref-width: 57px;
-}
-
-#csView {
-    -fx-pref-width: 72px;
-    -fx-pref-height: 30px;
-    -fx-background-radius: 14px;
-    -fx-background-color: #2a2d33;
-}
-
 #accountMenu {
     -fx-pref-width: 240px;
     -fx-pref-height: 325px;
@@ -509,3 +424,49 @@
     -fx-text-fill: #f5f2f2;
     -fx-alignment: center;
 }
+
+#userView {
+    -fx-pref-width: 470px;
+    -fx-pref-height: 60px;
+    -fx-background-radius: 12px;
+}
+
+#userView:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #181A1E;
+}
+
+#checkBox { -fx-image: url("images/checkBox.png") }
+#selectedCheckBox { -fx-image: url("images/selectedCheckBox.png") }
+
+#userViewName {
+    -fx-font-size: 17px;
+    -fx-text-fill: #f5f2f2;
+}
+
+#userViewMode {
+    -fx-font-size: 14px;
+    -fx-text-fill: #909090;
+}
+
+#userViewGameStatus {
+    -fx-pref-width: 60px;
+    -fx-pref-height: 30px;
+    -fx-background-radius: 4px;
+    -fx-background-color: #2a2d33;
+}
+
+#userViewEdit {
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+    -fx-opacity: 0.7;
+}
+#userViewEdit:hover {
+    -fx-cursor: hand;
+    -fx-opacity: 1.0;
+}
+
+#filter { -fx-image: url("images/filter.png") }
+#selectAll { -fx-image: url("images/selectAll.png") }
+#removeAll { -fx-image: url("images/removeAll.png") }
+#pencil { -fx-image: url("images/pencil.png") }

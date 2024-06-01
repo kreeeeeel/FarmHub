@@ -153,7 +153,7 @@ class PasswordFileWindow(
                 notifyView.warning(langApplication.text.warning.notAllAccount)
             } else notifyView.success(langApplication.text.success.import)
 
-            sectionView.refreshUi(userRepository.findAll())
+            //sectionView.refreshUi(userRepository.findAll())
             userModels.forEach{ authBackground.authenticate(it.username, it.password) }
         }
 
