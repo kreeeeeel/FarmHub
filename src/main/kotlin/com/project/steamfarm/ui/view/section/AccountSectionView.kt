@@ -6,6 +6,7 @@ import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.model.UserType
 import com.project.steamfarm.repository.impl.PhotoRepository
 import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
 import com.project.steamfarm.ui.view.block.account.NotFoundView
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
@@ -20,6 +21,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
+import javafx.scene.shape.Line
 import javafx.util.Duration
 import java.util.concurrent.CompletableFuture
 
@@ -43,6 +45,16 @@ private const val DOTA_NAME = "Dota 2"
 private const val CS_NAME = "Counter-Strike 2"
 
 private const val USER_VIEW_Y = 60.0
+
+private const val USER_EDIT_MENU_ID = "editMenu"
+private const val USER_EDIT_BUTTON_MENU_ID = "editMenuButton"
+private const val USER_EDIT_MENU_TEXT_ID = "editMenuText"
+
+private const val USER_MENU_VIEW_ID = "userMenuView"
+private const val USER_MENU_HEROES_ID = "userMenuHeroesView"
+private const val USER_MENU_TEXT_ID = "userMenuText"
+private const val USER_MENU_HINT_ID = "userMenuTextHint"
+
 
 class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
@@ -127,7 +139,12 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             if (it.children[0].id == SELECT_ALL_ID) selectAllUser() else removeAllUser()
         }
     }
-    private val edit = viewEdit(EDIT_ID)
+
+    private val edit = viewEdit(EDIT_ID).also {
+        it.setOnMouseClicked { viewEditMenu() }
+    }
+
+
     private val trash = viewEdit(TRASH_ID)
 
     private val content = AnchorPane().also { ap ->
@@ -158,9 +175,11 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         it.prefHeight = 425.0
         it.content = content
 
-        //it.vvalueProperty().addListener { _, _, _ -> closePrevMenu() }
-        //it.hvalueProperty().addListener { _, _, _ -> closePrevMenu() }
+        it.vvalueProperty().addListener { _, _, _ -> closePrevMenu() }
+        it.hvalueProperty().addListener { _, _, _ -> closePrevMenu() }
     }
+
+    private var prevMenu: Pane? = null
 
     private val userRepository = UserRepository()
     private val photoRepository = PhotoRepository()
@@ -377,6 +396,113 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private fun changeIdSelect() = Platform.runLater {
         selected.text = "${langApplication.text.accounts.selected} ${selectedUser.size}"
         selectAll.children[0].id = if (selectedUser.size == users.size) REMOVE_ALL_ID else SELECT_ALL_ID
+    }
+
+    private fun closePrevMenu() = prevMenu?.let {
+        root.children.removeAll(it)
+        prevMenu = null
+    }
+
+    private fun viewEditMenu() = Platform.runLater {
+
+        closePrevMenu()
+        val menu = Pane().also {
+            it.id = USER_EDIT_MENU_ID
+            it.layoutX = 525.0
+            it.layoutY = 120.0
+        }
+
+        // Button: Add accounts to farm dota 2
+        viewButton(GAME_DOTA_ID, langApplication.text.accounts.action.enableFarmGame).let {
+            it.setOnMouseClicked { updateUsers(isDota = true, isEnabled = true) }
+            menu.children.add(it)
+        }
+        // Button: Remove accounts from farm dota 2
+        viewButton(GAME_DOTA_ID, langApplication.text.accounts.action.disableFarmGame).let {
+            it.layoutY = 40.0
+            it.setOnMouseClicked { updateUsers(isDota = true, isEnabled = false) }
+            menu.children.add(it)
+        }
+
+        Line().also {
+            it.layoutX = 100.0
+            it.layoutY = 80.0
+            it.startX = -100.0
+            it.endX = 100.0
+
+            menu.children.add(it)
+        }
+
+        // Button: Add accounts to farm cs 2
+        viewButton(GAME_CS_ID, langApplication.text.accounts.action.enableFarmGame).let {
+            it.layoutY = 81.0
+            it.setOnMouseClicked { updateUsers(isDota = false, isEnabled = true) }
+            menu.children.add(it)
+        }
+        // Button: Remove accounts from farm cs 2
+        viewButton(GAME_CS_ID, langApplication.text.accounts.action.disableFarmGame).let {
+            it.layoutY = 121.0
+            it.setOnMouseClicked { updateUsers(isDota = false, isEnabled = false) }
+            menu.children.add(it)
+        }
+
+        prevMenu = menu
+        menu.setOnMouseExited { closePrevMenu() }
+
+        root.children.add(menu)
+    }
+
+    private fun updateUsers(isDota: Boolean, isEnabled: Boolean) = selectedUser.entries.forEach {
+        if (isDota) it.key.gameStat.enableDota = isEnabled else it.key.gameStat.enableCs = isEnabled
+        userRepository.save(it.key)
+
+        it.value.children.firstOrNull { n -> n.id == USER_MODE_ID }?.let { node ->
+            val mode = node as Label
+            mode.text = getEnabledMode(it.key.gameStat.enableDota, it.key.gameStat.enableCs)
+        }
+    }
+
+    private fun userMenuView(userModel: UserModel) = Platform.runLater {
+
+        closePrevMenu()
+        val menu = Pane().also {
+            it.id = USER_MENU_VIEW_ID
+        }
+
+        val heroes = Pane().also {
+            it.id = USER_MENU_HEROES_ID
+            it.layoutY = 20.0
+        }
+
+        val date = ImageView().also {
+            it.id = "date"
+            it.layoutX = 14.0
+            it.layoutY = 68.0
+        }
+
+        //val dateValue
+
+    }
+
+    //private fun setStatisticToMenu()
+
+    private fun viewButton(iconId: String, value: String) = Pane().also {
+        it.id = USER_EDIT_BUTTON_MENU_ID
+
+        val icon = ImageView().also { img ->
+            img.id = iconId
+            img.layoutX = 10.0
+            img.layoutY = 7.0
+        }
+
+        val text = Label().also { l ->
+            l.text = value
+            l.id = USER_EDIT_MENU_TEXT_ID
+            l.layoutX = 42.0
+            l.layoutY = 10.0
+        }
+
+        it.children.addAll(icon, text)
     }
 
 }

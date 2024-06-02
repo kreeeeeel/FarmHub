@@ -105,8 +105,12 @@ data class Success (
 )
 
 data class AccountAction(
+    var yourHero: String = "Your chosen heroes",
+    var createdDate: String = "Date added",
+    var clockInGame: String = "Clock in Dota 2",
+    var lastDropDate: String = "Last drop date",
     var chooseHero: String = "Choose hero",
     var enableFarmGame: String = "Add for farming",
     var disableFarmGame: String = "Remove from farm",
-    var dropAccount: String = "Delete account"
+    var dropAccount: String = "Drop account"
 )

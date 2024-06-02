@@ -470,3 +470,51 @@
 #selectAll { -fx-image: url("images/selectAll.png") }
 #removeAll { -fx-image: url("images/removeAll.png") }
 #pencil { -fx-image: url("images/pencil.png") }
+
+#editMenu {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 160px;
+    -fx-background-color: #2a2d33;
+    -fx-background-radius: 5px;
+}
+
+#editMenuButton {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 40px;
+    -fx-background-radius: 5px;
+}
+
+#editMenuButton:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #1e2023;
+}
+
+#editMenuText {
+    -fx-font-size: 15px;
+    -fx-text-fill: #f5f2f2;
+}
+
+#userMenuView {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 326px;
+    -fx-background-color: #2a2d33;
+    -fx-background-radius: 5px;
+}
+
+#userMenuText {
+    -fx-text-fill: #e8e8e8;
+    -fx-font-size: 14px;
+}
+#userMenuTextHint {
+    -fx-text-fill: #abaaaa;
+    -fx-font-size: 12px;
+}
+
+#userMenuHeroesView {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 40px;
+    -fx-background-color: #131417;
+}
+#date { -fx-image: url("images/date.png") }
+#clock { -fx-image: url("images/clock.png") }
+#money { -fx-image: url("images/money.png") }
