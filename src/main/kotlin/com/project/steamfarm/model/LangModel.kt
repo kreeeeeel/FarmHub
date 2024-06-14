@@ -44,6 +44,7 @@ data class Accounts(
     var import: String = "Import",
     var sorting: String = "Sorting",
     var selected: String = "Selected accounts: ",
+    var numberOfAccounts: String = "Number of accounts: ",
     var notFound: String = "Nothing found..",
     var hintToImport: String = "To import accounts, click 'Import'",
     var unused: String = "User not used",
@@ -105,8 +106,10 @@ data class Success (
 )
 
 data class AccountAction(
+    var unknown: String = "Unknown",
     var yourHero: String = "Your chosen heroes",
     var createdDate: String = "Date added",
+    var hours: String = "hours",
     var clockInGame: String = "Clock in Dota 2",
     var lastDropDate: String = "Last drop date",
     var chooseHero: String = "Choose hero",

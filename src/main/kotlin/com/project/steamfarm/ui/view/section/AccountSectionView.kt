@@ -10,7 +10,7 @@ import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
 import com.project.steamfarm.ui.view.block.account.NotFoundView
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
-import javafx.animation.FadeTransition
+import javafx.animation.ScaleTransition
 import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.control.Label
@@ -23,6 +23,10 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Line
 import javafx.util.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 
 val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/photo.png")!!.toURI().toString())
@@ -40,6 +44,7 @@ private const val SELECT_ALL_ID = "selectAll"
 private const val REMOVE_ALL_ID = "removeAll"
 private const val EDIT_ID = "pencil"
 private const val TRASH_ID = "bag"
+private const val STATUA_ID = "statua"
 
 private const val DOTA_NAME = "Dota 2"
 private const val CS_NAME = "Counter-Strike 2"
@@ -55,6 +60,11 @@ private const val USER_MENU_HEROES_ID = "userMenuHeroesView"
 private const val USER_MENU_TEXT_ID = "userMenuText"
 private const val USER_MENU_HINT_ID = "userMenuTextHint"
 
+private const val USER_MENU_DATE_ID = "date"
+private const val USER_MENU_CLOCK_ID = "clock"
+private const val USER_MENU_DROP_ID = "money"
+
+private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
 
 class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
@@ -105,31 +115,14 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         it.children.addAll(icon, text)
         block.children.add(it)
     }
-
-    private val sorting = Pane().also {
-        it.layoutX = 24.0
-        it.layoutY = 60.0
-
-        val icon = ImageView().also { img ->
-            img.id = "filter"
-            img.fitWidth = 16.0
-            img.fitHeight = img.fitWidth
-            img.layoutY = 4.0
-        }
-
-        val text = Label().also { l ->
-            l.id = USER_NAME_ID
-            l.text = langApplication.text.accounts.sorting
-            l.layoutX = 24.0
-            l.layoutY = 2.0
-        }
-
-        it.children.addAll(icon, text)
+    private val selected = Label().also {
+        it.text = "${langApplication.text.accounts.selected} 0"
+        it.layoutX = 26.0
+        it.layoutY = 65.0//84.0
     }
 
-    private val selected = Label().also {
+    private val count = Label().also {
         it.id = USER_MODE_ID
-        it.text = "${langApplication.text.accounts.selected} 0"
         it.layoutX = 26.0
         it.layoutY = 84.0
     }
@@ -189,7 +182,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private var users: MutableList<UserModel> = mutableListOf()
     private var userNodes: MutableList<Pane> = mutableListOf()
 
-    private var selectedUser: MutableMap<UserModel, Pane> = HashMap()
+    private var selectedUser: MutableMap<String, Pane> = HashMap()
 
     override fun refreshLanguage() {
         search.promptText = langApplication.text.accounts.search
@@ -198,13 +191,14 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     override fun initialize() {
-        section.children.addAll(block, scroll, sorting, selected, selectAll, edit, trash)
+        section.children.addAll(block, scroll/*, sorting*/, selected, count, selectAll, edit, trash)
 
         search.textProperty().addListener { _, _, newValue -> search(newValue)}
         import.setOnMouseClicked { _ -> MaFileWindow(this).show() }
 
         CompletableFuture.supplyAsync {
             users = userRepository.findByType(UserType.AUTH_COMPLETED).toMutableList()
+            Platform.runLater { count.text = "${langApplication.text.accounts.numberOfAccounts}${users.size}" }
             userNodes = users.map { viewUser(it) }.toMutableList()
             viewUsers(userNodes, true)
         }
@@ -236,8 +230,9 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private fun viewUser(userModel: UserModel) = Pane().also { pane ->
 
         pane.id = USER_VIEW_ID
-        pane.opacity = 0.1
         pane.layoutX = 25.0
+        pane.scaleX = 0.0
+        pane.scaleY = 0.0
 
         val select = ImageView().also {
             it.id = USER_CHECKBOX_EMPTY
@@ -280,7 +275,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             }
 
             if (event.button == MouseButton.SECONDARY) {
-                println("пкм")
+                userMenuView(userModel, event.sceneX, event.sceneY)
             }
         }
 
@@ -327,13 +322,16 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         val firstNode = nodes.first()
         val remainingNodes = nodes.drop(1)
 
-        val transition = FadeTransition(Duration(50.0), firstNode).also {
-            it.fromValue = 0.0
-            it.toValue = 1.0
+        val transition = ScaleTransition(Duration.millis(75.0), firstNode).also {
+            it.fromX = 0.1
+            it.fromY = 0.1
+            it.toX = 1.0
+            it.toY = 1.0
         }
-
         transition.setOnFinished {
-            firstNode.opacity = 1.0
+            firstNode.scaleX = 1.0
+            firstNode.scaleY = 1.0
+
             animateSequentially(remainingNodes)
         }
         transition.playFromStart()
@@ -356,8 +354,8 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     private fun selectUser(userModel: UserModel, pane: Pane) {
-        val isSelected = selectedUser[userModel] != null
-        if (isSelected) selectedUser.remove(userModel) else selectedUser[userModel] = pane
+        val isSelected = selectedUser[userModel.username] != null
+        if (isSelected) selectedUser.remove(userModel.username) else selectedUser[userModel.username] = pane
 
         pane.children.firstOrNull { it.id == USER_CHECKBOX_SELECTED || it.id == USER_CHECKBOX_EMPTY }?.let {
             it.id = if (isSelected) USER_CHECKBOX_EMPTY else USER_CHECKBOX_SELECTED
@@ -377,7 +375,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
             val userModel = users.firstOrNull { u -> u.username == username.text }
             if (userModel != null) {
-                selectedUser[userModel] = it
+                selectedUser[userModel.username] = it
             }
         }
         changeIdSelect()
@@ -452,21 +450,37 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         root.children.add(menu)
     }
 
-    private fun updateUsers(isDota: Boolean, isEnabled: Boolean) = selectedUser.entries.forEach {
-        if (isDota) it.key.gameStat.enableDota = isEnabled else it.key.gameStat.enableCs = isEnabled
-        userRepository.save(it.key)
+    private fun updateUsers(isDota: Boolean, isEnabled: Boolean) = users.filter { selectedUser.containsKey(it.username) }
+        .forEach {
+            val user = selectedUser[it.username] ?: return@forEach
 
-        it.value.children.firstOrNull { n -> n.id == USER_MODE_ID }?.let { node ->
-            val mode = node as Label
-            mode.text = getEnabledMode(it.key.gameStat.enableDota, it.key.gameStat.enableCs)
+            if (isDota) it.gameStat.enableDota = isEnabled else it.gameStat.enableCs = isEnabled
+            userRepository.save(it)
+
+            user.children.firstOrNull { n -> n.id == USER_MODE_ID }?.let { node ->
+                val mode = node as Label
+                mode.text = getEnabledMode(it.gameStat.enableDota, it.gameStat.enableCs)
+            }
         }
-    }
 
-    private fun userMenuView(userModel: UserModel) = Platform.runLater {
+    private fun userMenuView(userModel: UserModel, offsetX: Double, offsetY: Double) = Platform.runLater {
 
         closePrevMenu()
         val menu = Pane().also {
             it.id = USER_MENU_VIEW_ID
+        }
+
+        menu.boundsInLocalProperty().addListener { _, _, bounds ->
+            menu.layoutX = offsetX - bounds.width
+            menu.layoutY = if (offsetY + bounds.height > root.scene.window.height) {
+                root.scene.window.height - bounds.height - 10.0
+            } else offsetY
+        }
+
+        val yourHeroes = Label(langApplication.text.accounts.action.yourHero).also {
+            it.id = USER_MENU_HINT_ID
+            it.layoutX = 10.0
+            it.layoutY = 4.0
         }
 
         val heroes = Pane().also {
@@ -474,17 +488,102 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             it.layoutY = 20.0
         }
 
-        val date = ImageView().also {
-            it.id = "date"
-            it.layoutX = 14.0
-            it.layoutY = 68.0
+        val createdDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(userModel.createdTs), ZoneId.systemDefault())
+        setStatisticToMenu(menu, USER_MENU_DATE_ID, createdDate.format(formatter))
+
+        val clock = "${userModel.gameStat.currentPlayedDota} ${langApplication.text.accounts.action.hours}"
+        setStatisticToMenu(menu, USER_MENU_CLOCK_ID, clock)
+
+        val drop = if (userModel.gameStat.lastDropCsDate != null) userModel.gameStat.lastDropCsDate!!.format(formatter)
+            else langApplication.text.accounts.action.unknown
+
+        setStatisticToMenu(menu, USER_MENU_DROP_ID, drop)
+
+        val firstLine = Line().also {
+            it.layoutX = 100.0
+            it.layoutY = 164.0
+            it.startX = -100.0
+            it.endX = 100.0
         }
 
-        //val dateValue
+        val changeHero = viewButton(STATUA_ID, langApplication.text.accounts.action.chooseHero).also {
+            it.layoutY = 165.0
+        }
 
+        val dotaStatus = if (userModel.gameStat.enableDota) langApplication.text.accounts.action.disableFarmGame
+        else langApplication.text.accounts.action.enableFarmGame
+
+        val changeDotaFarm = viewButton(GAME_DOTA_ID, dotaStatus).also {
+            it.layoutY = 205.0
+        }
+
+        val csStatus = if (userModel.gameStat.enableDota) langApplication.text.accounts.action.disableFarmGame
+        else langApplication.text.accounts.action.enableFarmGame
+
+        val changeCsFarm = viewButton(GAME_CS_ID, csStatus).also {
+            it.layoutY = 245.0
+        }
+
+        val secondLine = Line().also {
+            it.layoutX = 100.0
+            it.layoutY = 285.0
+            it.startX = -100.0
+            it.endX = 100.0
+        }
+
+        val dropAccount = viewButton(USER_MENU_DROP_ID, langApplication.text.accounts.action.dropAccount).also {
+            it.layoutY = 286.0
+        }
+
+        menu.children.addAll(yourHeroes, heroes, changeHero, firstLine, changeDotaFarm, changeCsFarm, secondLine, dropAccount)
+        menu.setOnMouseExited { closePrevMenu() }
+
+        prevMenu = menu
+        root.children.add(menu)
+
+        val scaleTransition = ScaleTransition(Duration.millis(150.0), menu).also {
+            menu.scaleX = 0.1
+            menu.scaleY = 0.1
+
+            it.fromX = 0.1
+            it.fromY = 0.1
+            it.toX = 1.0
+            it.toY = 1.0
+        }
+        scaleTransition.play()
     }
 
-    //private fun setStatisticToMenu()
+    private fun setStatisticToMenu(pane: Pane, id: String, value: String) = Platform.runLater {
+
+        val icon = ImageView().also {
+            it.id = id
+            it.layoutX = 14.0
+            it.layoutY = when(id) {
+                USER_MENU_DATE_ID -> 68.0
+                USER_MENU_CLOCK_ID -> 102.0
+                else -> 134.0
+            }
+        }
+
+        val text = Label(value).also {
+            it.id = USER_MENU_TEXT_ID
+            it.layoutX = 45.0
+            it.layoutY = icon.layoutY - 2
+        }
+
+        val hint = Label().also {
+            it.id = USER_MENU_HINT_ID
+            it.layoutX = text.layoutX
+            it.layoutY = icon.layoutY + 12.0
+            it.text = when(id) {
+                USER_MENU_DATE_ID -> langApplication.text.accounts.action.createdDate
+                USER_MENU_CLOCK_ID -> langApplication.text.accounts.action.clockInGame
+                else -> langApplication.text.accounts.action.lastDropDate
+            }
+        }
+
+        pane.children.addAll(icon, text, hint)
+    }
 
     private fun viewButton(iconId: String, value: String) = Pane().also {
         it.id = USER_EDIT_BUTTON_MENU_ID

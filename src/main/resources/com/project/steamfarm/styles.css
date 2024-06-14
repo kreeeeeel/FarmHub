@@ -436,6 +436,13 @@
     -fx-background-color: #181A1E;
 }
 
+#userViewActive {
+    -fx-pref-width: 470px;
+    -fx-pref-height: 60px;
+    -fx-background-color: #0b0c0c;
+    -fx-background-radius: 12px;
+}
+
 #checkBox { -fx-image: url("images/checkBox.png") }
 #selectedCheckBox { -fx-image: url("images/selectedCheckBox.png") }
 
@@ -518,3 +525,4 @@
 #date { -fx-image: url("images/date.png") }
 #clock { -fx-image: url("images/clock.png") }
 #money { -fx-image: url("images/money.png") }
+#statua { -fx-image: url("images/statua.png") }
