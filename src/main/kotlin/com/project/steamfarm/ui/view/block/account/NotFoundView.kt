@@ -9,7 +9,7 @@ class NotFoundView(
     private val content: AnchorPane
 ) {
 
-    private val logo = ImageView().also {
+    val logo = ImageView().also {
         it.id = "404"
         it.fitWidth = 96.0
         it.fitHeight = 96.0
@@ -17,13 +17,13 @@ class NotFoundView(
         it.layoutY = 90.0
     }
 
-    private val title = Label(langApplication.text.accounts.notFound).also {
+    val title = Label(langApplication.text.accounts.notFound).also {
         it.id = "notFound"
         it.layoutX = 12.0
         it.layoutY = 210.0
     }
 
-    private val hint = Label(langApplication.text.accounts.hintToImport).also {
+    val hint = Label(langApplication.text.accounts.hintToImport).also {
         it.id = "notFoundHint"
         it.layoutX = 12.0
         it.layoutY = 230.0

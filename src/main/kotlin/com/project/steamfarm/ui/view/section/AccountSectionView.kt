@@ -27,6 +27,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.TimerTask
 import java.util.concurrent.CompletableFuture
 
 val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/photo.png")!!.toURI().toString())
@@ -63,6 +64,8 @@ private const val USER_MENU_HINT_ID = "userMenuTextHint"
 private const val USER_MENU_DATE_ID = "date"
 private const val USER_MENU_CLOCK_ID = "clock"
 private const val USER_MENU_DROP_ID = "money"
+
+private const val TIME_REFRESH_COUNT = 5
 
 private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
 
@@ -115,6 +118,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         it.children.addAll(icon, text)
         block.children.add(it)
     }
+
     private val selected = Label().also {
         it.text = "${langApplication.text.accounts.selected} 0"
         it.layoutX = 26.0
@@ -198,33 +202,65 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
         CompletableFuture.supplyAsync {
             users = userRepository.findByType(UserType.AUTH_COMPLETED).toMutableList()
-            Platform.runLater { count.text = "${langApplication.text.accounts.numberOfAccounts}${users.size}" }
             userNodes = users.map { viewUser(it) }.toMutableList()
             viewUsers(userNodes, true)
         }
 
+        timer.schedule(RefreshAccount(), 1000, 1000)
         super.initialize()
     }
 
     private fun search(prefix: String) {
-        val users = userNodes.filter {
+
+        val findUser = userNodes.filter {
             val node = it.children.firstOrNull { n -> n.id == USER_NAME_ID } ?: return@filter false
             val username = node as Label
             username.text.contains(prefix)
         }
-
-        viewUsers(users)
+        viewUsers(findUser)
     }
 
     private fun viewUsers(users: List<Pane>, isAnimate: Boolean = false) = Platform.runLater {
+
         content.children.clear()
         if (users.isNotEmpty()) {
             var vertical = 0
-            users.forEach { it.layoutY = USER_VIEW_Y * vertical++ }
 
+            users.forEach {
+                if (!isAnimate) {
+                    it.scaleX = 1.0
+                    it.scaleY = 1.0
+                }
+                it.layoutY = USER_VIEW_Y * vertical++
+            }
+
+            count.text = "${langApplication.text.accounts.numberOfAccounts}${userNodes.size}"
             content.children.addAll(users)
             if (isAnimate) animateSequentially(users)
-        } else notFoundView.view()
+        } else {
+            notFoundView.view()
+        }
+    }
+
+    private fun appendUser(userModel: UserModel) = Platform.runLater {
+
+        val view = viewUser(userModel)
+
+        userNodes.add(view)
+        users.add(userModel)
+
+        count.text = "${langApplication.text.accounts.numberOfAccounts}${userNodes.size}"
+        if (search.text.isEmpty() || (search.text.isNotEmpty() && userModel.username.contains(search.text))) {
+
+            content.children.removeIf {
+                it.id == notFoundView.logo.id || it.id == notFoundView.title.id || it.id == notFoundView.hint.id
+            }
+
+            view.layoutY = USER_VIEW_Y * content.children.size
+            content.children.add(view)
+
+            animateSequentially(listOf(view))
+        }
     }
 
     private fun viewUser(userModel: UserModel) = Pane().also { pane ->
@@ -346,10 +382,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             else -> 470.0
         }
 
-        val icon = ImageView().also {
-            it.id = imdId
-        }
-
+        val icon = ImageView().also { it.id = imdId }
         pane.children.add(icon)
     }
 
@@ -602,6 +635,24 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         }
 
         it.children.addAll(icon, text)
+    }
+
+    inner class RefreshAccount: TimerTask() {
+
+        private var count = TIME_REFRESH_COUNT
+
+        override fun run() {
+            count--
+
+            if (count <= 0) {
+
+                userRepository.findAll()
+                    .filter { it.userType == UserType.AUTH_COMPLETED && !users.contains(it) }
+                    .forEach { appendUser(it) }
+
+                count = TIME_REFRESH_COUNT
+            }
+        }
     }
 
 }

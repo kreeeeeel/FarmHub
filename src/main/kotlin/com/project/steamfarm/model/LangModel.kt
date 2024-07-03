@@ -31,7 +31,7 @@ data class Menu(
     var basic: String = "Basic",
     var other: String = "Other",
     var accounts: String = "Accounts",
-    var farm: String = "Farm in game",
+    var farm: String = "Farm",
     var sell: String = "Sell items",
     var subscribe: String = "Subscribe",
     var cloud: String = "Cloud",

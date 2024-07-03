@@ -4,13 +4,14 @@
   "text": {
     "closeSection": "按 'ESC' 关闭此窗口。",
     "description": "控制面板",
-    "welcome": "欢迎！",
-    "choosePointMenu": "从菜单中选择一个项目",
+    "welcome": "欢迎!",
+    "choosePointMenu": "从菜单中选择一项",
+    "readData": "读取数据中..",
     "menu": {
       "basic": "基本",
       "other": "其他",
       "accounts": "账户",
-      "farm": "游戏中的农场",
+      "farm": "农场",
       "sell": "出售物品",
       "subscribe": "订阅",
       "cloud": "云端",
@@ -20,11 +21,33 @@
       "name": "账户",
       "search": "搜索账户",
       "import": "导入",
+      "sorting": "排序",
+      "selected": "选中的账户: ",
+      "numberOfAccounts": "账户数量: ",
+      "notFound": "未找到任何内容..",
+      "hintToImport": "要导入账户，请点击 '导入'",
+      "unused": "用户未使用",
       "maFile": {
-        "name": "处理 .maFile 文件",
-        "drag": "将文件拖放到此区域",
+        "name": "使用 .maFile 文件",
+        "drag": "将文件拖到此区域",
         "file": "选择文件",
-        "hint": "将扩展名为 .maFile 的文件上传到此区域，或点击按钮选择文件"
+        "hint": "上传扩展名为 .maFile 的文件到此区域，或点击按钮选择文件"
+      },
+      "passwordFile": {
+        "name": "设置密码",
+        "hint": "您可以上传包含密码的文件，其内容格式应为 login:password"
+      },
+      "action": {
+        "unknown": "未知",
+        "yourHero": "您选择的英雄",
+        "createdDate": "添加日期",
+        "hours": "小时",
+        "clockInGame": "Dota 2 中的时钟",
+        "lastDropDate": "最后掉落日期",
+        "chooseHero": "选择英雄",
+        "enableFarmGame": "添加到农场",
+        "disableFarmGame": "从农场移除",
+        "dropAccount": "删除账户"
       }
     },
     "farm": {
@@ -42,6 +65,22 @@
     "settings": {
       "name": "当前设置",
       "langApp": "应用语言"
+    },
+    "success": {
+      "name": "成功",
+      "maFile": "现在您需要为账户设置密码，请在此窗口选择操作",
+      "import": "账户成功导入! 请等待后台授权和账户验证",
+      "auth": "账户 '%s' 已成功授权! 用户可以使用。"
+    },
+    "warning": {
+      "name": "警告!",
+      "notAllAccount": "在您提供的文件中，并非所有账户都有密码。"
+    },
+    "failure": {
+      "name": "发生错误",
+      "maFile": "您选择的文件不是 .maFile，请选择其他文件",
+      "passwordsNotFound": "在此文件中未找到导入账户的密码。",
+      "auth": "授权账户 '%s' 时发生错误! 您可能输入了错误的密码。"
     }
   }
 }

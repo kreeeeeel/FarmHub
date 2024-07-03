@@ -66,6 +66,8 @@ class MenuView: DefaultView {
     private val cloud = getPointMenu(CLOUD_ID, langApplication.text.menu.cloud)
     private val settings = getPointMenu(SETTINGS_ID, langApplication.text.menu.settings)
 
+    private var prevSection: DefaultSectionView? = null
+
     override fun initialize() {
         menu.children.addAll(
             logo, name, description,
@@ -155,6 +157,9 @@ class MenuView: DefaultView {
 
         pane.isDisable = true
         pane.id = "pointMenuDisable"
+
+        prevSection?.cancelTimer()
+        prevSection = section
 
         section.initialize()
     }
