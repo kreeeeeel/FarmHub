@@ -18,9 +18,12 @@ class LangRepository: Repository<LangModel> {
         val lang = FILE_LANG.listFiles() ?: return emptyList()
 
         return lang.filter { it.name.endsWith(".json") }
-            .map {
+            .mapNotNull {
                 gson.fromJson(FileReader(it).use { reader -> reader.readText() }, LangModel::class.java)
-                    .also { l -> l.code = it.name.substring(0, it.name.lastIndexOf('.')) }
+                    .also { l ->
+                        if (l == null) return@mapNotNull null
+                        l.code = it.name.substring(0, it.name.lastIndexOf('.'))
+                    }
             }
     }
 

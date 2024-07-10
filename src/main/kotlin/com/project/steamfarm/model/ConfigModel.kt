@@ -9,7 +9,6 @@ private val FILE_CONFIG = File(System.getProperty("user.dir") + "/config.json")
 
 data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,
-    var userViewIsList: Boolean = true
 ) {
 
     @Transient private val gson = GsonBuilder().setPrettyPrinting().create()

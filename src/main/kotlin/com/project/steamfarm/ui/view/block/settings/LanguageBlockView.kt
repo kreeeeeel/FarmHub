@@ -160,10 +160,6 @@ class LanguageBlockView(
 
         code?.let { c ->
             it.setOnMouseClicked { _ ->
-                /* Пасхалка */
-                if (c.startsWith("chinese")) {
-                    NotifyView().success("+1000 социальных кредитов, партия вами довольна!!!!")
-                }
                 langApplication = langRepository.findById(c) ?: LangModel()
                 ConfigModel().fromFile().let { config ->
                     config.langApp = c

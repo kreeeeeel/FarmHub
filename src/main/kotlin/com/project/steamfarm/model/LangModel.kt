@@ -51,6 +51,7 @@ data class Accounts(
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
     var action: AccountAction = AccountAction(),
+    var dropAccount: DropAccount = DropAccount(),
 )
 
 data class Farm(
@@ -116,4 +117,11 @@ data class AccountAction(
     var enableFarmGame: String = "Add for farming",
     var disableFarmGame: String = "Remove from farm",
     var dropAccount: String = "Drop account"
+)
+
+data class DropAccount(
+    var title: String = "Drop account",
+    var description: String = "Are you sure you want to delete the selected accounts?",
+    var delete: String = "Delete",
+    var cancel: String = "Cancel"
 )

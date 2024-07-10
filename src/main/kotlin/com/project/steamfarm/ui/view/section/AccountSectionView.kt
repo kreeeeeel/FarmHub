@@ -2,6 +2,7 @@ package com.project.steamfarm.ui.view.section
 
 import com.project.steamfarm.Runner
 import com.project.steamfarm.langApplication
+import com.project.steamfarm.model.DropAccount
 import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.model.UserType
 import com.project.steamfarm.repository.impl.PhotoRepository
@@ -9,6 +10,7 @@ import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
 import com.project.steamfarm.ui.view.block.account.NotFoundView
+import com.project.steamfarm.ui.view.window.import.DropAccountWindow
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
 import javafx.animation.ScaleTransition
 import javafx.application.Platform
@@ -141,8 +143,10 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         it.setOnMouseClicked { viewEditMenu() }
     }
 
-
-    private val trash = viewEdit(TRASH_ID)
+    private val trash = viewEdit(TRASH_ID).also {
+        it.isDisable = true
+        it.setOnMouseClicked { DropAccountWindow().show() }
+    }
 
     private val content = AnchorPane().also { ap ->
         ap.prefWidth = 505.0
@@ -427,6 +431,8 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private fun changeIdSelect() = Platform.runLater {
         selected.text = "${langApplication.text.accounts.selected} ${selectedUser.size}"
         selectAll.children[0].id = if (selectedUser.size == users.size) REMOVE_ALL_ID else SELECT_ALL_ID
+
+        trash.isDisable = selectedUser.isEmpty()
     }
 
     private fun closePrevMenu() = prevMenu?.let {
