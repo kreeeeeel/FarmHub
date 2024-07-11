@@ -20,7 +20,8 @@ class Test {
 
         //UserRepository.findAll().subList(0, 10).forEach {
 
-            val command = listOf(steamPath, "-applaunch", "570")
+            //val command = listOf(steamPath, "-applaunch", "570")
+            val command = listOf(steamPath, "-login", "kihdhd", "dahjkfa")
 
             val process = ProcessBuilder(command).start()
             val `in` = BufferedReader(InputStreamReader(process.inputStream))
