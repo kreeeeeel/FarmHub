@@ -1,13 +1,23 @@
 package com.project.steamfarm.ui.view.window.import
 
 import com.project.steamfarm.langApplication
+import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.ui.controller.BaseController.Companion.root
+import com.project.steamfarm.ui.view.section.USER_NAME_ID
 import com.project.steamfarm.ui.view.window.DefaultWindow
+import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.layout.Pane
 
-class DropAccountWindow: DefaultWindow() {
+class DropAccountWindow(
+    private val userModels: MutableList<UserModel>,
+    private val userNodes: MutableList<Pane>,
+    private val userMap: MutableMap<String, Pane>,
+    private val action: (MutableList<Pane>, Boolean) -> Unit
+): DefaultWindow() {
 
     private val block = Pane().also {
         it.id = "dropAccount"
@@ -40,21 +50,48 @@ class DropAccountWindow: DefaultWindow() {
         it.id = "dropAccountDelete"
         it.layoutX = 14.0
         it.layoutY = 125.0
+        it.isFocusTraversable = false
 
         block.children.add(it)
     }
 
     private val cancel: Button = Button(langApplication.text.accounts.dropAccount.cancel).also {
         it.id = "dropAccountCancel"
-        it.layoutX = 190.0
+        it.layoutX = 195.0
         it.layoutY = 125.0
+        it.isFocusTraversable = false
 
         block.children.add(it)
     }
 
+
     override fun show() {
         window.children.addAll(block)
+
+        delete.setOnMouseClicked {
+            dropLogic()
+        }
+        cancel.setOnMouseClicked { root.children.remove(window) }
         super.show()
+    }
+
+    private fun dropLogic() = Platform.runLater {
+
+        val usersDropped = userModels.filter { userMap[it.username] != null }
+        userNodes.removeAll {
+            val node = it.children.firstOrNull { n -> n.id == USER_NAME_ID } as? Label ?: return@removeAll false
+            userMap[node.text] != null
+        }
+
+        usersDropped.forEach {
+            UserRepository.delete(it)
+            userMap.remove(it.username)
+            userModels.remove(it)
+        }
+
+        action.invoke(userNodes, false)
+        root.children.remove(window)
+
     }
 
 }

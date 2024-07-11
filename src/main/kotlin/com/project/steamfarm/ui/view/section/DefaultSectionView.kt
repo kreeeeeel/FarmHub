@@ -3,7 +3,6 @@ package com.project.steamfarm.ui.view.section
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
-import com.project.steamfarm.ui.view.block.account.MENU_ID
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
 import java.util.*
@@ -45,7 +44,7 @@ abstract class DefaultSectionView(
     open fun initialize() {
 
         root.children.removeIf {
-            it.id == section.id || it.id == sectionName.id || it.id == sectionClose.id || it.id == MENU_ID
+            it.id == section.id || it.id == sectionName.id || it.id == sectionClose.id
         }
         root.children.add(section)
 

@@ -9,12 +9,11 @@ import java.io.File
 
 class DefaultMaFileImport: MaFileImport {
 
-    private val maFileRepository: Repository<SteamData> = MaFileRepository()
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     override fun filterFiles(files: List<File>): List<File> {
         val filtered = files.filter { f -> f.isFile && getDataFromFile(f) != null }
-        filtered.mapNotNull { getDataFromFile(it) }.forEach { maFileRepository.save(it) }
+        filtered.mapNotNull { getDataFromFile(it) }.forEach { MaFileRepository.save(it) }
         return filtered
     }
 

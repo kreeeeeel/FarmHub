@@ -9,7 +9,7 @@ import java.io.FileWriter
 
 private val PATH_TO_MA_FILE = System.getProperty("user.dir") + "/mafiles"
 
-class MaFileRepository: Repository<SteamData> {
+object MaFileRepository: Repository<SteamData> {
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -26,6 +26,8 @@ class MaFileRepository: Repository<SteamData> {
 
         return gson.fromJson(FileReader(file).use { reader -> reader.readText() }, SteamData::class.java)
     }
+
+    override fun delete(data: SteamData) {}
 
     override fun save(data: SteamData) {
         val path = String.format("%s/%s.maFile", PATH_TO_MA_FILE, data.accountName)

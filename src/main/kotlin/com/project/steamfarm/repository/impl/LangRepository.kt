@@ -10,7 +10,7 @@ import java.io.FileReader
 private val PATH_TO_LANG = System.getProperty("user.dir") + "/lang"
 private val FILE_LANG = File(PATH_TO_LANG)
 
-class LangRepository: Repository<LangModel> {
+object LangRepository: Repository<LangModel> {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -36,6 +36,7 @@ class LangRepository: Repository<LangModel> {
         return gson.fromJson(FileReader(lang), LangModel::class.java)
     }
 
+    override fun delete(data: LangModel) {}
     override fun save(data: LangModel) {}
 
 }

@@ -2,14 +2,15 @@ package com.project.steamfarm.ui.view.section
 
 import com.project.steamfarm.Runner
 import com.project.steamfarm.langApplication
-import com.project.steamfarm.model.DropAccount
 import com.project.steamfarm.model.UserModel
-import com.project.steamfarm.model.UserType
+import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.PhotoRepository
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
 import com.project.steamfarm.ui.view.block.account.NotFoundView
+import com.project.steamfarm.ui.view.menu.account.AccountEditStatusView
+import com.project.steamfarm.ui.view.menu.account.DefaultAccountMenuView
 import com.project.steamfarm.ui.view.window.import.DropAccountWindow
 import com.project.steamfarm.ui.view.window.import.MaFileWindow
 import javafx.animation.ScaleTransition
@@ -29,19 +30,20 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.TimerTask
+import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
 
 val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/photo.png")!!.toURI().toString())
 
 private const val USER_VIEW_ID = "userView"
 private const val USER_CHECKBOX_EMPTY = "checkBox"
 private const val USER_CHECKBOX_SELECTED = "selectedCheckBox"
-private const val USER_NAME_ID = "userViewName"
+const val USER_NAME_ID = "userViewName"
 private const val USER_MODE_ID = "userViewMode"
 private const val USER_GAME_STATUS_ID = "userViewGameStatus"
-private const val GAME_DOTA_ID = "dota"
-private const val GAME_CS_ID = "cs"
+const val GAME_DOTA_ID = "dota"
+const val GAME_CS_ID = "cs"
 private const val USER_VIEW_EDIT_ID = "userViewEdit"
 private const val SELECT_ALL_ID = "selectAll"
 private const val REMOVE_ALL_ID = "removeAll"
@@ -49,14 +51,10 @@ private const val EDIT_ID = "pencil"
 private const val TRASH_ID = "bag"
 private const val STATUA_ID = "statua"
 
-private const val DOTA_NAME = "Dota 2"
-private const val CS_NAME = "Counter-Strike 2"
+const val DOTA_NAME = "Dota 2"
+const val CS_NAME = "Counter-Strike 2"
 
 private const val USER_VIEW_Y = 60.0
-
-private const val USER_EDIT_MENU_ID = "editMenu"
-private const val USER_EDIT_BUTTON_MENU_ID = "editMenuButton"
-private const val USER_EDIT_MENU_TEXT_ID = "editMenuText"
 
 private const val USER_MENU_VIEW_ID = "userMenuView"
 private const val USER_MENU_HEROES_ID = "userMenuHeroesView"
@@ -124,7 +122,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     private val selected = Label().also {
         it.text = "${langApplication.text.accounts.selected} 0"
         it.layoutX = 26.0
-        it.layoutY = 65.0//84.0
+        it.layoutY = 65.0
     }
 
     private val count = Label().also {
@@ -140,12 +138,22 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     private val edit = viewEdit(EDIT_ID).also {
-        it.setOnMouseClicked { viewEditMenu() }
+        it.isDisable = true
     }
 
     private val trash = viewEdit(TRASH_ID).also {
         it.isDisable = true
-        it.setOnMouseClicked { DropAccountWindow().show() }
+        it.setOnMouseClicked {
+
+            val dropAccountWindow = DropAccountWindow(
+                userModels = users,
+                userNodes = userNodes,
+                userMap = selectedUser,
+                action = this::viewUsers
+            )
+
+            dropAccountWindow.show()
+        }
     }
 
     private val content = AnchorPane().also { ap ->
@@ -180,17 +188,15 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         it.hvalueProperty().addListener { _, _, _ -> closePrevMenu() }
     }
 
-    private var prevMenu: Pane? = null
-
-    private val userRepository = UserRepository()
-    private val photoRepository = PhotoRepository()
 
     private val notFoundView = NotFoundView(content)
 
+    /* Variables for action with accounts, used in select, edit, menu */
     private var users: MutableList<UserModel> = mutableListOf()
     private var userNodes: MutableList<Pane> = mutableListOf()
-
     private var selectedUser: MutableMap<String, Pane> = HashMap()
+    /* Variables for action menu */
+    private var prevMenu: Pane? = null
 
     override fun refreshLanguage() {
         search.promptText = langApplication.text.accounts.search
@@ -199,23 +205,34 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
     }
 
     override fun initialize() {
-        section.children.addAll(block, scroll/*, sorting*/, selected, count, selectAll, edit, trash)
+
+        section.children.addAll(block, scroll, selected, count, selectAll, edit, trash)
 
         search.textProperty().addListener { _, _, newValue -> search(newValue)}
-        import.setOnMouseClicked { _ -> MaFileWindow(this).show() }
 
-        CompletableFuture.supplyAsync {
-            users = userRepository.findByType(UserType.AUTH_COMPLETED).toMutableList()
+        import.setOnMouseClicked { _ -> MaFileWindow(this::appendUser).show() }
+        edit.setOnMouseClicked {
+            val accountEditStatusView: DefaultAccountMenuView = AccountEditStatusView(
+                users.filter { selectedUser[it.username] != null },
+                userNodes.mapNotNull {
+                    val node = it.children.firstOrNull { n -> n.id == USER_MODE_ID } ?: return@mapNotNull null
+                    node as Label
+                }
+            )
+            openMenu(accountEditStatusView.getMenu())
+        }
+
+        val executor = Executors.newCachedThreadPool()
+        executor.submit {
+            users = UserRepository.findAll().toMutableList()
             userNodes = users.map { viewUser(it) }.toMutableList()
             viewUsers(userNodes, true)
         }
-
-        timer.schedule(RefreshAccount(), 1000, 1000)
+        executor.shutdown()
         super.initialize()
     }
 
     private fun search(prefix: String) {
-
         val findUser = userNodes.filter {
             val node = it.children.firstOrNull { n -> n.id == USER_NAME_ID } ?: return@filter false
             val username = node as Label
@@ -239,6 +256,8 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             }
 
             count.text = "${langApplication.text.accounts.numberOfAccounts}${userNodes.size}"
+            changeIdSelect()
+
             content.children.addAll(users)
             if (isAnimate) animateSequentially(users)
         } else {
@@ -281,7 +300,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         }
 
         val photo = ImageView().also {
-            it.image = photoRepository.findById(userModel.username) ?: DEFAULT_PHOTO
+            it.image = PhotoRepository.findById(userModel.username) ?: DEFAULT_PHOTO
             it.layoutX = 60.0
             it.layoutY = 12.0
             it.fitWidth = 36.0
@@ -315,7 +334,7 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
             }
 
             if (event.button == MouseButton.SECONDARY) {
-                userMenuView(userModel, event.sceneX, event.sceneY)
+                //userMenuView(userModel, event.sceneX, event.sceneY)
             }
         }
 
@@ -402,14 +421,12 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
 
     private fun selectAllUser() {
         userNodes.forEach {
-
             it.children.firstOrNull { n -> n.id == USER_CHECKBOX_SELECTED || n.id == USER_CHECKBOX_EMPTY }?.let { i ->
                 i.id = USER_CHECKBOX_SELECTED
             }
 
             val node = it.children.firstOrNull { n -> n.id == USER_NAME_ID }
             val username = node as Label
-
             val userModel = users.firstOrNull { u -> u.username == username.text }
             if (userModel != null) {
                 selectedUser[userModel.username] = it
@@ -428,81 +445,28 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         changeIdSelect()
     }
 
-    private fun changeIdSelect() = Platform.runLater {
+    private fun changeIdSelect(): Unit = Platform.runLater {
         selected.text = "${langApplication.text.accounts.selected} ${selectedUser.size}"
         selectAll.children[0].id = if (selectedUser.size == users.size) REMOVE_ALL_ID else SELECT_ALL_ID
 
         trash.isDisable = selectedUser.isEmpty()
+        edit.isDisable = selectedUser.isEmpty()
+    }
+
+    private fun openMenu(menu: Pane) = Platform.runLater {
+        prevMenu?.let { root.children.remove(it) }
+        root.children.add(menu)
+
+        prevMenu = menu
+        prevMenu?.setOnMouseExited { closePrevMenu() }
     }
 
     private fun closePrevMenu() = prevMenu?.let {
-        root.children.removeAll(it)
+        root.children.remove(it)
         prevMenu = null
     }
 
-    private fun viewEditMenu() = Platform.runLater {
-
-        closePrevMenu()
-        val menu = Pane().also {
-            it.id = USER_EDIT_MENU_ID
-            it.layoutX = 525.0
-            it.layoutY = 120.0
-        }
-
-        // Button: Add accounts to farm dota 2
-        viewButton(GAME_DOTA_ID, langApplication.text.accounts.action.enableFarmGame).let {
-            it.setOnMouseClicked { updateUsers(isDota = true, isEnabled = true) }
-            menu.children.add(it)
-        }
-        // Button: Remove accounts from farm dota 2
-        viewButton(GAME_DOTA_ID, langApplication.text.accounts.action.disableFarmGame).let {
-            it.layoutY = 40.0
-            it.setOnMouseClicked { updateUsers(isDota = true, isEnabled = false) }
-            menu.children.add(it)
-        }
-
-        Line().also {
-            it.layoutX = 100.0
-            it.layoutY = 80.0
-            it.startX = -100.0
-            it.endX = 100.0
-
-            menu.children.add(it)
-        }
-
-        // Button: Add accounts to farm cs 2
-        viewButton(GAME_CS_ID, langApplication.text.accounts.action.enableFarmGame).let {
-            it.layoutY = 81.0
-            it.setOnMouseClicked { updateUsers(isDota = false, isEnabled = true) }
-            menu.children.add(it)
-        }
-        // Button: Remove accounts from farm cs 2
-        viewButton(GAME_CS_ID, langApplication.text.accounts.action.disableFarmGame).let {
-            it.layoutY = 121.0
-            it.setOnMouseClicked { updateUsers(isDota = false, isEnabled = false) }
-            menu.children.add(it)
-        }
-
-        prevMenu = menu
-        menu.setOnMouseExited { closePrevMenu() }
-
-        root.children.add(menu)
-    }
-
-    private fun updateUsers(isDota: Boolean, isEnabled: Boolean) = users.filter { selectedUser.containsKey(it.username) }
-        .forEach {
-            val user = selectedUser[it.username] ?: return@forEach
-
-            if (isDota) it.gameStat.enableDota = isEnabled else it.gameStat.enableCs = isEnabled
-            userRepository.save(it)
-
-            user.children.firstOrNull { n -> n.id == USER_MODE_ID }?.let { node ->
-                val mode = node as Label
-                mode.text = getEnabledMode(it.gameStat.enableDota, it.gameStat.enableCs)
-            }
-        }
-
-    private fun userMenuView(userModel: UserModel, offsetX: Double, offsetY: Double) = Platform.runLater {
+    /*private fun userMenuView(userModel: UserModel, offsetX: Double, offsetY: Double) = Platform.runLater {
 
         closePrevMenu()
         val menu = Pane().also {
@@ -622,43 +586,6 @@ class AccountSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         }
 
         pane.children.addAll(icon, text, hint)
-    }
-
-    private fun viewButton(iconId: String, value: String) = Pane().also {
-        it.id = USER_EDIT_BUTTON_MENU_ID
-
-        val icon = ImageView().also { img ->
-            img.id = iconId
-            img.layoutX = 10.0
-            img.layoutY = 7.0
-        }
-
-        val text = Label().also { l ->
-            l.text = value
-            l.id = USER_EDIT_MENU_TEXT_ID
-            l.layoutX = 42.0
-            l.layoutY = 10.0
-        }
-
-        it.children.addAll(icon, text)
-    }
-
-    inner class RefreshAccount: TimerTask() {
-
-        private var count = TIME_REFRESH_COUNT
-
-        override fun run() {
-            count--
-
-            if (count <= 0) {
-
-                userRepository.findAll()
-                    .filter { it.userType == UserType.AUTH_COMPLETED && !users.contains(it) }
-                    .forEach { appendUser(it) }
-
-                count = TIME_REFRESH_COUNT
-            }
-        }
-    }
+    }*/
 
 }

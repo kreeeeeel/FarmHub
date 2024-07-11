@@ -25,7 +25,7 @@ class DefaultClientSteam: ClientSteam {
     private val steamAuthClient: AuthSteam = DefaultAuthSteam()
 
     override fun authentication(username: String, password: String): Boolean {
-        val maFile = MaFileRepository().findById(username) ?: return false
+        val maFile = MaFileRepository.findById(username) ?: return false
 
         val fetchRSAParam = steamAuthClient.fetchRSAParam(username) ?: return false
 

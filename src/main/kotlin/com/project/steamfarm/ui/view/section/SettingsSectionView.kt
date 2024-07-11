@@ -28,6 +28,7 @@ class SettingsSectionView(menu: MenuView): DefaultSectionView(SectionType.SETTIN
     }
 
     override fun initialize() {
+
         content.children.clear()
 
         var value = 14.0

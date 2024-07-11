@@ -4,14 +4,14 @@ import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.UserRepository
-import com.project.steamfarm.service.background.AuthBackground
-import com.project.steamfarm.service.background.impl.DefaultAuthBackground
 import com.project.steamfarm.service.import.PasswordImport
 import com.project.steamfarm.service.import.impl.DefaultPasswordImport
+import com.project.steamfarm.service.steam.ClientSteam
+import com.project.steamfarm.service.steam.impl.DefaultClientSteam
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.notify.NotifyView
-import com.project.steamfarm.ui.view.section.AccountSectionView
 import com.project.steamfarm.ui.view.window.DefaultWindow
+import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
@@ -20,10 +20,11 @@ import javafx.scene.layout.Pane
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
+import java.util.concurrent.CompletableFuture
 
 class PasswordFileWindow(
     private val maFiles: List<File>,
-    private val sectionView: AccountSectionView
+    private val action: (UserModel) -> Unit
 ): DefaultWindow() {
 
     private val block = Pane().also {
@@ -84,8 +85,7 @@ class PasswordFileWindow(
     private val notifyView = NotifyView()
 
     private val passwordImport: PasswordImport = DefaultPasswordImport()
-    private val userRepository: Repository<UserModel> = UserRepository()
-    private val authBackground: AuthBackground = DefaultAuthBackground()
+    private val clientSteam: ClientSteam = DefaultClientSteam()
 
     override fun show() {
         dragFiles()
@@ -146,17 +146,29 @@ class PasswordFileWindow(
             notifyView.failure(langApplication.text.failure.passwordsNotFound)
 
         } else {
-            userModels.forEach { userRepository.save(it) }
-
+            authenticate(userModels)
             root.children.remove(window)
+
             if (userModels.size != maFiles.size) {
                 notifyView.warning(langApplication.text.warning.notAllAccount)
             } else notifyView.success(langApplication.text.success.import)
-
-            //sectionView.refreshUi(userRepository.findAll())
-            userModels.forEach{ authBackground.authenticate(it.username, it.password) }
         }
+    }
 
+    private fun authenticate(userModels: List<UserModel>) = userModels.forEach {
+        CompletableFuture.supplyAsync {
+            it.createdTs = System.currentTimeMillis()
+            if (clientSteam.authentication(it.username, it.password)) {
+
+                val data = clientSteam.getProfileData()
+                if (data != null) {
+                    it.photo = data.avatar
+                }
+
+                UserRepository.save(it)
+                Platform.runLater { action.invoke(it) }
+            }
+        }
     }
 
 }

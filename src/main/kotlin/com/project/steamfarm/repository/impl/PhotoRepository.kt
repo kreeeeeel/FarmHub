@@ -1,6 +1,5 @@
 package com.project.steamfarm.repository.impl
 
-import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.repository.Repository
 import javafx.scene.image.Image
 import java.io.*
@@ -9,9 +8,7 @@ import java.net.URL
 private val PHOTO_PATH = System.getProperty("user.dir") + "/users"
 private const val PHOTO_FILE_NAME = "photo.png"
 
-class PhotoRepository: Repository<Image> {
-
-    private val userRepository: Repository<UserModel> = UserRepository()
+object PhotoRepository: Repository<Image> {
 
     override fun findAll(): List<Image> {
         return listOf()
@@ -29,10 +26,11 @@ class PhotoRepository: Repository<Image> {
 
     }
 
+    override fun delete(data: Image) {}
     override fun save(data: Image) {}
 
     private fun getPhotoFromLink(username: String): Image? {
-        val userModel = userRepository.findById(username) ?: return null
+        val userModel = UserRepository.findById(username) ?: return null
 
         val link = userModel.photo ?: return null
         val bytes = getBytesFromUrl(link) ?: return null

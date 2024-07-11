@@ -1,0 +1,84 @@
+package com.project.steamfarm.ui.view.menu.account
+
+import com.project.steamfarm.langApplication
+import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.ui.view.section.GAME_CS_ID
+import com.project.steamfarm.ui.view.section.GAME_DOTA_ID
+import javafx.application.Platform
+import javafx.scene.control.Label
+import javafx.scene.layout.Pane
+import javafx.scene.shape.Line
+
+class AccountEditStatusView(
+    private val userModels: List<UserModel>,
+    private val userStatusLabel: List<Label>
+): DefaultAccountMenuView() {
+
+    private val menu = Pane().also {
+        it.id = USER_EDIT_MENU_ID
+        it.layoutX = 525.0
+        it.layoutY = 120.0
+
+        val line = Line().also { l ->
+            l.layoutX = 100.0
+            l.layoutY = 80.0
+            l.startX = -100.0
+            l.endX = 100.0
+        }
+
+        it.children.add(line)
+    }
+
+    private val enableGameDota = getButtonMenu(
+        iconId = GAME_DOTA_ID,
+        value = langApplication.text.accounts.action.enableFarmGame
+    ).also {
+        it.setOnMouseClicked { updateStatus(isEnableDota = true) }
+    }
+
+    private val disableGameDota = getButtonMenu(
+        iconId = GAME_DOTA_ID,
+        value = langApplication.text.accounts.action.disableFarmGame
+    ).also {
+        it.layoutY = 40.0
+        it.setOnMouseClicked { updateStatus(isEnableDota = false) }
+    }
+
+    private val enableGameCs = getButtonMenu(
+        iconId = GAME_CS_ID,
+        value = langApplication.text.accounts.action.enableFarmGame
+    ).also {
+        it.layoutY = 81.0
+        it.setOnMouseClicked { updateStatus(isEnableCs = true) }
+    }
+
+    private val disableGameCs = getButtonMenu(
+        iconId = GAME_CS_ID,
+        value = langApplication.text.accounts.action.disableFarmGame
+    ).also {
+        it.layoutY = 121.0
+        it.setOnMouseClicked { updateStatus(isEnableCs = false) }
+    }
+
+    override fun getMenu(): Pane {
+        menu.children.addAll(enableGameDota, disableGameDota, enableGameCs, disableGameCs)
+        return menu
+    }
+
+    private fun updateStatus(isEnableDota: Boolean? = null, isEnableCs: Boolean? = null) {
+        var value = 0
+        userModels.forEach { u ->
+            isEnableDota?.let { u.gameStat.enableDota = it }
+            isEnableCs?.let { u.gameStat.enableCs = it }
+
+            UserRepository.save(u)
+
+            Platform.runLater {
+                userStatusLabel[value++].text = getStatusGame(u.gameStat.enableDota, u.gameStat.enableCs)
+            }
+        }
+
+    }
+
+}

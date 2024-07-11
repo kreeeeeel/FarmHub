@@ -5,10 +5,8 @@ import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.ConfigModel
 import com.project.steamfarm.model.LangModel
 import com.project.steamfarm.repository.impl.LangRepository
-import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.menu.MenuView
-import com.project.steamfarm.ui.view.notify.NotifyView
 import javafx.application.Platform
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
@@ -34,8 +32,7 @@ class LanguageBlockView(
     private val menu: MenuView,
 ): SettingsBlockView(LANGUAGE_ID) {
 
-    private val langRepository: Repository<LangModel> = LangRepository()
-    private val languages = langRepository.findAll()
+    private val languages = LangRepository.findAll()
 
     lateinit var blockView: List<SettingsBlockView>
 
@@ -160,7 +157,7 @@ class LanguageBlockView(
 
         code?.let { c ->
             it.setOnMouseClicked { _ ->
-                langApplication = langRepository.findById(c) ?: LangModel()
+                langApplication = LangRepository.findById(c) ?: LangModel()
                 ConfigModel().fromFile().let { config ->
                     config.langApp = c
                     config.save()

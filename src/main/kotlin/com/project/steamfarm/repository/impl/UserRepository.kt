@@ -3,18 +3,16 @@ package com.project.steamfarm.repository.impl
 import com.google.gson.GsonBuilder
 import com.project.steamfarm.adapter.LocalDateTimeAdapter
 import com.project.steamfarm.model.UserModel
-import com.project.steamfarm.model.UserType
 import com.project.steamfarm.repository.Repository
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.time.LocalDateTime
 
-
 private const val USER_PATH = "/users"
 private const val USER_INFO = "/user.json"
 
-class UserRepository: Repository<UserModel> {
+object UserRepository: Repository<UserModel> {
 
     private val gson = GsonBuilder().setPrettyPrinting()
         .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
@@ -33,8 +31,6 @@ class UserRepository: Repository<UserModel> {
                 gson.fromJson(reader, UserModel::class.java)
             }
         }
-
-        users.forEach { getDropCs(it) }
         return users
     }
 
@@ -46,13 +42,16 @@ class UserRepository: Repository<UserModel> {
         }
 
         val user = gson.fromJson(FileReader(file).use { reader -> reader.readText() }, UserModel::class.java)
-        getDropCs(user)
         return user
     }
 
-    override fun save(data: UserModel) {
-        getDropCs(data)
+    override fun delete(data: UserModel) {
+        val path = String.format("%s/%s/%s", System.getProperty("user.dir"), USER_PATH, data.username)
+        val file = File(path)
+        file.deleteRecursively()
+    }
 
+    override fun save(data: UserModel) {
         val path = String.format("%s/%s/%s", System.getProperty("user.dir"), USER_PATH, data.username)
         val directory = File(path)
         if (!directory.exists() && !directory.mkdirs()) {
@@ -66,11 +65,4 @@ class UserRepository: Repository<UserModel> {
         }
     }
 
-    fun findByType(type: UserType): List<UserModel> = findAll().filter { it.userType == type }
-
-    private fun getDropCs(userModel: UserModel) {
-        userModel.gameStat.lastDropCsDate?.let {
-
-        }
-    }
 }

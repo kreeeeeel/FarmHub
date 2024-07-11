@@ -1,11 +1,11 @@
 package com.project.steamfarm.ui.view.window.import
 
 import com.project.steamfarm.langApplication
+import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.service.import.MaFileImport
 import com.project.steamfarm.service.import.impl.DefaultMaFileImport
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.notify.NotifyView
-import com.project.steamfarm.ui.view.section.AccountSectionView
 import com.project.steamfarm.ui.view.window.DefaultWindow
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -17,7 +17,7 @@ import javafx.stage.Stage
 import java.io.File
 
 class MaFileWindow(
-    private val sectionView: AccountSectionView
+    private val action: (UserModel) -> Unit
 ): DefaultWindow() {
 
     private val block = Pane().also {
@@ -136,7 +136,7 @@ class MaFileWindow(
         } else {
             root.children.removeIf { it.id == window.id }
 
-            val passwordFileWindow: DefaultWindow = PasswordFileWindow(filterFiles, sectionView)
+            val passwordFileWindow: DefaultWindow = PasswordFileWindow(filterFiles, action)
             passwordFileWindow.show()
 
             notifyView.success(langApplication.text.success.maFile)

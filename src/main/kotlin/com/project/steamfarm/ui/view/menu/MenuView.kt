@@ -1,5 +1,6 @@
 package com.project.steamfarm.ui.view.menu
 
+import com.project.steamfarm.Test
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.view.DefaultView
 import com.project.steamfarm.ui.controller.BaseController.Companion.root

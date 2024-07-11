@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class UserModel(
     var username: String,
-    var userType: UserType = UserType.WAIT_AUTH,
+    //var userType: UserType = UserType.WAIT_AUTH,
     var steamId: String? = null,
     var photo: String? = null,
     var password: String,
