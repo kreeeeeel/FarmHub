@@ -12,14 +12,17 @@ import java.io.InputStreamReader
 
 class Test {
 
-    private val steamPath: String = "\"H:\\Program Files (x86)\\Steam\\steam.exe\""
+    private val steamPath: String = "\"C:\\Program Files (x86)\\steam\\steam.exe\""
     private val command: String = "-w 380 -h 285 -sw -console -novid -low -nosound"
     private val gameId: Int = 570
 
     fun start() {
 
         //UserRepository.findAll().subList(0, 10).forEach {
-            val process = ProcessBuilder("$steamPath").start()
+
+            val command = listOf(steamPath, "-applaunch", "570")
+
+            val process = ProcessBuilder(command).start()
             val `in` = BufferedReader(InputStreamReader(process.inputStream))
             val er = BufferedReader(InputStreamReader(process.errorStream))
 
