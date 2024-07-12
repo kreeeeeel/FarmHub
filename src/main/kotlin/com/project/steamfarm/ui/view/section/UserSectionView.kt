@@ -48,7 +48,7 @@ const val CS_NAME = "Counter-Strike 2"
 
 private const val USER_VIEW_Y = 60.0
 
-class UserSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
+class UserSectionView: DefaultSectionView(SectionType.USERS) {
 
     private val block = Pane().also {
         it.id = "accountSearch"

@@ -157,7 +157,7 @@ class UserInfoMenuView(
 
             val heroModel = HeroRepository.findById(value) ?: HeroModel()
             ImageView().also { img ->
-                img.layoutX = 10.0 + (30*index)
+                img.layoutX = 12.0 + (30*index)
                 img.layoutY = 8.0
                 img.fitWidth = 24.0
                 img.fitHeight = img.fitWidth

@@ -57,7 +57,7 @@ abstract class DefaultSectionView(
 
     private fun sectionLang() {
         sectionName.text = when (sectionType) {
-            SectionType.ACCOUNTS -> langApplication.text.accounts.name
+            SectionType.USERS -> langApplication.text.accounts.name
             SectionType.FARM -> langApplication.text.farm.name
             SectionType.SELL -> langApplication.text.sell.name
             SectionType.SUBSCRIBE -> langApplication.text.subscribe.name

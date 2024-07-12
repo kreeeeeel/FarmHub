@@ -127,5 +127,5 @@ class Test {
 }
 
 fun main() {
-    //Test().parse()//.start()
+    Test().start()
 }
