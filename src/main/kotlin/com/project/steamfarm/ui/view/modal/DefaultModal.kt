@@ -2,13 +2,14 @@ package com.project.steamfarm.ui.view.modal
 
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import javafx.animation.FadeTransition
+import javafx.scene.Node
 import javafx.scene.image.ImageView
 import javafx.scene.layout.Pane
 import javafx.util.Duration
 
 const val WINDOW_ID = "window"
 
-abstract class DefaultWindow {
+abstract class DefaultModal {
 
     protected val window = Pane().also {
         it.id = WINDOW_ID
@@ -51,6 +52,25 @@ abstract class DefaultWindow {
 
     open fun show() {
         show(true)
+    }
+
+    fun animateFadeTransition(nodes: List<Node>) {
+        nodes.forEach { it.opacity = 0.1 }
+
+        if (nodes.isEmpty()) return
+
+        val firstNode = nodes.first()
+        val remainingNodes = nodes.drop(1)
+
+        val transition = FadeTransition(Duration.millis(75.0), firstNode).also {
+            it.fromValue = 0.1
+            it.toValue = 0.1
+        }
+        transition.setOnFinished {
+            firstNode.opacity = 1.0
+            animateFadeTransition(remainingNodes)
+        }
+        transition.playFromStart()
     }
 
 }

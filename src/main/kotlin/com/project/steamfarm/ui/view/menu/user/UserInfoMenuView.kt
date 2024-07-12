@@ -1,10 +1,15 @@
 package com.project.steamfarm.ui.view.menu.user
 
 import com.project.steamfarm.langApplication
+import com.project.steamfarm.model.HeroModel
 import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.repository.impl.HeroImageRepository
+import com.project.steamfarm.repository.impl.HeroRepository
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
-import com.project.steamfarm.ui.view.modal.import.DropUserModal
+import com.project.steamfarm.ui.view.modal.DEFAULT_PHOTO
+import com.project.steamfarm.ui.view.modal.DropUserModal
+import com.project.steamfarm.ui.view.modal.HeroModal
 import com.project.steamfarm.ui.view.section.GAME_CS_ID
 import com.project.steamfarm.ui.view.section.GAME_DOTA_ID
 import javafx.application.Platform
@@ -25,7 +30,7 @@ private const val USER_MENU_DATE_ID = "date"
 private const val USER_MENU_CLOCK_ID = "clock"
 private const val USER_MENU_DROP_ID = "money"
 
-private const val STATUA_ID = "statua"
+const val STATUA_ID = "statua"
 
 private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
 
@@ -109,6 +114,12 @@ class UserInfoMenuView(
 
         val selectHero = getButtonMenu(STATUA_ID, langApplication.text.accounts.action.chooseHero).also {
             it.layoutY = 165.0
+
+            it.setOnMouseClicked {
+                val heroModal = HeroModal()
+                heroModal.setUserDate(userModel)
+                heroModal.show()
+            }
         }
 
         val statusGameDota = getButtonMenu(GAME_DOTA_ID, getToggledGame(userModel.gameStat.enableDota)).also {
@@ -141,6 +152,20 @@ class UserInfoMenuView(
     private fun getUserHeroes() = Pane().also {
         it.id = USER_MENU_HEROES_ID
         it.layoutY = 20.0
+
+        val heroesImg = userModel.gameStat.priorityHero.mapIndexed { index, value ->
+
+            val heroModel = HeroRepository.findById(value) ?: HeroModel()
+            ImageView().also { img ->
+                img.layoutX = 10.0 + (30*index)
+                img.layoutY = 8.0
+                img.fitWidth = 24.0
+                img.fitHeight = img.fitWidth
+                img.image = HeroImageRepository.findById(heroModel.icon) ?: DEFAULT_PHOTO
+            }
+        }
+
+        it.children.addAll(heroesImg)
     }
 
     private fun appendStatsInMenu(id: String, value: String) = Platform.runLater {

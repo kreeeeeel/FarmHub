@@ -10,7 +10,6 @@ import java.io.FileWriter
 object UserRepository: Repository<UserModel> {
 
     override fun findAll(): List<UserModel> {
-
         val files = File(PATH_REPOSITORY).listFiles()
         if (files == null || files.isEmpty()) {
             return listOf()
@@ -28,8 +27,7 @@ object UserRepository: Repository<UserModel> {
             return null
         }
 
-        val user = gson.fromJson(FileReader(file).use { reader -> reader.readText() }, UserModel::class.java)
-        return user
+        return gson.fromJson(FileReader(file).use { reader -> reader.readText() }, UserModel::class.java)
     }
 
     override fun delete(data: UserModel) = File("$PATH_REPOSITORY\\${data.steam.accountName}.json").let {

@@ -6,7 +6,7 @@ import com.project.steamfarm.service.import.MaFileImport
 import com.project.steamfarm.service.import.impl.DefaultMaFileImport
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.notify.NotifyView
-import com.project.steamfarm.ui.view.modal.DefaultWindow
+import com.project.steamfarm.ui.view.modal.DefaultModal
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
@@ -18,7 +18,7 @@ import java.io.File
 
 class MaFileModal(
     private val action: (UserModel) -> Unit
-): DefaultWindow() {
+): DefaultModal() {
 
     init {
         block.id = "maFile"
@@ -135,7 +135,7 @@ class MaFileModal(
         } else {
             root.children.removeIf { it.id == window.id }
 
-            val passwordFileModal: DefaultWindow = PasswordFileModal(filterFiles, action)
+            val passwordFileModal: DefaultModal = PasswordFileModal(filterFiles, action)
             passwordFileModal.show()
 
             notifyView.success(langApplication.text.success.maFile)

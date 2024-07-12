@@ -9,7 +9,7 @@ import com.project.steamfarm.service.steam.ClientSteam
 import com.project.steamfarm.service.steam.impl.DefaultClientSteam
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.notify.NotifyView
-import com.project.steamfarm.ui.view.modal.DefaultWindow
+import com.project.steamfarm.ui.view.modal.DefaultModal
 import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture
 class PasswordFileModal(
     private val maFiles: List<File>,
     private val action: (UserModel) -> Unit
-): DefaultWindow() {
+): DefaultModal() {
 
     init {
         block.id = "passwordFile"

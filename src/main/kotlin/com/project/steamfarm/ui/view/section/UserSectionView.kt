@@ -10,7 +10,7 @@ import com.project.steamfarm.ui.view.block.user.NotFoundView
 import com.project.steamfarm.ui.view.menu.user.DefaultUserMenuView
 import com.project.steamfarm.ui.view.menu.user.UserEditStatusMenuView
 import com.project.steamfarm.ui.view.menu.user.UserInfoMenuView
-import com.project.steamfarm.ui.view.modal.import.DropUserModal
+import com.project.steamfarm.ui.view.modal.DropUserModal
 import com.project.steamfarm.ui.view.modal.import.MaFileModal
 import javafx.animation.ScaleTransition
 import javafx.application.Platform
@@ -116,13 +116,8 @@ class UserSectionView: DefaultSectionView(SectionType.ACCOUNTS) {
         }
     }
 
-    private val edit = viewEdit(EDIT_ID).also {
-        it.isDisable = true
-    }
-
-    private val trash = viewEdit(TRASH_ID).also {
-        it.isDisable = true
-    }
+    private val edit = viewEdit(EDIT_ID)
+    private val trash = viewEdit(TRASH_ID)
 
     private val content = AnchorPane().also { ap ->
         ap.prefWidth = 505.0

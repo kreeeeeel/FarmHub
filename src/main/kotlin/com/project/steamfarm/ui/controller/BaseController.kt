@@ -70,8 +70,8 @@ open class BaseController: Application() {
     private val menuView = MenuView()
     private val startSection = StartSectionView()
 
-    private var offsetX: Double = 0.0
-    private var offsetY: Double = 0.0
+    private var offsetX: Double? = 0.0
+    private var offsetY: Double? = 0.0
 
     override fun start(primaryStage: Stage?) {
 
@@ -91,15 +91,23 @@ open class BaseController: Application() {
 
             it.scene = Scene(root, WIDTH_APPLICATION, HEIGHT_APPLICATION, Color.TRANSPARENT)
             it.scene.setOnMousePressed { event ->
-                offsetX = primaryStage.x - event.screenX
-                offsetY = primaryStage.y - event.screenY
+                if (event.y <= primaryStage.height / 10) {
+                    offsetX = primaryStage.x - event.screenX
+                    offsetY = primaryStage.y - event.screenY
+                }
             }
             it.scene.setOnMouseDragged { event ->
-                it.scene.cursor = Cursor.MOVE
-                primaryStage.x = event.screenX + offsetX
-                primaryStage.y = event.screenY + offsetY
+                if (offsetX != null && offsetY != null) {
+                    it.scene.cursor = Cursor.MOVE
+                    primaryStage.x = event.screenX + offsetX!!
+                    primaryStage.y = event.screenY + offsetY!!
+                }
             }
-            it.scene.setOnMouseReleased { _ -> it.scene.cursor = Cursor.DEFAULT }
+            it.scene.setOnMouseReleased { _ ->
+                offsetX = null
+                offsetY = null
+                it.scene.cursor = Cursor.DEFAULT
+            }
             it.scene.setOnKeyReleased { event ->
 
                 if (!startSection.isStartSection() && event.code == KeyCode.ESCAPE) {

@@ -51,6 +51,7 @@ data class Accounts(
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
     var action: AccountAction = AccountAction(),
+    var hero: HeroAction = HeroAction(),
     var dropAccount: DropAccount = DropAccount(),
 )
 
@@ -117,6 +118,15 @@ data class AccountAction(
     var enableFarmGame: String = "Add for farming",
     var disableFarmGame: String = "Remove from farm",
     var dropAccount: String = "Drop account"
+)
+
+data class HeroAction(
+    var title: String = "Priority Heroes",
+    var search: String = "Search for Dota2 heroes",
+    var count: String = "Heroes available: ",
+    var random: String = "Random Hero",
+    var notFound: String = "Nothing found..",
+    var hint: String = "To change a specific hero, click on it and make a choice. If you want to reset your specific choice, click on the cross, a random hero will be selected"
 )
 
 data class DropAccount(

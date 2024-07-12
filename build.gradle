@@ -37,6 +37,8 @@ javafx {
 }
 
 dependencies {
+    implementation("org.seleniumhq.selenium:selenium-java:4.22.0")
+
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.retrofit2:converter-simplexml:2.11.0")

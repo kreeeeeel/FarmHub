@@ -570,3 +570,102 @@
     -fx-cursor: hand;
     -fx-background-color: #0d0d0e;
 }
+
+#peekHeroBlock {
+    -fx-background-color: #181A1E;
+    -fx-background-radius: 18px;
+    -fx-pref-width: 237px;
+    -fx-pref-height: 395px;
+}
+
+#searchHeroBlock {
+    -fx-background-color: #181A1E;
+    -fx-background-radius: 18px;
+    -fx-pref-width: 330px;
+    -fx-pref-height: 395px;
+}
+
+#searchHero {
+    -fx-background-color: #2a2d33;
+    -fx-background-radius: 14px;
+    -fx-pref-width: 295px;
+    -fx-pref-height: 40px;
+}
+
+#searchHeroField {
+    -fx-font-family: "Franklin Gothic Medium";
+    -fx-font-size: 17px;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-pref-width: 255px;
+    -fx-pref-height: 30px;
+}
+
+#peekHeroHint {
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+    -fx-pref-width: 640px;
+    -fx-font-size: 15px;
+    -fx-text-fill: #b5b5b5;
+}
+
+#peekedHero {
+    -fx-background-color: #131417;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 210px;
+    -fx-pref-height: 50px;
+}
+
+#peekedHero:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #0f0f12;
+}
+
+#selectedPeekedHero {
+    -fx-background-color: #131417;
+    -fx-background-radius: 8px;
+    -fx-border-color: grey;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-pref-width: 210px;
+    -fx-pref-height: 50px;
+}
+
+#hero {
+    -fx-background-color: #131417;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 50px;
+    -fx-pref-height: 50px;
+}
+
+#hero:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #131415;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+#hero:disabled .image-view {
+    -fx-opacity: 0.5;
+}
+
+#countHeroes {
+    -fx-font-size: 14px;
+    -fx-text-fill: #b5b5b5;
+}
+
+#clear {
+    -fx-opacity: 0.85;
+    -fx-image: url("images/clear.png")
+}
+#clear:hover {
+    -fx-cursor: hand;
+    -fx-opacity: 1.0;
+}
+
+#infoHero {
+    -fx-background-color: black;
+    -fx-background-radius: 8px;
+    -fx-alignment: center;
+}

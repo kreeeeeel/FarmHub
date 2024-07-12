@@ -1,10 +1,9 @@
-package com.project.steamfarm.ui.view.modal.import
+package com.project.steamfarm.ui.view.modal
 
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
-import com.project.steamfarm.ui.view.modal.DefaultWindow
 import com.project.steamfarm.ui.view.section.UserDataView
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -12,7 +11,7 @@ import javafx.scene.image.ImageView
 
 class DropUserModal(
     private val action: (MutableMap<String, UserDataView>, MutableMap<String, UserDataView>) -> Unit
-): DefaultWindow() {
+): DefaultModal() {
 
     init {
         block.id = "dropAccount"
