@@ -54,21 +54,21 @@ abstract class DefaultModal {
         show(true)
     }
 
-    fun animateFadeTransition(nodes: List<Node>) {
-        nodes.forEach { it.opacity = 0.1 }
+    fun animateFadeTransition(nodes: List<Node>, millis: Double) {
+        nodes.forEach { it.opacity = 0.0 }
 
         if (nodes.isEmpty()) return
 
         val firstNode = nodes.first()
         val remainingNodes = nodes.drop(1)
 
-        val transition = FadeTransition(Duration.millis(75.0), firstNode).also {
+        val transition = FadeTransition(Duration.millis(millis), firstNode).also {
             it.fromValue = 0.1
             it.toValue = 0.1
         }
         transition.setOnFinished {
             firstNode.opacity = 1.0
-            animateFadeTransition(remainingNodes)
+            animateFadeTransition(remainingNodes, millis)
         }
         transition.playFromStart()
     }

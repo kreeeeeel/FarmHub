@@ -2,8 +2,12 @@ package com.project.steamfarm
 
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
+import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
+import java.awt.event.KeyEvent
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 @Suppress("unused")
 class Test {
@@ -15,32 +19,17 @@ class Test {
     private val guard = DefaultGuardSteam()
 
     fun start() {
-
         UserRepository.findAll()[1].let {
-
-            val text = "login ${it.steam.accountName} ${it.steam.password} ${guard.getCode(it.steam.sharedSecret)}"
-            val stringSelection = StringSelection(text)
-            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-            clipboard.setContents(stringSelection, null)
-
-            //val command = listOf(steamPath, "-applaunch", "570")
-            /*val command = listOf(
+            val command = listOf(
                 steamPath,
-                "-nofriendsui",
-                "-vgui",
-                "-noreactlogin",
-                "-noverifyfiles",
-                "-nobootstrapupdate",
-                "-skipinitialbootstrap",
-                "-norepairfiles",
-                "-overridepackageurl",
-                "-disable-winh264",
-                "-language",
-                "english"
+                "-login",
+                it.steam.accountName,
+                it.steam.password,
+                guard.getCode(it.steam.sharedSecret)
             )
 
             val process = ProcessBuilder(command).start()
-            val `in` = BufferedReader(InputStreamReader(process.inputStream))
+            /*val `in` = BufferedReader(InputStreamReader(process.inputStream))
             val er = BufferedReader(InputStreamReader(process.errorStream))
 
             var s: String
@@ -49,13 +38,40 @@ class Test {
             }
             while ((er.readLine().also { s = it }) != null) {
                 println(s)
+            }*/
+
+
+            // Добавьте задержку, чтобы убедиться, что Steam запустился и находится в фокусе
+            Thread.sleep(20000)
+
+            val robot = Robot()
+
+            // Установите данные в буфер обмена и вставьте их
+            fun pasteText(text: String) {
+                val stringSelection = StringSelection(text)
+                val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                clipboard.setContents(stringSelection, null)
+
+                robot.keyPress(KeyEvent.VK_CONTROL)
+                robot.keyPress(KeyEvent.VK_V)
+                robot.keyRelease(KeyEvent.VK_V)
+                robot.keyRelease(KeyEvent.VK_CONTROL)
+                println(text)
             }
 
-            val status = process.waitFor()
-            println("Exited with status: $status")*/
+            // Вводим имя пользователя
+            pasteText(it.steam.accountName)
+            robot.keyPress(KeyEvent.VK_TAB)
+            robot.keyRelease(KeyEvent.VK_TAB)
 
+            // Вводим пароль
+            pasteText(it.steam.password)
+            robot.keyPress(KeyEvent.VK_ENTER)
+            robot.keyRelease(KeyEvent.VK_ENTER)
+
+            //val status = process.waitFor()
+            //println("Exited with status: $status")
         }
-
     }
 
     /*fun parse() {

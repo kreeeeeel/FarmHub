@@ -21,6 +21,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import javafx.scene.text.Text
+import java.util.concurrent.Executors
 
 private const val HERO_PRIORITY_BLOCK_ID = "peekHeroBlock"
 private const val HERO_PEEKED_ID = "peekedHero"
@@ -134,13 +135,17 @@ class HeroModal: DefaultModal() {
         search.children.addAll(searchInner, count, scroll)
         window.children.addAll(priority, search, hint)
 
-        currentHeroes = HeroRepository.findAll().associateWith { getHeroView(it) }.toMutableMap()
+        val executor = Executors.newCachedThreadPool()
+        executor.submit {
+            currentHeroes = HeroRepository.findAll().associateWith { getHeroView(it) }.toMutableMap()
 
-        count.text = "${langApplication.text.accounts.hero.count}${currentHeroes.size}"
-
-        viewPriorityHeroes()
-        viewHeroes(currentHeroes.values.toList())
-
+            Platform.runLater {
+                count.text = "${langApplication.text.accounts.hero.count}${currentHeroes.size}"
+                viewPriorityHeroes()
+                viewHeroes(currentHeroes.values.toList(), true)
+            }
+        }
+        executor.shutdown()
         super.show()
     }
 
@@ -165,6 +170,7 @@ class HeroModal: DefaultModal() {
         selectedPriorityHeroIndex = 0
 
         priority.children.addAll(currentPriorityHeroes)
+        animateFadeTransition(currentPriorityHeroes, 75.0)
     }
 
     private fun viewHeroes(heroes: List<Pane>, isAnimate: Boolean = false) = Platform.runLater {
@@ -184,8 +190,7 @@ class HeroModal: DefaultModal() {
                 }
             }
             content.children.addAll(heroes)
-            //content.prefHeight = vertical * 60.0 + 80.0
-            if (isAnimate) animateFadeTransition(heroes)
+            if (isAnimate) animateFadeTransition(heroes, 10.0)
         } else {
 
             val logo = ImageView().also {
