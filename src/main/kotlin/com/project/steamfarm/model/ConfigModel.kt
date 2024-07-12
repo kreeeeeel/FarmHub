@@ -1,5 +1,6 @@
 package com.project.steamfarm.model
 
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import java.io.File
 import java.io.FileReader
@@ -11,16 +12,17 @@ data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,
 ) {
 
-    @Transient private val gson = GsonBuilder().setPrettyPrinting().create()
+    @Transient
+    private val gson = GsonBuilder().setPrettyPrinting()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .create()
 
-    fun fromFile(): ConfigModel {
-        return try {
-            gson.fromJson(FileReader(FILE_CONFIG), ConfigModel::class.java)
-        } catch (e: Exception) { this }
-    }
+    fun fromFile(): ConfigModel = try {
+        gson.fromJson(FileReader(FILE_CONFIG), ConfigModel::class.java)
+    } catch (e: Exception) { this }
 
-    fun save() {
-        FileWriter(FILE_CONFIG).use { writer -> writer.write(gson.toJson(this)) }
+    fun save() = FileWriter(FILE_CONFIG).use {
+        writer -> writer.write(gson.toJson(this))
     }
 
 }

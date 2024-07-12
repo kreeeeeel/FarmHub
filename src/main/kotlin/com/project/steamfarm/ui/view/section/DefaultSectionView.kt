@@ -3,9 +3,10 @@ package com.project.steamfarm.ui.view.section
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.SectionType
+import com.project.steamfarm.ui.view.menu.user.USER_EDIT_MENU_ID
+import com.project.steamfarm.ui.view.menu.user.USER_MENU_VIEW_ID
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
-import java.util.*
 
 const val SECTION_ID = "section"
 const val SECTION_NAME_ID = "sectionName"
@@ -35,16 +36,14 @@ abstract class DefaultSectionView(
         it.layoutY = 42.0
     }
 
-    protected val timer = Timer()
-
-    fun cancelTimer() = timer.cancel()
 
     abstract fun refreshLanguage()
 
     open fun initialize() {
 
         root.children.removeIf {
-            it.id == section.id || it.id == sectionName.id || it.id == sectionClose.id
+            it.id == section.id || it.id == sectionName.id || it.id == sectionClose.id || it.id == USER_EDIT_MENU_ID ||
+                    it.id == USER_MENU_VIEW_ID
         }
         root.children.add(section)
 

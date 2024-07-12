@@ -1,18 +1,15 @@
 package com.project.steamfarm.repository.impl
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.project.steamfarm.model.LangModel
+import com.project.steamfarm.repository.PATH_REPOSITORY
 import com.project.steamfarm.repository.Repository
 import java.io.File
 import java.io.FileReader
 
-private val PATH_TO_LANG = System.getProperty("user.dir") + "/lang"
-private val FILE_LANG = File(PATH_TO_LANG)
+private val PATH_LANGUAGES = "$PATH_REPOSITORY\\languages"
+private val FILE_LANG = File(PATH_LANGUAGES)
 
 object LangRepository: Repository<LangModel> {
-
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     override fun findAll(): List<LangModel> {
         val lang = FILE_LANG.listFiles() ?: return emptyList()
@@ -27,8 +24,9 @@ object LangRepository: Repository<LangModel> {
             }
     }
 
+    // id = country code
     override fun findById(id: String): LangModel? {
-        val lang = File("$PATH_TO_LANG/$id.json")
+        val lang = File("$PATH_LANGUAGES/$id.json")
         if (!lang.exists()) {
             return null
         }

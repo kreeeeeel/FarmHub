@@ -1,11 +1,10 @@
 package com.project.steamfarm.ui.view.menu
 
-import com.project.steamfarm.Test
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.view.DefaultView
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.controller.NAME_APPLICATION
-import com.project.steamfarm.ui.view.section.AccountSectionView
+import com.project.steamfarm.ui.view.section.UserSectionView
 import com.project.steamfarm.ui.view.section.DefaultSectionView
 import com.project.steamfarm.ui.view.section.SettingsSectionView
 import com.project.steamfarm.ui.view.section.StartSectionView
@@ -14,7 +13,7 @@ import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.layout.Pane
 
-private const val ACCOUNT_ID = "accounts"
+private const val USER_ID = "accounts"
 private const val FARM_ID = "farm"
 private const val SELL_ID = "sell"
 private const val SUBSCRIBE_ID = "subscribe"
@@ -53,7 +52,7 @@ class MenuView: DefaultView {
         it.layoutY = 115.0
     }
 
-    private val accounts = getPointMenu(ACCOUNT_ID, langApplication.text.menu.accounts)
+    private val users = getPointMenu(USER_ID, langApplication.text.menu.accounts)
     private val farm = getPointMenu(FARM_ID, langApplication.text.menu.farm)
     private val sell = getPointMenu(SELL_ID, langApplication.text.menu.sell)
 
@@ -72,12 +71,12 @@ class MenuView: DefaultView {
     override fun initialize() {
         menu.children.addAll(
             logo, name, description,
-            basic, accounts, farm, sell,
+            basic, users, farm, sell,
             other, subscribe, cloud, settings
         )
         root.children.add(menu)
 
-        accounts.setOnMouseClicked { clickOnMenu(ACCOUNT_ID, accounts) }
+        users.setOnMouseClicked { clickOnMenu(USER_ID, users) }
         settings.setOnMouseClicked { clickOnMenu(SETTINGS_ID, settings) }
 
         animation(menu)
@@ -89,7 +88,7 @@ class MenuView: DefaultView {
             description.text = langApplication.text.description
             basic.text = langApplication.text.menu.basic
 
-            refreshPoint(accounts, langApplication.text.menu.accounts)
+            refreshPoint(users, langApplication.text.menu.accounts)
             refreshPoint(farm, langApplication.text.menu.farm)
             refreshPoint(sell, langApplication.text.menu.sell)
 
@@ -122,7 +121,7 @@ class MenuView: DefaultView {
     private fun getPointMenu(imgId: String, text: String): Pane = Pane().also {
         it.id = "pointMenu"
         it.layoutY = when(imgId) {
-            ACCOUNT_ID -> 135.0
+            USER_ID -> 135.0
             FARM_ID -> 175.0
             SELL_ID -> 215.0
             SUBSCRIBE_ID -> 300.0
@@ -150,7 +149,7 @@ class MenuView: DefaultView {
     private fun clickOnMenu(imgId: String, pane: Pane) {
         val section: DefaultSectionView = when(imgId) {
             SETTINGS_ID -> SettingsSectionView(this)
-            ACCOUNT_ID -> AccountSectionView()
+            USER_ID -> UserSectionView()
             else -> StartSectionView()
         }
 
@@ -159,7 +158,6 @@ class MenuView: DefaultView {
         pane.isDisable = true
         pane.id = "pointMenuDisable"
 
-        prevSection?.cancelTimer()
         prevSection = section
 
         section.initialize()

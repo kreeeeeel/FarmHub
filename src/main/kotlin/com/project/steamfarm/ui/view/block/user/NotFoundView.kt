@@ -1,4 +1,4 @@
-package com.project.steamfarm.ui.view.block.account
+package com.project.steamfarm.ui.view.block.user
 
 import com.project.steamfarm.langApplication
 import javafx.scene.control.Label

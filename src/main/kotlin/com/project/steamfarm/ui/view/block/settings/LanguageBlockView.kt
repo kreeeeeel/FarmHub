@@ -95,13 +95,10 @@ class LanguageBlockView(
 
         block.children.add(scroll)
         root.scene.addEventFilter(MouseEvent.MOUSE_CLICKED) { event ->
-
             if (!scroll.boundsInParent.contains(event.x, event.y)) {
                 block.children.remove(scroll)
             }
-
         }
-
     }
 
     private fun updateLang() {

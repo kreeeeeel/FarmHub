@@ -28,19 +28,12 @@ class DefaultPasswordImport: PasswordImport {
                     }
                 }
             }
-
-            return users.values.filter { it.password != null }
-                .map { UserModel(username = it.accountName, password = it.password) }
-                .toList()
-
+            return users.values.map { UserModel(steam = it) }.toList()
         } catch (e: Exception) { return emptyList() }
     }
 
-    private fun getDataFromFile(file: File): SteamData? {
-        return try {
-            gson.fromJson(file.reader(), SteamData::class.java)
-        }
-        catch (e: Exception) { null }
-    }
+    private fun getDataFromFile(file: File): SteamData? =try {
+        gson.fromJson(file.reader(), SteamData::class.java)
+    } catch (e: Exception) { null }
 
 }

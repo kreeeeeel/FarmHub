@@ -1,4 +1,4 @@
-package com.project.steamfarm.ui.view.window.import
+package com.project.steamfarm.ui.view.modal.import
 
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
@@ -6,7 +6,7 @@ import com.project.steamfarm.service.import.MaFileImport
 import com.project.steamfarm.service.import.impl.DefaultMaFileImport
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.notify.NotifyView
-import com.project.steamfarm.ui.view.window.DefaultWindow
+import com.project.steamfarm.ui.view.modal.DefaultWindow
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
@@ -16,14 +16,14 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
 
-class MaFileWindow(
+class MaFileModal(
     private val action: (UserModel) -> Unit
 ): DefaultWindow() {
 
-    private val block = Pane().also {
-        it.id = "maFile"
-        it.layoutX = 273.0
-        it.layoutY = 135.0
+    init {
+        block.id = "maFile"
+        block.layoutX = 273.0
+        block.layoutY = 135.0
 
         val icon = ImageView().also { img ->
             img.id = "plus"
@@ -44,7 +44,7 @@ class MaFileWindow(
             l.layoutY = 264.0
         }
 
-        it.children.addAll(icon, text, hint)
+        block.children.addAll(icon, text, hint)
     }
 
     private val drag = Pane().also {
@@ -85,7 +85,6 @@ class MaFileWindow(
 
         drag.children.add(file)
         block.children.add(drag)
-        window.children.addAll(block)
 
         super.show()
     }
@@ -136,8 +135,8 @@ class MaFileWindow(
         } else {
             root.children.removeIf { it.id == window.id }
 
-            val passwordFileWindow: DefaultWindow = PasswordFileWindow(filterFiles, action)
-            passwordFileWindow.show()
+            val passwordFileModal: DefaultWindow = PasswordFileModal(filterFiles, action)
+            passwordFileModal.show()
 
             notifyView.success(langApplication.text.success.maFile)
         }

@@ -1,20 +1,14 @@
 package com.project.steamfarm
 
-import com.project.steamfarm.model.ConfigModel
-import com.project.steamfarm.model.LangModel
-import com.project.steamfarm.repository.impl.LangRepository
-import com.project.steamfarm.repository.impl.MaFileRepository
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
-import com.project.steamfarm.ui.controller.MainController
-import javafx.application.Application
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
-
+@Suppress("unused")
 class Test {
 
-    private val steamPath: String = "\"C:\\Program Files (x86)\\steam\\steam.exe\""
+    private val steamPath: String = "\"H:\\Program Files (x86)\\Steam\\steam.exe\""
     private val command: String = "-w 380 -h 285 -sw -console -novid -low -nosound"
     private val gameId: Int = 570
 
@@ -22,12 +16,28 @@ class Test {
 
     fun start() {
 
-        UserRepository.findAll()[0].let {
+        UserRepository.findAll()[1].let {
 
-            val data = MaFileRepository.findById(it.username)
+            val text = "login ${it.steam.accountName} ${it.steam.password} ${guard.getCode(it.steam.sharedSecret)}"
+            val stringSelection = StringSelection(text)
+            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+            clipboard.setContents(stringSelection, null)
 
             //val command = listOf(steamPath, "-applaunch", "570")
-            val command = listOf(steamPath, "set_steam_guard_code", guard.getCode(data!!.sharedSecret), it.username, it.password)
+            /*val command = listOf(
+                steamPath,
+                "-nofriendsui",
+                "-vgui",
+                "-noreactlogin",
+                "-noverifyfiles",
+                "-nobootstrapupdate",
+                "-skipinitialbootstrap",
+                "-norepairfiles",
+                "-overridepackageurl",
+                "-disable-winh264",
+                "-language",
+                "english"
+            )
 
             val process = ProcessBuilder(command).start()
             val `in` = BufferedReader(InputStreamReader(process.inputStream))
@@ -42,7 +52,7 @@ class Test {
             }
 
             val status = process.waitFor()
-            println("Exited with status: $status")
+            println("Exited with status: $status")*/
 
         }
 

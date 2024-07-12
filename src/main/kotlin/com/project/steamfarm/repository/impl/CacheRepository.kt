@@ -1,29 +1,26 @@
 package com.project.steamfarm.repository.impl
 
+import com.project.steamfarm.repository.PATH_REPOSITORY
 import com.project.steamfarm.repository.Repository
 import javafx.scene.image.Image
 import java.io.*
 import java.net.URL
 
-private val PHOTO_PATH = System.getProperty("user.dir") + "/users"
-private const val PHOTO_FILE_NAME = "photo.png"
+private val CACHE_PATH = "$PATH_REPOSITORY\\cache"
 
-object PhotoRepository: Repository<Image> {
+object CacheRepository: Repository<Image> {
 
     override fun findAll(): List<Image> {
         return listOf()
     }
 
+    // id = username
     override fun findById(id: String): Image? {
-
-        val path = String.format("%s/%s/%s", PHOTO_PATH, id, PHOTO_FILE_NAME)
-        val file = File(path)
+        val file = File("${CACHE_PATH}\\$id.png")
         if (!file.exists()) {
             return getPhotoFromLink(id)
         }
-
         return Image(file.toURI().toString())
-
     }
 
     override fun delete(data: Image) {}
@@ -37,9 +34,10 @@ object PhotoRepository: Repository<Image> {
         val inputStream = ByteArrayInputStream(bytes)
 
         val result = Image(inputStream)
-
-        val path = String.format("%s/%s/%s", PHOTO_PATH, username, PHOTO_FILE_NAME)
-        val file = File(path).also { it.createNewFile() }
+        val file = File("${CACHE_PATH}\\$username.png").apply {
+            parentFile.mkdirs()
+            createNewFile()
+        }
 
         FileOutputStream(file).use { outputStream -> outputStream.write(bytes) }
         return result

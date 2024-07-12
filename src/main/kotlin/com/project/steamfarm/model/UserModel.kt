@@ -1,15 +1,13 @@
 package com.project.steamfarm.model
 
+import com.project.steamfarm.data.SteamData
 import java.time.LocalDateTime
 
 data class UserModel(
-    var username: String,
-    //var userType: UserType = UserType.WAIT_AUTH,
-    var steamId: String? = null,
     var photo: String? = null,
-    var password: String,
     var createdTs: Long = System.currentTimeMillis(),
-    var gameStat: GameStat = GameStat()
+    var gameStat: GameStat = GameStat(),
+    var steam: SteamData,
 )
 
 data class GameStat(
@@ -19,7 +17,3 @@ data class GameStat(
     var currentDroppedCs: Boolean = false,
     var lastDropCsDate: LocalDateTime? = null
 )
-
-enum class UserType {
-    WAIT_AUTH, BAD_AUTH, AUTH_COMPLETED
-}

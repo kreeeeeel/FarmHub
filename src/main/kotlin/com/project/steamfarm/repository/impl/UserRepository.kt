@@ -1,42 +1,29 @@
 package com.project.steamfarm.repository.impl
 
-import com.google.gson.GsonBuilder
-import com.project.steamfarm.adapter.LocalDateTimeAdapter
 import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.repository.PATH_REPOSITORY
 import com.project.steamfarm.repository.Repository
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.time.LocalDateTime
-
-private const val USER_PATH = "/users"
-private const val USER_INFO = "/user.json"
 
 object UserRepository: Repository<UserModel> {
 
-    private val gson = GsonBuilder().setPrettyPrinting()
-        .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
-        .create()
-
     override fun findAll(): List<UserModel> {
-        val path = String.format("%s/%s", System.getProperty("user.dir"), USER_PATH)
 
-        val files = File(path).listFiles()
+        val files = File(PATH_REPOSITORY).listFiles()
         if (files == null || files.isEmpty()) {
             return listOf()
         }
 
-        val users = files.map {
-            FileReader( String.format("%s/%s", it.absolutePath, USER_INFO) ).use { reader ->
-                gson.fromJson(reader, UserModel::class.java)
+        return files.filter { it.isFile }
+            .map {
+                FileReader(it.absolutePath).use { reader -> gson.fromJson(reader, UserModel::class.java) }
             }
-        }
-        return users
     }
 
     override fun findById(id: String): UserModel? {
-        val path = String.format("%s/%s/%s/%s", System.getProperty("user.dir"), USER_PATH, id, USER_INFO)
-        val file = File(path)
+        val file = File("$PATH_REPOSITORY\\$id.json")
         if (!file.exists()) {
             return null
         }
@@ -45,20 +32,12 @@ object UserRepository: Repository<UserModel> {
         return user
     }
 
-    override fun delete(data: UserModel) {
-        val path = String.format("%s/%s/%s", System.getProperty("user.dir"), USER_PATH, data.username)
-        val file = File(path)
-        file.deleteRecursively()
+    override fun delete(data: UserModel) = File("$PATH_REPOSITORY\\${data.steam.accountName}.json").let {
+        if (it.exists()) { it.delete() }
     }
 
     override fun save(data: UserModel) {
-        val path = String.format("%s/%s/%s", System.getProperty("user.dir"), USER_PATH, data.username)
-        val directory = File(path)
-        if (!directory.exists() && !directory.mkdirs()) {
-            return
-        }
-
-        val file = File(String.format("%s%s", path, USER_INFO))
+        val file = File("$PATH_REPOSITORY\\${data.steam.accountName}.json").apply { parentFile.mkdirs() }
         FileWriter(file).use { writer ->
             writer.write(gson.toJson(data))
             writer.flush()

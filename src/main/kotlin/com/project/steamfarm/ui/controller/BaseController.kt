@@ -6,7 +6,7 @@ import com.project.steamfarm.ui.view.section.SECTION_CLOSE_ID
 import com.project.steamfarm.ui.view.section.SECTION_ID
 import com.project.steamfarm.ui.view.section.SECTION_NAME_ID
 import com.project.steamfarm.ui.view.section.StartSectionView
-import com.project.steamfarm.ui.view.window.WINDOW_ID
+import com.project.steamfarm.ui.view.modal.WINDOW_ID
 import javafx.application.Application
 import javafx.scene.Cursor
 import javafx.scene.Scene

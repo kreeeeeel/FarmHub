@@ -1,4 +1,4 @@
-package com.project.steamfarm.ui.view.window
+package com.project.steamfarm.ui.view.modal
 
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import javafx.animation.FadeTransition
@@ -29,6 +29,10 @@ abstract class DefaultWindow {
         }
 
         it.children.add(close)
+    }
+
+    protected val block: Pane = Pane().also {
+        window.children.add(it)
     }
 
     open fun show(animate: Boolean) {

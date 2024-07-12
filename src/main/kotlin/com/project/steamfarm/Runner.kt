@@ -5,7 +5,6 @@ import com.project.steamfarm.model.LangModel
 import com.project.steamfarm.repository.impl.LangRepository
 import com.project.steamfarm.ui.controller.MainController
 import javafx.application.Application
-import java.util.concurrent.Executors
 
 lateinit var langApplication: LangModel
 

@@ -1,8 +1,7 @@
-package com.project.steamfarm.ui.view.window.import
+package com.project.steamfarm.ui.view.modal.import
 
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
-import com.project.steamfarm.repository.Repository
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.service.import.PasswordImport
 import com.project.steamfarm.service.import.impl.DefaultPasswordImport
@@ -10,7 +9,7 @@ import com.project.steamfarm.service.steam.ClientSteam
 import com.project.steamfarm.service.steam.impl.DefaultClientSteam
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.notify.NotifyView
-import com.project.steamfarm.ui.view.window.DefaultWindow
+import com.project.steamfarm.ui.view.modal.DefaultWindow
 import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -22,15 +21,15 @@ import javafx.stage.Stage
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
-class PasswordFileWindow(
+class PasswordFileModal(
     private val maFiles: List<File>,
     private val action: (UserModel) -> Unit
 ): DefaultWindow() {
 
-    private val block = Pane().also {
-        it.id = "passwordFile"
-        it.layoutX = 273.0
-        it.layoutY = 135.0
+    init {
+        block.id = "passwordFile"
+        block.layoutX = 273.0
+        block.layoutY = 135.0
 
         val icon = ImageView().also { img ->
             img.id = "password"
@@ -51,7 +50,7 @@ class PasswordFileWindow(
             l.layoutY = 258.0
         }
 
-        it.children.addAll(icon, text, hint)
+        block.children.addAll(icon, text, hint)
     }
 
     private val drag = Pane().also {
@@ -94,7 +93,6 @@ class PasswordFileWindow(
 
         drag.children.addAll(file)
         block.children.addAll(drag)
-        window.children.addAll(block)
 
         super.show(false)
     }
@@ -158,7 +156,7 @@ class PasswordFileWindow(
     private fun authenticate(userModels: List<UserModel>) = userModels.forEach {
         CompletableFuture.supplyAsync {
             it.createdTs = System.currentTimeMillis()
-            if (clientSteam.authentication(it.username, it.password)) {
+            if (clientSteam.authentication(it.steam.accountName, it.steam.password, it.steam.sharedSecret)) {
 
                 val data = clientSteam.getProfileData()
                 if (data != null) {

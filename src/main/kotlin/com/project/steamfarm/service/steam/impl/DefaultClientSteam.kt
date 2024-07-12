@@ -1,6 +1,5 @@
 package com.project.steamfarm.service.steam.impl
 
-import com.project.steamfarm.repository.impl.MaFileRepository
 import com.project.steamfarm.retrofit.api.Profile
 import com.project.steamfarm.retrofit.response.SteamProfileResponse
 import com.project.steamfarm.service.steam.AuthSteam
@@ -24,8 +23,7 @@ class DefaultClientSteam: ClientSteam {
 
     private val steamAuthClient: AuthSteam = DefaultAuthSteam()
 
-    override fun authentication(username: String, password: String): Boolean {
-        val maFile = MaFileRepository.findById(username) ?: return false
+    override fun authentication(username: String, password: String, sharedSecret: String): Boolean {
 
         val fetchRSAParam = steamAuthClient.fetchRSAParam(username) ?: return false
 
@@ -38,7 +36,7 @@ class DefaultClientSteam: ClientSteam {
         val clientId = beginAuth.clientId ?: return false
         val requestId = beginAuth.requestId ?: return false
 
-        if( !steamAuthClient.updateSessionWithSteamGuard(id, maFile.sharedSecret, clientId) ){
+        if( !steamAuthClient.updateSessionWithSteamGuard(id, sharedSecret, clientId) ){
             return false
         }
 
