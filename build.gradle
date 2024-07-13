@@ -19,7 +19,7 @@ ext {
 }
 
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -37,6 +37,7 @@ javafx {
 }
 
 dependencies {
+    implementation("com.sikulix:sikulixapi:2.0.5")
     implementation("org.seleniumhq.selenium:selenium-java:4.22.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")

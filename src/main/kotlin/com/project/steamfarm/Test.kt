@@ -2,12 +2,19 @@ package com.project.steamfarm
 
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
+import javafx.scene.image.Image
+import org.sikuli.script.App
+import org.sikuli.script.FindFailed
+import org.sikuli.script.Pattern
+import org.sikuli.script.Region
+import org.sikuli.script.Screen
 import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import kotlin.math.log
 
 @Suppress("unused")
 class Test {
@@ -140,8 +147,81 @@ class Test {
             return null
         }
     }*/
+
+    fun testScreen() {
+
+        /*ProcessBuilder(listOf(
+            steamPath,
+            "-appLaunch",
+            "570",
+            "-silent",
+            "-w",
+            "480",
+            "-h",
+            "360",
+            "-sw",
+            "-console",
+            "-novid",
+            "-low",
+            "-nosound",
+            "-x",
+            "0",
+            "-y",
+            "0"
+        )).start()
+
+        val path = "C:\\Users\\nemty\\Desktop\\Projects\\Steam Farm Desktop\\src\\main\\resources\\com\\project\\steamfarm\\pages\\auth"
+
+        val screen = Screen()
+        val window = Pattern("$path\\main.png")
+        val match = screen.wait(window, 100.0)
+
+        val login = match.wait("$path\\login.png", 100.0).wait("$path\\field.png", 100.0)
+        val password = match.wait("$path\\password.png", 100.0).wait("$path\\field.png", 100.0)
+
+        val userModel = UserRepository.findAll()[0]
+        match.type(login, userModel.steam.accountName)
+        match.type(password, userModel.steam.password)
+
+        val signIn = match.wait("$path\\signIn.png", 100.0)
+        signIn.click()
+
+        val guardField = screen.wait("$path\\guard.png", 100.0)
+        guardField.type(guard.getCode(userModel.steam.sharedSecret))*/
+
+        val screen = Screen()
+        val path = "C:\\Users\\nemty\\Desktop\\Projects\\Steam Farm Desktop\\src\\main\\resources\\com\\project\\steamfarm\\pages\\auth"
+        val pattern = Pattern("$path\\wk.png")
+
+        val region = Region(47, 75, 390, 192)
+
+        val similarities = listOf(0.7)
+        val resizeFactors = listOf(1F)
+
+        var found = false
+
+        for (similarity in similarities) {
+            for (resizeFactor in resizeFactors) {
+                try {
+                    val adjustedPattern = pattern.similar(similarity).resize(resizeFactor)
+                    val pudge = region.wait(adjustedPattern, 10.0)
+                    pudge.click()
+                    println("Image found and clicked with similarity: $similarity and resize: $resizeFactor")
+                    found = true
+                    break
+                } catch (e: FindFailed) {
+                    println("Image not found with similarity: $similarity and resize: $resizeFactor")
+                }
+            }
+            if (found) break
+        }
+
+        if (!found) {
+            println("Image not found with any of the given similarity and resize values.")
+        }
+    }
 }
 
 fun main() {
-    Test().start()
+    Test().testScreen()
 }
