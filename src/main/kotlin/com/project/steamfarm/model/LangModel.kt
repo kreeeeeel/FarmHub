@@ -31,8 +31,8 @@ data class Menu(
     var basic: String = "Basic",
     var other: String = "Other",
     var accounts: String = "Accounts",
-    var farm: String = "Farm",
-    var sell: String = "Sell items",
+    var farm: String = "Farming in games",
+    var sell: String = "Auto Sell",
     var subscribe: String = "Subscribe",
     var cloud: String = "Cloud",
     var settings: String = "Settings",
@@ -47,7 +47,7 @@ data class Accounts(
     var numberOfAccounts: String = "Number of accounts: ",
     var notFound: String = "Nothing found..",
     var hintToImport: String = "To import accounts, click 'Import'",
-    var unused: String = "User not used",
+    var userNotActive: String = "User not used",
     var maFile: MaFile = MaFile(),
     var passwordFile: PasswordFile = PasswordFile(),
     var action: AccountAction = AccountAction(),
@@ -92,7 +92,7 @@ data class Failure (
     var name: String = "An error has occurred",
     var maFile: String = "The files you selected are not .maFile, please select other files",
     var passwordsNotFound: String = "No passwords were found in this file for the accounts you are importing.",
-    var auth: String = "An error occurred while authorizing account '%s'! You may have entered the wrong password.."
+    //var auth: String = "An error occurred while authorizing account '%s'! You may have entered the wrong password.."
 )
 
 data class Warning(

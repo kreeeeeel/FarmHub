@@ -6,7 +6,7 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
-private val FILE_CONFIG = File(System.getProperty("user.dir") + "/config.json")
+private val FILE_CONFIG = File(System.getProperty("user.dir") + "\\config\\config.json")
 
 data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,

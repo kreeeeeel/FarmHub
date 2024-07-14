@@ -68,7 +68,7 @@ abstract class DefaultUserMenuView {
 
     fun getStatusGame(isDotaEnabled: Boolean, isCsEnabled: Boolean): String {
         if (!isDotaEnabled && !isCsEnabled) {
-            return langApplication.text.accounts.unused
+            return langApplication.text.accounts.userNotActive
         }
 
         val stringBuilder = StringBuilder()

@@ -345,7 +345,7 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
     private fun getEnabledMode(isDotaEnabled: Boolean, isCsEnabled: Boolean): String {
 
         if (!isDotaEnabled && !isCsEnabled) {
-            return langApplication.text.accounts.unused
+            return langApplication.text.accounts.userNotActive
         }
 
         val stringBuilder = StringBuilder()
