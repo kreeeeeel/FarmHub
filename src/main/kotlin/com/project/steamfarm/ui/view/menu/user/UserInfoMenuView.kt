@@ -7,7 +7,7 @@ import com.project.steamfarm.repository.impl.HeroImageRepository
 import com.project.steamfarm.repository.impl.HeroRepository
 import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
-import com.project.steamfarm.ui.view.modal.DEFAULT_PHOTO
+import com.project.steamfarm.ui.view.modal.DEFAULT_RANDOM_PHOTO
 import com.project.steamfarm.ui.view.modal.DropUserModal
 import com.project.steamfarm.ui.view.modal.HeroModal
 import com.project.steamfarm.ui.view.section.GAME_CS_ID
@@ -161,7 +161,7 @@ class UserInfoMenuView(
                 img.layoutY = 8.0
                 img.fitWidth = 24.0
                 img.fitHeight = img.fitWidth
-                img.image = HeroImageRepository.findById(heroModel.icon) ?: DEFAULT_PHOTO
+                img.image = HeroImageRepository.findById(heroModel.icon) ?: DEFAULT_RANDOM_PHOTO
             }
         }
 

@@ -27,7 +27,6 @@ import javafx.util.Duration
 import java.util.*
 import java.util.concurrent.Executors
 
-val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/photo.png")!!.toURI().toString())
 
 private const val USER_VIEW_ID = "userView"
 private const val USER_CHECKBOX_EMPTY = "checkBox"
@@ -47,6 +46,12 @@ const val DOTA_NAME = "Dota 2"
 const val CS_NAME = "Counter-Strike 2"
 
 private const val USER_VIEW_Y = 60.0
+
+private val DEFAULT_STEAM_PHOTO = Image(
+    Runner::class.java.getResource("images/photo.png")!!
+        .toURI()
+        .toString()
+)
 
 class UserSectionView: DefaultSectionView(SectionType.USERS) {
 
@@ -291,7 +296,7 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
         }
 
         val photo = ImageView().also {
-            it.image = CacheRepository.findById(userModel.steam.accountName) ?: DEFAULT_PHOTO
+            it.image = CacheRepository.findById(userModel.steam.accountName) ?: DEFAULT_STEAM_PHOTO
             it.layoutX = 60.0
             it.layoutY = 12.0
             it.fitWidth = 36.0

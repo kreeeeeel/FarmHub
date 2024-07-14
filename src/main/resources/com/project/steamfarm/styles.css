@@ -392,7 +392,6 @@
 
 #on { -fx-image: url("images/on.png") }
 #off { -fx-image: url("images/off.png") }
-#pudge { -fx-image: url("images/pudge.png") }
 
 #accountButton {
     -fx-pref-width: 230px;

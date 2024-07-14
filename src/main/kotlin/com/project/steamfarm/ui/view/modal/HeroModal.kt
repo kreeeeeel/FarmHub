@@ -35,7 +35,11 @@ private const val HERO_FIELD_ID = "hero"
 
 private const val HERO_HINT_ID = "peekHeroHint"
 
-val DEFAULT_PHOTO = Image(Runner::class.java.getResource("images/random.png")!!.toURI().toString())
+val DEFAULT_RANDOM_PHOTO = Image(
+    Runner::class.java.getResource("images/random.png")!!
+        .toURI()
+        .toString()
+)
 
 class HeroModal: DefaultModal() {
 
@@ -222,7 +226,7 @@ class HeroModal: DefaultModal() {
         it.id = HERO_PEEKED_ID
         it.layoutX = 14.0
 
-        var image = DEFAULT_PHOTO
+        var image = DEFAULT_RANDOM_PHOTO
 
         if (heroModel != null) {
             HeroImageRepository.findById(heroModel.icon)?.let { i -> image = i }
@@ -235,7 +239,7 @@ class HeroModal: DefaultModal() {
         }
 
         val label = Label().also { l ->
-            l.text = if (image == DEFAULT_PHOTO) langApplication.text.accounts.hero.random else heroModel?.name
+            l.text = if (image == DEFAULT_RANDOM_PHOTO) langApplication.text.accounts.hero.random else heroModel?.name
             l.id = HERO_PEEKED_NAME_ID
             l.layoutX = 55.0
             l.layoutY = 15.0

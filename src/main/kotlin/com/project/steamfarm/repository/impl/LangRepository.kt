@@ -1,12 +1,11 @@
 package com.project.steamfarm.repository.impl
 
 import com.project.steamfarm.model.LangModel
-import com.project.steamfarm.repository.PATH_REPOSITORY
 import com.project.steamfarm.repository.Repository
 import java.io.File
 import java.io.FileReader
 
-private val PATH_LANGUAGES = "$PATH_REPOSITORY\\languages"
+private val PATH_LANGUAGES = "${System.getProperty("user.dir")}\\config\\Languages"
 private val FILE_LANG = File(PATH_LANGUAGES)
 
 object LangRepository: Repository<LangModel> {
