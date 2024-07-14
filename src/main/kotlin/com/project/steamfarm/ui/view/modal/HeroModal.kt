@@ -21,7 +21,6 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
 import javafx.scene.text.Text
-import java.util.concurrent.Executors
 
 private const val HERO_PRIORITY_BLOCK_ID = "peekHeroBlock"
 private const val HERO_PEEKED_ID = "peekedHero"
@@ -118,12 +117,9 @@ class HeroModal: DefaultModal() {
     }
 
     private lateinit var currentHeroes: MutableMap<HeroModel, Pane>
+    private lateinit var currentPriorityHeroes: MutableList<HeroDataView>
 
-    private var currentPriorityHeroes: MutableList<Pane> = MutableList(6) { Pane() }
-    private var usedHeroes: MutableList<Pane> = MutableList(6) { Pane() }
-
-    private lateinit var selectedPriorityHero: Pane
-    private var selectedPriorityHeroIndex: Int = -1
+    private var selectedPriorityHeroIndex: Int = 0
 
     private lateinit var userModel: UserModel
 
@@ -135,17 +131,16 @@ class HeroModal: DefaultModal() {
         search.children.addAll(searchInner, count, scroll)
         window.children.addAll(priority, search, hint)
 
-        val executor = Executors.newCachedThreadPool()
-        executor.submit {
-            currentHeroes = HeroRepository.findAll().associateWith { getHeroView(it) }.toMutableMap()
+        currentPriorityHeroes = userModel.gameStat.priorityHero.mapIndexed { index, it ->
+            HeroDataView(it, Pane(), getPriorityView(HeroRepository.findById(it), index).apply { layoutY = 55.0 + 55.0*index  })
+        }.toMutableList().also { viewPriorityHeroes() }
 
-            Platform.runLater {
-                count.text = "${langApplication.text.accounts.hero.count}${currentHeroes.size}"
-                viewPriorityHeroes()
-                viewHeroes(currentHeroes.values.toList(), true)
+        currentHeroes = HeroRepository.findAll().associateWith { getHeroView(it) }
+            .toMutableMap().also {
+                count.text = "${langApplication.text.accounts.hero.count}${it.size}"
+                viewHeroes(it.values.toList(), true)
             }
-        }
-        executor.shutdown()
+
         super.show()
     }
 
@@ -157,20 +152,10 @@ class HeroModal: DefaultModal() {
     )
 
     private fun viewPriorityHeroes() = Platform.runLater {
-        currentPriorityHeroes = List(currentPriorityHeroes.size) { index ->
-            getPriorityView(HeroRepository.findById(userModel.gameStat.priorityHero[index]))
-                .also {
-                    it.layoutY = 55.0 + 55.0*index
-                }
-        }.toMutableList()
+        changePriority(selectedPriorityHeroIndex)
 
-        selectedPriorityHero = currentPriorityHeroes[0]
-        selectedPriorityHero.id = HERO_SELECTED_PEEKED_ID
-
-        selectedPriorityHeroIndex = 0
-
-        priority.children.addAll(currentPriorityHeroes)
-        animateFadeTransition(currentPriorityHeroes, 75.0)
+        priority.children.addAll(currentPriorityHeroes.map { it.priorityHero })
+        animateFadeTransition(priority.children, 75.0)
     }
 
     private fun viewHeroes(heroes: List<Pane>, isAnimate: Boolean = false) = Platform.runLater {
@@ -215,11 +200,11 @@ class HeroModal: DefaultModal() {
     private fun getHeroView(heroModel: HeroModel) = Pane().also {
         it.id = HERO_FIELD_ID
 
-        val correctName = getCorrectHeroName(heroModel.name)
-        if (userModel.gameStat.priorityHero.contains(correctName)) {
-            it.isDisable = true
-            usedHeroes[userModel.gameStat.priorityHero.indexOf(correctName)] = it
-        }
+        currentPriorityHeroes.firstOrNull { hero -> hero.name == getCorrectHeroName(heroModel.name) }
+            ?.let { v ->
+                it.isDisable = true
+                v.hero = it
+            }
 
         val icon = ImageView().also { img ->
             img.image = HeroImageRepository.findById(heroModel.icon)
@@ -227,21 +212,13 @@ class HeroModal: DefaultModal() {
             img.layoutY = 9.0
         }
 
-        viewNameHero(heroModel.name, it)
-
-        it.setOnMouseClicked { event ->
-            if (event.button == MouseButton.PRIMARY) {
-                changePriorityHero(heroModel)
-
-                it.isDisable = true
-                usedHeroes[selectedPriorityHeroIndex].isDisable = false
-                usedHeroes[selectedPriorityHeroIndex] = it
-            }
-        }
+        it.setOnMouseClicked { event -> if (event.button == MouseButton.PRIMARY) changePriorityHero(heroModel, it) }
         it.children.add(icon)
+
+        viewNameHero(heroModel.name, it)
     }
 
-    private fun getPriorityView(heroModel: HeroModel?): Pane = Pane().also {
+    private fun getPriorityView(heroModel: HeroModel?, index: Int): Pane = Pane().also {
         it.id = HERO_PEEKED_ID
         it.layoutX = 14.0
 
@@ -258,9 +235,7 @@ class HeroModal: DefaultModal() {
         }
 
         val label = Label().also { l ->
-            l.text = if (image == DEFAULT_PHOTO)
-                langApplication.text.accounts.hero.random
-            else heroModel?.name
+            l.text = if (image == DEFAULT_PHOTO) langApplication.text.accounts.hero.random else heroModel?.name
             l.id = HERO_PEEKED_NAME_ID
             l.layoutX = 55.0
             l.layoutY = 15.0
@@ -280,16 +255,7 @@ class HeroModal: DefaultModal() {
             }
 
             p.setOnMouseClicked { event ->
-
-                val index = userModel.gameStat.priorityHero.indexOf(getCorrectHeroName(heroModel!!.name))
-                userModel.gameStat.priorityHero[index] = "default"
-                usedHeroes[index].isDisable = false
-
-                it.children.clear()
-                it.children.addAll(getPriorityView(null).children)
-
-                UserRepository.save(userModel)
-
+                clearPriorityHero(index)
                 event.consume()
             }
             p.children.add(clearImg)
@@ -298,40 +264,34 @@ class HeroModal: DefaultModal() {
         it.setOnMouseEntered { clear.isVisible = true && heroModel != null }
         it.setOnMouseExited { clear.isVisible = false }
         it.setOnMouseClicked { event ->
-            changePriority(currentPriorityHeroes.indexOf(it))
+            changePriority(index)
             event.consume()
         }
         it.children.addAll(icon, label, clear)
     }
 
     private fun changePriority(index: Int) {
-        if (currentPriorityHeroes[index] != selectedPriorityHero) {
-
-            selectedPriorityHero.id = HERO_PEEKED_ID
-
-            currentPriorityHeroes[index].id = HERO_SELECTED_PEEKED_ID
-            selectedPriorityHeroIndex = index
-            selectedPriorityHero = currentPriorityHeroes[index]
-        }
+        currentPriorityHeroes[selectedPriorityHeroIndex].priorityHero.id = HERO_PEEKED_ID
+        currentPriorityHeroes[index].priorityHero.id = HERO_SELECTED_PEEKED_ID
+        selectedPriorityHeroIndex = index
     }
 
-    private fun changePriorityHero(heroModel: HeroModel) {
+    private fun changePriorityHero(heroModel: HeroModel, hero: Pane) = Platform.runLater {
 
-        val prevOffsetX = selectedPriorityHero.layoutX
-        val prevOffsetY = selectedPriorityHero.layoutY
-
-        priority.children.remove(selectedPriorityHero)
-
-        val priorityView = getPriorityView(heroModel).also {
+        val priorityView = getPriorityView(heroModel, selectedPriorityHeroIndex).also {
             it.id = HERO_SELECTED_PEEKED_ID
 
-            it.layoutX = prevOffsetX
-            it.layoutY = prevOffsetY
-        }
+            it.layoutX = currentPriorityHeroes[selectedPriorityHeroIndex].priorityHero.layoutX
+            it.layoutY = currentPriorityHeroes[selectedPriorityHeroIndex].priorityHero.layoutY
 
-        selectedPriorityHero = priorityView
-        currentPriorityHeroes[selectedPriorityHeroIndex] = priorityView
-        priority.children.add(priorityView)
+            priority.children.remove(currentPriorityHeroes[selectedPriorityHeroIndex].priorityHero)
+            priority.children.add(it)
+        }
+        currentPriorityHeroes[selectedPriorityHeroIndex].hero.isDisable = false
+
+        currentPriorityHeroes[selectedPriorityHeroIndex].hero = hero
+        currentPriorityHeroes[selectedPriorityHeroIndex].hero.isDisable = true
+        currentPriorityHeroes[selectedPriorityHeroIndex].priorityHero = priorityView
 
         userModel.gameStat.priorityHero[selectedPriorityHeroIndex] = getCorrectHeroName(heroModel.name)
         UserRepository.save(userModel)
@@ -371,9 +331,38 @@ class HeroModal: DefaultModal() {
         prevInfoHero = null
     }
 
+    private fun clearPriorityHero(index: Int) = Platform.runLater {
+
+        val priorityView = getPriorityView(null, index).also {
+            it.layoutX = currentPriorityHeroes[index].priorityHero.layoutX
+            it.layoutY = currentPriorityHeroes[index].priorityHero.layoutY
+
+            priority.children.remove(currentPriorityHeroes[index].priorityHero)
+            priority.children.add(it)
+        }
+
+        currentPriorityHeroes[index].priorityHero = priorityView
+        if (selectedPriorityHeroIndex == index) {
+            currentPriorityHeroes[index].priorityHero.id = HERO_SELECTED_PEEKED_ID
+        }
+
+        currentPriorityHeroes[index].name = "default"
+        currentPriorityHeroes[index].hero.isDisable = false
+        currentPriorityHeroes[index].priorityHero = priorityView
+
+        userModel.gameStat.priorityHero[index] = "default"
+        UserRepository.save(userModel)
+    }
+
     private fun getCorrectHeroName(name: String) = name.trim()
         .replace(" ", "_")
         .replace("-", "_")
         .lowercase()
 
 }
+
+data class HeroDataView(
+    var name: String,
+    var hero: Pane,
+    var priorityHero: Pane
+)
