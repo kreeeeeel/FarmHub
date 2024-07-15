@@ -86,7 +86,7 @@ class Test {
 
     fun api () {
         val authSteamDesktop = DefaultAuthSteamDesktop()
-        val userModel = UserRepository.findAll()[3]
+        val userModel = UserRepository.findAll()[6]
         authSteamDesktop.start(userModel.steam.accountName, 730)
         authSteamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
         authSteamDesktop.guard(userModel.steam.sharedSecret)
