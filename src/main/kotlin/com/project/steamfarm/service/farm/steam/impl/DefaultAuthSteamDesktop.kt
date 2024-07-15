@@ -9,6 +9,7 @@ import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
 import com.project.steamfarm.service.user32.User32
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR
 import com.sun.jna.platform.win32.WinDef
+import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.platform.win32.WinUser.INPUT
 import org.sikuli.script.Pattern
 import java.io.File
@@ -18,7 +19,7 @@ val charToVK = mapOf(
     'h' to 0x48, 'i' to 0x49, 'j' to 0x4A, 'k' to 0x4B, 'l' to 0x4C, 'm' to 0x4D, 'n' to 0x4E,
     'o' to 0x4F, 'p' to 0x50, 'q' to 0x51, 'r' to 0x52, 's' to 0x53, 't' to 0x54, 'u' to 0x55,
     'v' to 0x56, 'w' to 0x57, 'x' to 0x58, 'y' to 0x59, 'z' to 0x5A,
-    'A' to 65, 'B' to 0x42, 'C' to 0x43, 'D' to 0x44, 'E' to 0x45, 'F' to 0x46, 'G' to 0x47,
+    'A' to 0x41, 'B' to 0x42, 'C' to 0x43, 'D' to 0x44, 'E' to 0x45, 'F' to 0x46, 'G' to 0x47,
     'H' to 0x48, 'I' to 0x49, 'J' to 0x4A, 'K' to 0x4B, 'L' to 0x4C, 'M' to 0x4D, 'N' to 0x4E,
     'O' to 0x4F, 'P' to 0x50, 'Q' to 0x51, 'R' to 0x52, 'S' to 0x53, 'T' to 0x54, 'U' to 0x55,
     'V' to 0x56, 'W' to 0x57, 'X' to 0x58, 'Y' to 0x59, 'Z' to 0x5A
@@ -69,10 +70,10 @@ class DefaultAuthSteamDesktop: AuthSteamDesktop() {
 
         User32.INSTANCE.GetWindowThreadProcessId(hWnd, currentPid)
         User32.INSTANCE.SetForegroundWindow(hWnd)
+        User32.INSTANCE.SetFocus(hWnd)
 
-
-        "A".toCharArray().forEach {
-            val vkCode = charToVK[it] ?: it.code
+        password.toCharArray().forEach { char ->
+            val vkCode = charToVK[char] ?: char.code
             val input = INPUT()
 
             input.type = WinDef.DWORD(INPUT.INPUT_KEYBOARD.toLong())
@@ -81,29 +82,25 @@ class DefaultAuthSteamDesktop: AuthSteamDesktop() {
             input.input.ki.time = WinDef.DWORD(0)
             input.input.ki.dwExtraInfo = ULONG_PTR(0)
 
+            if (char.isUpperCase()) {
+                input.input.ki.wVk = WinDef.WORD(0x10)
+                input.input.ki.dwFlags = WinDef.DWORD(0)
+                User32.INSTANCE.SendInput(WinDef.DWORD(1), arrayOf(input), input.size())
+            }
+
             input.input.ki.wVk = WinDef.WORD(vkCode.toLong())
             input.input.ki.dwFlags = WinDef.DWORD(0) // keydown
+            User32.INSTANCE.SendInput(WinDef.DWORD(1), arrayOf(input), input.size())
 
-            User32.INSTANCE.SendInput(WinDef.DWORD(1), input.toArray(1) as Array<INPUT?>, input.size())
+            input.input.ki.dwFlags = WinDef.DWORD(WinUser.KEYBDINPUT.KEYEVENTF_KEYUP.toLong())
+            User32.INSTANCE.SendInput(WinDef.DWORD(1), arrayOf(input), input.size())
 
-
-            input.input.ki.wVk = WinDef.WORD(it.code.toLong())
-            input.input.ki.dwFlags = WinDef.DWORD(2) // keyup
-
-            User32.INSTANCE.SendInput(WinDef.DWORD(1), input.toArray(1) as Array<INPUT?>, input.size())
+            if (char.isUpperCase()) {
+                input.input.ki.wVk = WinDef.WORD(0x10)
+                input.input.ki.dwFlags = WinDef.DWORD(WinUser.KEYBDINPUT.KEYEVENTF_KEYUP.toLong())
+                User32.INSTANCE.SendInput(WinDef.DWORD(1), arrayOf(input), input.size())
+            }
         }
-
-        /*val offsetProperties = getOffsetProperties(hWnd)
-        val login = Region(offsetProperties.offsetX + 45, offsetProperties.offsetY + 135)
-        login.click()
-        login.type(username)
-
-        val pass = Region(offsetProperties.offsetX + 45, offsetProperties.offsetY + 210)
-        pass.click()
-        pass.type(password)
-
-        val signIn = Region(offsetProperties.offsetX + 220, offsetProperties.offsetY + 300)
-        signIn.click()*/
     }
 
     override fun guard(sharedSecret: String) {
