@@ -1,5 +1,6 @@
 package com.project.steamfarm
 
+import com.project.steamfarm.AsciiTable.drawAsciiTable
 import com.project.steamfarm.model.ConfigModel
 import com.project.steamfarm.model.LangModel
 import com.project.steamfarm.repository.impl.LangRepository
@@ -86,12 +87,38 @@ class Test {
 
     fun api () {
         val authSteamDesktop = DefaultAuthSteamDesktop()
-        val userModel = UserRepository.findAll()[6]
-        authSteamDesktop.start(userModel.steam.accountName, 730)
+        val userModel = UserRepository.findAll()[0]
+        //authSteamDesktop.start(userModel.steam.accountName, 570)
         authSteamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
-        authSteamDesktop.guard(userModel.steam.sharedSecret)
+        //authSteamDesktop.guard(userModel.steam.sharedSecret)
     }
 
+}
+
+/**
+ * A simple console application that displays the ascii table.
+ *
+ * @author Daniel Peters
+ */
+object AsciiTable {
+    /**
+     * Maximum amount of columns before line break.
+     */
+    private val MAX_COLS: Int = 6
+
+    /**
+     * Outputs the ascii table to the console window.
+     */
+    fun drawAsciiTable() {
+        for (c in 32..128) {
+            System.out.print(c.toString() + ": " +  c.toChar() + "\t")
+
+            if (c % MAX_COLS == 1) {
+                System.out.println()
+            }
+        }
+        System.out.println()
+    }
 }
 
 fun main() {
@@ -99,5 +126,6 @@ fun main() {
     val configModel: ConfigModel = ConfigModel().fromFile()
     langApplication = LangRepository.findById(configModel.langApp) ?: LangModel()
 
-    Test().api()
+    drawAsciiTable()
+    //Test().api()
 }
