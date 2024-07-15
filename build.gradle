@@ -25,7 +25,7 @@ tasks.withType(JavaCompile).configureEach {
 
 application {
     mainModule = 'com.project.steamfarm'
-    mainClass = 'com.project.steamfarm.Runner'
+    mainClass = 'com.project.steamfarm.TestKt'
 }
 kotlin {
     jvmToolchain(17)
@@ -38,7 +38,9 @@ javafx {
 
 dependencies {
     implementation("com.sikulix:sikulixapi:2.0.5")
-    implementation("org.seleniumhq.selenium:selenium-java:4.22.0")
+
+    implementation("net.java.dev.jna:jna:5.14.0")
+    implementation("net.java.dev.jna:jna-platform:5.14.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
@@ -62,4 +64,12 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
+}
+
+tasks.jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass.get()
+        )
+    }
 }

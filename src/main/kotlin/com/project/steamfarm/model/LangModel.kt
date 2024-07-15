@@ -57,6 +57,11 @@ data class Accounts(
 
 data class Farm(
     var name: String = "Farm in games",
+    var service: FarmService = FarmService(),
+)
+
+data class FarmService(
+    var auth: String = "[%s] | Authorization"
 )
 
 data class Sell(

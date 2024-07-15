@@ -1,20 +1,19 @@
 package com.project.steamfarm
 
+import com.project.steamfarm.model.ConfigModel
+import com.project.steamfarm.model.LangModel
+import com.project.steamfarm.repository.impl.LangRepository
 import com.project.steamfarm.repository.impl.UserRepository
+import com.project.steamfarm.service.farm.steam.impl.DefaultAuthSteamDesktop
 import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
-import javafx.scene.image.Image
-import org.sikuli.script.App
-import org.sikuli.script.FindFailed
-import org.sikuli.script.Pattern
-import org.sikuli.script.Region
-import org.sikuli.script.Screen
+import com.sun.jna.platform.win32.User32
+import com.sun.jna.platform.win32.WinDef
+import com.sun.jna.platform.win32.WinUser.INPUT
 import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import kotlin.math.log
+
 
 @Suppress("unused")
 class Test {
@@ -27,15 +26,15 @@ class Test {
 
     fun start() {
         UserRepository.findAll()[1].let {
-            val command = listOf(
+            /*val command = listOf(
                 steamPath,
                 "-login",
                 it.steam.accountName,
                 it.steam.password,
                 guard.getCode(it.steam.sharedSecret)
-            )
+            )*/
 
-            val process = ProcessBuilder(command).start()
+            //val process = ProcessBuilder(command).start()
             /*val `in` = BufferedReader(InputStreamReader(process.inputStream))
             val er = BufferedReader(InputStreamReader(process.errorStream))
 
@@ -148,9 +147,9 @@ class Test {
         }
     }*/
 
-    fun testScreen() {
+    /*fun testScreen() {
 
-        /*ProcessBuilder(listOf(
+        ProcessBuilder(listOf(
             steamPath,
             "-appLaunch",
             "570",
@@ -187,9 +186,9 @@ class Test {
         signIn.click()
 
         val guardField = screen.wait("$path\\guard.png", 100.0)
-        guardField.type(guard.getCode(userModel.steam.sharedSecret))*/
+        guardField.type(guard.getCode(userModel.steam.sharedSecret))
 
-        val screen = Screen()
+        /*val screen = Screen()
         val path = "C:\\Users\\nemty\\Desktop\\Projects\\Steam Farm Desktop\\src\\main\\resources\\com\\project\\steamfarm\\pages\\auth"
         val pattern = Pattern("$path\\wk.png")
 
@@ -218,10 +217,38 @@ class Test {
 
         if (!found) {
             println("Image not found with any of the given similarity and resize values.")
-        }
+        }*/
+    }*/
+
+    fun api () {
+        val authSteamDesktop = DefaultAuthSteamDesktop()
+        val userModel = UserRepository.findAll()[3]
+        authSteamDesktop.start(userModel.steam.accountName, 730)
+        authSteamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
+        authSteamDesktop.guard(userModel.steam.sharedSecret)
+    }
+
+    fun type(value: String): CharArray {
+        val textBuffer: CharArray = value.toCharArray()
+        val lParamBuffer = CharArray(textBuffer.size + 1)
+        System.arraycopy(textBuffer, 0, lParamBuffer, 0, textBuffer.size)
+        lParamBuffer[textBuffer.size] = '\u0000'
+        return lParamBuffer
+    }
+
+    private fun sendInput(input: INPUT) {
+        val inputs = arrayOf(input)
+        User32.INSTANCE.SendInput(WinDef.DWORD(1), inputs, input.size())
     }
 }
 
 fun main() {
-    Test().testScreen()
+
+    val configModel: ConfigModel = ConfigModel().fromFile()
+    langApplication = LangRepository.findById(configModel.langApp) ?: LangModel()
+
+    Test().api()
+    //val userModel = UserRepository.findAll()[0]
+    //println("login ${userModel.steam.accountName} ${userModel.steam.password} ${DefaultGuardSteam().getCode(userModel.steam.sharedSecret)}")
+    //Test().testScreen()
 }

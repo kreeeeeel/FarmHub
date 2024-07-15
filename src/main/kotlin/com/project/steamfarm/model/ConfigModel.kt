@@ -10,6 +10,7 @@ private val FILE_CONFIG = File(System.getProperty("user.dir") + "\\config\\confi
 
 data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,
+    var steamExecutor: String? = null
 ) {
 
     @Transient
