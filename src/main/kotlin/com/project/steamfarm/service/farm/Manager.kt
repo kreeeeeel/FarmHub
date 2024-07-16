@@ -40,7 +40,7 @@ class Manager {
             val offsetX = horizontal++ * offsetProperty.width
             val offsetY = vertical * offsetProperty.height
 
-            if (horizontal >= 3) {
+            if (horizontal >= 5) {
                 horizontal = 0
                 vertical++
             }
