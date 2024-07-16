@@ -1,7 +1,7 @@
 package com.project.steamfarm.service.farm
 
 import com.project.steamfarm.data.WindowData
-import com.project.steamfarm.service.user32.User32
+import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.ptr.IntByReference

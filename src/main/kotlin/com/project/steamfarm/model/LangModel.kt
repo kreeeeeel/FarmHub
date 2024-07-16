@@ -61,7 +61,8 @@ data class Farm(
 )
 
 data class FarmService(
-    var auth: String = "[%s] | Authorization"
+    var auth: String = "[%s] | Authorization",
+    var dota: String = "[%s] | Dota 2"
 )
 
 data class Sell(

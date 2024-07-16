@@ -11,6 +11,6 @@ abstract class AuthSteamDesktop: Desktop() {
 
     abstract fun start(ipcName: String, gameId: Int)
     abstract fun signIn(username: String, password: String)
-    abstract fun guard(sharedSecret: String)
+    abstract fun guard(sharedSecret: String): Boolean
 
 }
