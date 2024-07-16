@@ -2,6 +2,8 @@ package com.project.steamfarm.service.farm.steam.impl
 
 import com.project.steamfarm.service.farm.DEFAULT_DURATION
 import com.project.steamfarm.service.farm.PATH_TO_IMG
+import com.project.steamfarm.service.farm.VK_ENTER
+import com.project.steamfarm.service.farm.VK_TAB
 import com.project.steamfarm.service.farm.steam.AuthSteamDesktop
 import com.project.steamfarm.service.farm.steam.STEAM_SIGN_IN_NAME
 import com.project.steamfarm.service.steam.GuardSteam
@@ -9,7 +11,6 @@ import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinDef.HWND
 import org.sikuli.script.Pattern
-import org.sikuli.script.Region
 import java.io.File
 import java.lang.Exception
 
@@ -34,7 +35,7 @@ class AuthSteamDesktopImpl: AuthSteamDesktop() {
         processBuilder.environment()["VPROJECT"] = random
 
         val command = listOf(
-            configModel.steamExecutor, "-login", "-nofriendsui", "-vgui", "-noreactlogin", "-noverifyfiles", "-nobootstrapupdate",
+            configModel.steamExecutor, "-login", "-silent", "-nofriendsui", "-vgui", "-noreactlogin", "-noverifyfiles", "-nobootstrapupdate",
             "-skipinitialbootstrap", "-norepairfiles", "-overridepackageurl", "-disable-winh264", "-language",
             "english", "-master_ipc_name_override", "$ipcName$random", "-applaunch", "$gameId", "-language", "english",
             "+exec", "autoexec.cfg", "+exec", "gamestate_integration_1.cfg", "-w", "360", "-h", "270", "-console",
@@ -54,20 +55,14 @@ class AuthSteamDesktopImpl: AuthSteamDesktop() {
             hWnd = User32.INSTANCE.FindWindow(null, STEAM_SIGN_IN_NAME)
         }
 
-        User32.INSTANCE.GetWindowThreadProcessId(hWnd, currentPid)
-        User32.INSTANCE.SetForegroundWindow(hWnd)
+        val cefBrowserHwnd = User32.INSTANCE.FindWindowEx(hWnd, null, "CefBrowserWindow", null)
+        val widget = User32.INSTANCE.FindWindowEx(cefBrowserHwnd, null, "Chrome_WidgetWin_0", null)
 
-        val offsetProperties = getOffsetProperties(hWnd)
-        val login = Region(offsetProperties.offsetX + 45, offsetProperties.offsetY + 135)
-        login.click()
-        login.type(username)
+        postText(widget, username)
+        postKeyPress(widget, VK_TAB.toLong())
 
-        val pass = Region(offsetProperties.offsetX + 45, offsetProperties.offsetY + 210)
-        pass.click()
-        pass.type(password)
-
-        val signIn = Region(offsetProperties.offsetX + 220, offsetProperties.offsetY + 300)
-        signIn.click()
+        postText(widget, password)
+        //postKeyPress(widget, VK_ENTER.toLong())
     }
 
     override fun guard(sharedSecret: String): Boolean {

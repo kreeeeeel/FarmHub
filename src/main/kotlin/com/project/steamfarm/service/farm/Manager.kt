@@ -25,13 +25,13 @@ class Manager {
         var vertical = 0
         var horizontal = 0
 
-        userModels.forEach { userModel ->
+        //userModels.forEach { userModel ->
 
-            authSteamDesktop.start(userModel.steam.accountName, gameId)
-            authSteamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
-            authSteamDesktop.guard(userModel.steam.sharedSecret)
+            //authSteamDesktop.start(userModel.steam.accountName, gameId)
+            authSteamDesktop.signIn(userModels[0].steam.accountName, userModels[0].steam.password)
+            //authSteamDesktop.guard(userModels[0].steam.sharedSecret)
 
-            val dotaDesktop = DotaGameDesktop()
+            /*val dotaDesktop = DotaGameDesktop()
             val hwnd = dotaDesktop.gameLaunched() ?: throw NullPointerException("Dota is not running")
 
             val name = String.format(langApplication.text.farm.service.dota, userModel.steam.accountName)
@@ -46,8 +46,8 @@ class Manager {
             }
 
             User32Ext.INSTANCE.SetWindowTextA(hwnd, name)
-            User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)
-        }
+            User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)*/
+        //}
         return true
     }
 

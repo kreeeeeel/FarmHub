@@ -3,13 +3,21 @@ package com.project.steamfarm.service.farm
 import com.project.steamfarm.data.WindowData
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinDef
-import com.sun.jna.platform.win32.WinDef.HWND
+import com.sun.jna.platform.win32.WinDef.*
+import com.sun.jna.platform.win32.WinUser
+import com.sun.jna.platform.win32.WinUser.WM_KEYDOWN
 import com.sun.jna.ptr.IntByReference
 import org.sikuli.script.Region
 import java.awt.Toolkit
-import java.awt.datatransfer.DataFlavor
+
 
 val PATH_TO_IMG = "${System.getProperty("user.dir")}\\config\\ui"
+
+const val VK_TAB = 0x09
+const val VK_ENTER = 0x0D
+
+const val WM_LBUTTONDOWN = 0x0201
+const val WM_LBUTTONUP = 0x0202
 
 const val DEFAULT_DURATION = 5.0
 
@@ -30,7 +38,6 @@ open class Desktop {
         )
     }
 
-
     fun getOffsetProperties(hWnd: HWND): WindowData {
         User32.INSTANCE.GetWindowRect(hWnd, rect)
 
@@ -39,14 +46,18 @@ open class Desktop {
         return WindowData(rect.left, rect.top, screenWidth, screenHeight)
     }
 
-    private fun getClipboardText(): String? {
-        val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-        val data = clipboard.getContents(null)
-        return if (data != null && data.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-            data.getTransferData(DataFlavor.stringFlavor) as String
-        } else {
-            null
-        }
+    fun postText(hWnd: HWND?, value: String) = value.toCharArray().forEach {
+        typeChar(hWnd, it)
+    }
+
+    fun postKeyPress(hWnd: HWND?, key: Long) {
+        User32.INSTANCE.PostMessage(hWnd, WM_KEYDOWN, WPARAM(key), LPARAM(0))
+    }
+
+    private fun typeChar(hWnd: HWND?, value: Char) {
+        User32.INSTANCE.PostMessage(hWnd, WinUser.WH_MOUSE, WPARAM(0), null)
+        User32.INSTANCE.PostMessage(hWnd, WinUser.WM_CHAR, WPARAM(value.toLong()), null)
+        Thread.sleep(50)
     }
 
 }
