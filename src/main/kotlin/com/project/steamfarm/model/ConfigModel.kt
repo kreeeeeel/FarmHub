@@ -8,6 +8,9 @@ import java.io.FileWriter
 
 private val FILE_CONFIG = File(System.getProperty("user.dir") + "\\config\\config.json")
 
+const val WIDTH_APP = 384
+const val HEIGHT_APP = 216
+
 data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,
     var steamExecutor: String? = null

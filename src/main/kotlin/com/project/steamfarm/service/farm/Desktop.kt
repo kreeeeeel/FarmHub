@@ -1,32 +1,34 @@
 package com.project.steamfarm.service.farm
 
 import com.project.steamfarm.data.WindowData
-import com.sun.jna.platform.win32.User32
-import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.platform.win32.WinUser.WM_KEYDOWN
 import com.sun.jna.ptr.IntByReference
+import org.sikuli.script.Pattern
 import org.sikuli.script.Region
-import java.awt.Toolkit
-
+import java.awt.Robot
+import java.awt.event.InputEvent
 
 val PATH_TO_IMG = "${System.getProperty("user.dir")}\\config\\ui"
 
 const val VK_TAB = 0x09
 const val VK_ENTER = 0x0D
 
-const val WM_LBUTTONDOWN = 0x0201
-const val WM_LBUTTONUP = 0x0202
-
-const val DEFAULT_DURATION = 5.0
-
 open class Desktop {
 
     protected val currentPid = IntByReference()
-    private val rect = WinDef.RECT()
 
-    private val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+    private val robot = Robot()
+    private val rect = RECT()
+
+    fun click(hWnd: HWND, offsetX: Int, offsetY: Int) {
+        User32Ext.INSTANCE.SetForegroundWindow(hWnd)
+
+        robot.mouseMove(offsetX, offsetY)
+        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK)
+        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK)
+    }
 
     fun getRegion(hWnd: HWND): Region {
         val offsetProperties = getOffsetProperties(hWnd)
@@ -38,8 +40,13 @@ open class Desktop {
         )
     }
 
+    fun isCurrentPage(hwnd: HWND, pattern: Pattern): Boolean = try {
+        User32Ext.INSTANCE.SetForegroundWindow(hwnd)
+        getRegion(hwnd).wait(pattern, 1.0) != null
+    } catch (ignored: Exception) { false }
+
     fun getOffsetProperties(hWnd: HWND): WindowData {
-        User32.INSTANCE.GetWindowRect(hWnd, rect)
+        User32Ext.INSTANCE.GetWindowRect(hWnd, rect)
 
         val screenWidth = rect.right - rect.left
         val screenHeight = rect.bottom - rect.top
@@ -51,13 +58,13 @@ open class Desktop {
     }
 
     fun postKeyPress(hWnd: HWND?, key: Long) {
-        User32.INSTANCE.PostMessage(hWnd, WM_KEYDOWN, WPARAM(key), LPARAM(0))
+        User32Ext.INSTANCE.PostMessage(hWnd, WM_KEYDOWN, WPARAM(key), LPARAM(0))
+        Thread.sleep(50)
     }
 
+    @Suppress("DEPRECATION")
     private fun typeChar(hWnd: HWND?, value: Char) {
-        User32.INSTANCE.PostMessage(hWnd, WinUser.WH_MOUSE, WPARAM(0), null)
-        User32.INSTANCE.PostMessage(hWnd, WinUser.WM_CHAR, WPARAM(value.toLong()), null)
-        Thread.sleep(50)
+        User32Ext.INSTANCE.SendMessage(hWnd, WinUser.WM_CHAR, WPARAM(value.toLong()), null)
     }
 
 }

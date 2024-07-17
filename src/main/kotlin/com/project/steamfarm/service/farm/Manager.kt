@@ -2,8 +2,8 @@ package com.project.steamfarm.service.farm
 
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.UserModel
-import com.project.steamfarm.service.farm.steam.impl.AuthSteamDesktopImpl
 import com.project.steamfarm.service.farm.steam.impl.DotaGameDesktop
+import com.project.steamfarm.service.farm.steam.impl.SteamDesktopImpl
 
 const val SWP_NOSIZE = 0x0001
 const val SWP_NOZORDER = 0x0004
@@ -12,7 +12,7 @@ class Manager {
 
     private var userModels: MutableList<UserModel> = mutableListOf()
 
-    private val authSteamDesktop = AuthSteamDesktopImpl()
+    private val authSteamDesktop = SteamDesktopImpl()
 
     fun initUser(userModels: MutableList<UserModel>) {
         this.userModels = userModels
@@ -25,13 +25,15 @@ class Manager {
         var vertical = 0
         var horizontal = 0
 
-        //userModels.forEach { userModel ->
+        userModels.forEach { userModel ->
 
-            //authSteamDesktop.start(userModel.steam.accountName, gameId)
-            authSteamDesktop.signIn(userModels[0].steam.accountName, userModels[0].steam.password)
-            //authSteamDesktop.guard(userModels[0].steam.sharedSecret)
+            authSteamDesktop.start(userModel.steam.accountName, gameId)
+            authSteamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
+            authSteamDesktop.guard(userModel.steam.sharedSecret)
+            authSteamDesktop.closeSupportMessage()
+            authSteamDesktop.closeConflictDialog()
 
-            /*val dotaDesktop = DotaGameDesktop()
+            val dotaDesktop = DotaGameDesktop()
             val hwnd = dotaDesktop.gameLaunched() ?: throw NullPointerException("Dota is not running")
 
             val name = String.format(langApplication.text.farm.service.dota, userModel.steam.accountName)
@@ -45,9 +47,9 @@ class Manager {
                 vertical++
             }
 
-            User32Ext.INSTANCE.SetWindowTextA(hwnd, name)
-            User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)*/
-        //}
+            User32Ext.INSTANCE.SetWindowText(hwnd, name)
+            User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)
+        }
         return true
     }
 

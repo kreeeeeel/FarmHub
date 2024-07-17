@@ -5,8 +5,9 @@ import com.project.steamfarm.retrofit.response.SteamProfileResponse
 import com.project.steamfarm.service.steam.AuthSteam
 import com.project.steamfarm.service.steam.ClientSteam
 import retrofit2.Retrofit
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
+import retrofit2.converter.simplexml.*
 
+@Suppress("DEPRECATION")
 class DefaultClientSteam: ClientSteam {
 
     private var steamCookie: String? = null
