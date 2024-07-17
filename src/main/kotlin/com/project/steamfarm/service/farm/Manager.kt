@@ -26,7 +26,6 @@ class Manager {
         var horizontal = 0
 
         userModels.forEach { userModel ->
-
             authSteamDesktop.start(userModel.steam.accountName, gameId)
             authSteamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
             authSteamDesktop.guard(userModel.steam.sharedSecret)

@@ -3,9 +3,9 @@ package com.project.steamfarm.service.farm.steam
 import com.project.steamfarm.model.ConfigModel
 import com.project.steamfarm.service.farm.Desktop
 
-const val STEAM_SIGN_CLASS = "Sign in to Steam"
+const val STEAM_SIGN_NAME = "Sign in to Steam"
 
-abstract class AuthSteamDesktop: Desktop() {
+abstract class SteamDesktop: Desktop() {
 
     protected val configModel = ConfigModel().fromFile()
 

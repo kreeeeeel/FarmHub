@@ -11,6 +11,6 @@ fun main() {
     langApplication = LangRepository.findById(configModel.langApp) ?: LangModel()
 
     val manager = Manager()
-    manager.initUser(UserRepository.findAll().subList(10, 20).toMutableList())
+    manager.initUser(UserRepository.findAll().subList(0, 10).toMutableList())
     manager.launchGame(570)
 }

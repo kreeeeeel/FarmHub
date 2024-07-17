@@ -40,10 +40,11 @@ open class Desktop {
         )
     }
 
-    fun isCurrentPage(hwnd: HWND, pattern: Pattern): Boolean = try {
+    fun isCurrentPage(hwnd: HWND, pattern: Pattern, duration: Double): Boolean = try {
         User32Ext.INSTANCE.SetForegroundWindow(hwnd)
-        getRegion(hwnd).wait(pattern, 1.0) != null
-    } catch (ignored: Exception) { false }
+        getRegion(hwnd).wait(pattern, duration)
+        true
+    } catch (ignored: Exception) {false}
 
     fun getOffsetProperties(hWnd: HWND): WindowData {
         User32Ext.INSTANCE.GetWindowRect(hWnd, rect)

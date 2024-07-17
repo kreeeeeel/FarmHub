@@ -26,9 +26,9 @@ private val GUARD_PATH = "$STEAM_PATH\\guard.png"
 
 private val CLOUD_OUT_DATE_PATH = "$STEAM_PATH\\cloud_out_of_date.png"
 
-private const val DURATION_WAIT_GUARD = 15
-private const val DURATION_WAIT_SUPPORT_MESSAGE = 15
-private const val DURATION_WAIT_CONFLICT = 10
+private const val DURATION_WAIT_GUARD = 15.0
+private const val DURATION_WAIT_SUPPORT_MESSAGE = 15.0
+private const val DURATION_WAIT_CONFLICT = 10.0
 
 private const val OFFSET_X_CONFLICT_CLOUD = 45
 private const val OFFSET_Y_CONFLICT_CLOUD = 220
@@ -39,7 +39,7 @@ private const val OFFSET_Y_CONFLICT_SAVE = 510
 private const val OFFSET_X_CONFLICT_CLOUD_DATE = 275
 private const val OFFSET_Y_CONFLICT_CLOUD_DATE = 350
 
-class SteamDesktopImpl: AuthSteamDesktop() {
+class SteamDesktopImpl: SteamDesktop() {
 
     private val patternLogo = Pattern(LOGO_PATH)
     private val patternGuard = Pattern(GUARD_PATH)
@@ -78,10 +78,10 @@ class SteamDesktopImpl: AuthSteamDesktop() {
 
         var hWnd: HWND? = null
         while (hWnd == null) {
-            hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_CLASS)
+            hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         }
 
-        while (!isCurrentPage(hWnd, patternLogo)) { continue }
+        while (!isCurrentPage(hWnd, patternLogo, 1.0)) { continue }
 
         /* Нужно обязательно кликакать на эту хуйню чтобы ввод работа */
         val cefBrowserHwnd = User32Ext.INSTANCE.FindWindowEx(hWnd, null, "CefBrowserWindow", null)
@@ -96,15 +96,11 @@ class SteamDesktopImpl: AuthSteamDesktop() {
         postKeyPress(widgetHwnd, VK_ENTER.toLong())
     }
 
-
     override fun guard(sharedSecret: String): Boolean {
         try {
-            val hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_CLASS) ?: return false
 
-            var wait = DURATION_WAIT_GUARD
-            while (wait > 0 && !isCurrentPage(hWnd, patternGuard)) { wait-- }
-
-            if (wait <= 0) return false
+            val hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME) ?: return false
+            if (!isCurrentPage(hWnd, patternGuard, DURATION_WAIT_GUARD)) return false
 
             val cefBrowserHwnd = User32Ext.INSTANCE.FindWindowEx(hWnd, null, "CefBrowserWindow", null)
             User32Ext.INSTANCE.PostMessage(cefBrowserHwnd, WH_MOUSE, WPARAM(0), null)
@@ -114,6 +110,7 @@ class SteamDesktopImpl: AuthSteamDesktop() {
 
             val code = guardSteam.getCode(sharedSecret)
             postText(widgetHwnd, code)
+
             return true
         } catch (ignored: Exception) { return false }
     }
@@ -149,7 +146,7 @@ class SteamDesktopImpl: AuthSteamDesktop() {
 
             if (hWnd != null) {
                 TimeUnit.SECONDS.sleep(1)
-                if (isCurrentPage(hWnd, patternCloudOutDate)) {
+                if (isCurrentPage(hWnd, patternCloudOutDate, 5.0)) {
                     closeCloudOutOfDate(hWnd)
                 } else closeCloud(hWnd)
 
