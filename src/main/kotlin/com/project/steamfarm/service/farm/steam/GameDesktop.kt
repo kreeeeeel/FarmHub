@@ -7,6 +7,7 @@ import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.platform.win32.WinDef.WPARAM
 import com.sun.jna.platform.win32.WinUser.WM_CLOSE
+import kotlinx.coroutines.delay
 import org.sikuli.script.Pattern
 import java.io.File
 
@@ -34,18 +35,22 @@ abstract class GameDesktop: Desktop() {
     abstract suspend fun setName(hWnd: HWND, username: String)
     abstract suspend fun getGameHwnd(): HWND
 
-    fun closeSupport() {
+    suspend fun closeSupport() {
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, "Support Message")
         while (hWnd == null) {
+            System.gc()
+            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, "Support Message")
         }
 
         User32Ext.INSTANCE.PostMessage(hWnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
     }
 
-    fun closeCloudConflict() {
+    suspend fun closeCloudConflict() {
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, "Steam Dialog")
         while (hWnd == null) {
+            System.gc()
+            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, "Steam Dialog")
         }
 

@@ -14,6 +14,7 @@ import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.platform.win32.WinDef.WPARAM
 import com.sun.jna.platform.win32.WinUser.WH_MOUSE
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.sikuli.script.Pattern
 import java.io.File
@@ -23,7 +24,7 @@ private val STEAM_PATH = "$PATH_TO_IMG\\steam"
 private val LOGO_PATH = "$STEAM_PATH\\logo.png"
 private val GUARD_PATH = "$STEAM_PATH\\guard.png"
 
-private const val DURATION_WAIT_GUARD = 15.0
+private const val DURATION_WAIT_GUARD = 5.0
 
 class SteamDesktopImpl(
     private val gameDesktop: GameDesktop
@@ -72,6 +73,7 @@ class SteamDesktopImpl(
         LoggerService.getLogger().info("Search steam window for sign in user: $username")
         var hWnd: HWND? = null
         while (hWnd == null) {
+            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         }
 
@@ -88,9 +90,11 @@ class SteamDesktopImpl(
         postText(widgetHwnd, username)
         postKeyPress(widgetHwnd, VK_TAB.toLong())
 
-        LoggerService.getLogger().info("Entering password in Steam.")
+        LoggerService.getLogger().info("Entering $password in Steam.")
         postText(widgetHwnd, password)
         postKeyPress(widgetHwnd, VK_ENTER.toLong())
+
+        System.gc()
     }
 
     override suspend fun guard(sharedSecret: String): Boolean {
@@ -108,6 +112,8 @@ class SteamDesktopImpl(
             val code = guardSteam.getCode(sharedSecret)
             LoggerService.getLogger().info("Entering guard in Steam | Guard Code: $code")
             postText(widgetHwnd, code)
+
+            System.gc()
 
             return true
         } catch (ignored: Exception) { return false }

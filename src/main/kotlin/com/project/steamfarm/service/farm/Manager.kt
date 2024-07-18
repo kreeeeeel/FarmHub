@@ -46,14 +46,20 @@ object Manager: Desktop() {
         if (userModels.size != 10) throw IllegalStateException("Users must be 10!")
 
         val steamDesktop = SteamDesktopImpl(currentGame)
+        //val userModel = userModels[0]
         userModels.forEachIndexed { index, userModel ->
 
-            LoggerService.getLogger().info("Start account #$index for the farm")
+            LoggerService.getLogger().info("Start account #${index + 1} for the farm")
 
             currentUserName = userModel.steam.accountName
             steamDesktop.start(userModel.steam.accountName)
             steamDesktop.signIn(userModel.steam.accountName, userModel.steam.password)
-            steamDesktop.guard(userModel.steam.sharedSecret)
+            val isEntered = steamDesktop.guard(userModel.steam.sharedSecret)
+            if (!isEntered) {
+                LoggerService.getLogger().warning("User ${userModel.steam.accountName} is not entered!")
+            } else {
+                LoggerService.getLogger().info("User ${userModel.steam.accountName} is entered!")
+            }
 
             val closeJob = launch {
                 currentGame.closeSupport()
@@ -66,6 +72,7 @@ object Manager: Desktop() {
             }
 
             closeJob.cancel()
+            System.gc()
         }
     }
 
@@ -81,5 +88,6 @@ object Manager: Desktop() {
 
         LoggerService.getLogger().info("Changing the Dota2 window position for $currentUserName | X=$offsetX Y=$offsetY")
         User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)
+        System.gc()
     }
 }

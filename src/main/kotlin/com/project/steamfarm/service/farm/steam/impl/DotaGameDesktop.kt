@@ -8,6 +8,7 @@ import com.project.steamfarm.service.farm.steam.GameDesktop
 import com.project.steamfarm.service.logger.LoggerService
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinDef.HWND
+import kotlinx.coroutines.delay
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -30,8 +31,8 @@ class DotaGameDesktop: GameDesktop() {
 
     override fun getCommand(): List<String> = listOf(
         "-applaunch", "570", "-language", "english", "-w", "$WIDTH_APP", "-h", "$HEIGHT_APP", "-novid", "-prewarm",
-        "-noaafonts", "-nod3d9ex", "-console", "-nosound", "-low", "-autoconfig_level", "0", "-useforcedmparms",
-        "-maxtextureres", "2", "-noforcemaccel", "-noforcemspd", "-noipx", "-nojoy"
+        "-noaafonts", "-nod3d9ex", "-console", "+exec", "$NAME_CONFIG.cfg", "-nosound", "-high",
+        "-autoconfig_level", "0", "-maxtextureres", "2"
     )
 
     override suspend fun setName(hWnd: HWND, username: String) {
@@ -44,8 +45,11 @@ class DotaGameDesktop: GameDesktop() {
         LoggerService.getLogger().info("Search dota2 window")
         var hWnd = User32.INSTANCE.FindWindow(null, DOTA_GAME_NAME)
         while (hWnd == null) {
+            System.gc()
+            delay(1000)
             hWnd = User32.INSTANCE.FindWindow(null, DOTA_GAME_NAME)
         }
+        System.gc()
         return hWnd
     }
 
