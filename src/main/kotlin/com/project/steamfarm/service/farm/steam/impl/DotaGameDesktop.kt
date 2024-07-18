@@ -30,9 +30,10 @@ class DotaGameDesktop: GameDesktop() {
     }
 
     override fun getCommand(): List<String> = listOf(
-        "-applaunch", "570", "-language", "english", "-w", "$WIDTH_APP", "-h", "$HEIGHT_APP", "-novid", "-prewarm",
-        "-noaafonts", "-nod3d9ex", "-console", "+exec", "$NAME_CONFIG.cfg", "-nosound", "-high",
-        "-autoconfig_level", "0", "-maxtextureres", "2"
+        "-applaunch", "570", "-language", "english", "-w", "$WIDTH_APP", "-h", "$HEIGHT_APP",
+        "+map_enable_background_maps", "0", "+fps_max", "40", "-dota_embers", "0", "-autoconfig_level",
+        "-maxtextureres", "2", "-novid", "-nosync", "-conclearlog", "-swapcores", "-noqueuedload", "-vrdisable",
+        "-windowed", "-nopreload", "-limitvsconst", "-softparticlesdefaultoff", "-nod3d9ex", "-noipx", "-nocra"
     )
 
     override suspend fun setName(hWnd: HWND, username: String) {
