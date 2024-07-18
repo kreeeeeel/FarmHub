@@ -1,6 +1,7 @@
 package com.project.steamfarm.service.farm
 
 import com.project.steamfarm.data.WindowData
+import com.project.steamfarm.model.ConfigModel
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.platform.win32.WinUser.WM_KEYDOWN
@@ -18,6 +19,7 @@ const val VK_ENTER = 0x0D
 open class Desktop {
 
     protected val currentPid = IntByReference()
+    protected val config = ConfigModel().fromFile()
 
     private val robot = Robot()
     private val rect = RECT()

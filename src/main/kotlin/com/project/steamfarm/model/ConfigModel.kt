@@ -13,7 +13,8 @@ const val HEIGHT_APP = 216
 
 data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,
-    var steamExecutor: String? = null
+    var steamExecutor: String? = null,
+    var dota2Path: String? = null
 ) {
 
     @Transient

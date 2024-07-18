@@ -1,12 +1,11 @@
 package com.project.steamfarm.service.farm.steam.impl
 
-import com.project.steamfarm.model.HEIGHT_APP
-import com.project.steamfarm.model.WIDTH_APP
 import com.project.steamfarm.service.farm.PATH_TO_IMG
 import com.project.steamfarm.service.farm.User32Ext
 import com.project.steamfarm.service.farm.VK_ENTER
 import com.project.steamfarm.service.farm.VK_TAB
-import com.project.steamfarm.service.farm.steam.*
+import com.project.steamfarm.service.farm.steam.STEAM_SIGN_NAME
+import com.project.steamfarm.service.farm.steam.SteamDesktop
 import com.project.steamfarm.service.steam.GuardSteam
 import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
 import com.sun.jna.platform.win32.WinDef
@@ -46,11 +45,14 @@ class SteamDesktopImpl: SteamDesktop() {
     private val patternCloudOutDate = Pattern(CLOUD_OUT_DATE_PATH)
 
     private val guardSteam: GuardSteam = DefaultGuardSteam()
+    private val dotaGameDesktop = DotaGameDesktop()
 
     init {
         if (!File(GUARD_PATH).exists()) throw NullPointerException("$GUARD_PATH is not found.")
         if (!File(LOGO_PATH).exists()) throw NullPointerException("$LOGO_PATH is not found.")
         if (!File(CLOUD_OUT_DATE_PATH).exists()) throw NullPointerException("$CLOUD_OUT_DATE_PATH is not found.")
+
+        dotaGameDesktop.setConfig()
     }
 
     override fun start(ipcName: String, gameId: Int) {
@@ -60,17 +62,15 @@ class SteamDesktopImpl: SteamDesktop() {
         val random = (1000..50000).random().toString()
         processBuilder.environment()["VPROJECT"] = random
 
-        val command = listOf(
+        val command = mutableListOf(
             configModel.steamExecutor, "-login", "-silent", "-nofriendsui", "-vgui", "-noreactlogin", "-noverifyfiles",
             "-nobootstrapupdate", "-skipinitialbootstrap", "-norepairfiles", "-overridepackageurl", "-disable-winh264",
-            "-language", "english", "-master_ipc_name_override", "$ipcName$random", "-applaunch", "$gameId",
-            "-language", "english", "+exec", "autoexec.cfg", "+exec", "gamestate_integration_1.cfg",
-            "-w", "$WIDTH_APP", "-h", "$HEIGHT_APP", "-console", "-condebug", "-conclearlog", "-allowmultiple",
-            "-con_logfile", "$ipcName.log", "-swapcores", "-noqueuedload", "-vrdisable", "-windowed", "-nopreload",
-            "-limitvsconst", "-softparticlesdefaultoff", "-nohltv", "-noaafonts", "-nosound", "-novid",
-            "+violence_hblood", "0", "+sethdmodels", "0", "+mat_disable_fancy_blending", "1", "+r_dynamic", "0",
-            "+engine_no_focus_sleep", "100", "-nojoy"
-        )
+            "-language", "english", "-master_ipc_name_override", "$ipcName$random"
+        ).apply {
+            addAll(dotaGameDesktop.getCommand())
+            add("-allowmultiple")
+        }
+
         processBuilder.command(command).start()
     }
 
