@@ -10,7 +10,7 @@ fun main() {
     val configModel: ConfigModel = ConfigModel().fromFile()
     langApplication = LangRepository.findById(configModel.langApp) ?: LangModel()
 
-    val manager = Manager()
-    manager.initUser(UserRepository.findAll().subList(0, 10).toMutableList())
-    manager.launchGame(570)
+    Manager.initUser(UserRepository.findAll().subList(0, 10).toMutableList())
+    Manager.initGame(570)
+    Manager.launchGame()
 }

@@ -6,6 +6,7 @@ import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.platform.win32.WinUser.WM_KEYDOWN
 import com.sun.jna.ptr.IntByReference
+import kotlinx.coroutines.delay
 import org.sikuli.script.Pattern
 import org.sikuli.script.Region
 import java.awt.Robot
@@ -19,7 +20,7 @@ const val VK_ENTER = 0x0D
 open class Desktop {
 
     protected val currentPid = IntByReference()
-    protected val config = ConfigModel().fromFile()
+    protected val configModel = ConfigModel().fromFile()
 
     private val robot = Robot()
     private val rect = RECT()
@@ -60,9 +61,9 @@ open class Desktop {
         typeChar(hWnd, it)
     }
 
-    fun postKeyPress(hWnd: HWND?, key: Long) {
+    suspend fun postKeyPress(hWnd: HWND?, key: Long) {
         User32Ext.INSTANCE.PostMessage(hWnd, WM_KEYDOWN, WPARAM(key), LPARAM(0))
-        Thread.sleep(50)
+        delay(5)
     }
 
     @Suppress("DEPRECATION")
