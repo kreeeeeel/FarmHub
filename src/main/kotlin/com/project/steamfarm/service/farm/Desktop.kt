@@ -63,7 +63,7 @@ open class Desktop {
 
     suspend fun postKeyPress(hWnd: HWND?, key: Long) {
         User32Ext.INSTANCE.PostMessage(hWnd, WM_KEYDOWN, WPARAM(key), LPARAM(0))
-        delay(5)
+        delay(50)
     }
 
     @Suppress("DEPRECATION")

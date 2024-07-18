@@ -65,7 +65,7 @@ object Manager: Desktop() {
                 setOffsetHwnd(it)
             }
 
-            closeJob.cancelAndJoin()
+            closeJob.cancel()
         }
     }
 
