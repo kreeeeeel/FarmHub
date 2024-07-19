@@ -50,10 +50,9 @@ object Manager: Desktop() {
         if (userModels.size != 10) throw IllegalStateException("Users must be 10!")
 
         val steamDesktop = SteamDesktopImpl(currentGame)
-        val userModel = userModels[0]
-        //userModels.forEachIndexed { index, userModel ->
+        userModels.forEachIndexed { index, userModel ->
 
-            //LoggerService.getLogger().info("Start account #${index + 1} for the farm")
+            LoggerService.getLogger().info("Start account #${index + 1} for the farm")
 
             currentUserName = userModel.steam.accountName
             steamDesktop.start(userModel.steam.accountName)
@@ -78,7 +77,7 @@ object Manager: Desktop() {
 
             closeJob.cancel()
             System.gc()
-        //}
+        }
     }
 
     private fun setOffsetHwnd(hwnd: HWND) {
