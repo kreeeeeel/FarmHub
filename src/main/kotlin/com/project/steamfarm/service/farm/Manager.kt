@@ -1,11 +1,14 @@
 package com.project.steamfarm.service.farm
 
 import com.project.steamfarm.model.UserModel
+import com.project.steamfarm.service.farm.bes.BesLimit
+import com.project.steamfarm.service.farm.bes.impl.BesLimitImpl
 import com.project.steamfarm.service.farm.steam.GameDesktop
 import com.project.steamfarm.service.farm.steam.impl.DotaGameDesktop
 import com.project.steamfarm.service.farm.steam.impl.SteamDesktopImpl
 import com.project.steamfarm.service.logger.LoggerService
 import com.sun.jna.platform.win32.WinDef.HWND
+import com.sun.jna.ptr.IntByReference
 import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 
@@ -19,6 +22,7 @@ object Manager: Desktop() {
     private val coroutineScope = CoroutineScope(Executors.newFixedThreadPool(10).asCoroutineDispatcher())
 
     private val dotaDesktop: GameDesktop = DotaGameDesktop()
+    private val besLimit: BesLimit = BesLimitImpl()
 
     private var userModels: MutableList<UserModel> = mutableListOf()
     private lateinit var currentGame: GameDesktop
@@ -46,10 +50,10 @@ object Manager: Desktop() {
         if (userModels.size != 10) throw IllegalStateException("Users must be 10!")
 
         val steamDesktop = SteamDesktopImpl(currentGame)
-        //val userModel = userModels[0]
-        userModels.forEachIndexed { index, userModel ->
+        val userModel = userModels[0]
+        //userModels.forEachIndexed { index, userModel ->
 
-            LoggerService.getLogger().info("Start account #${index + 1} for the farm")
+            //LoggerService.getLogger().info("Start account #${index + 1} for the farm")
 
             currentUserName = userModel.steam.accountName
             steamDesktop.start(userModel.steam.accountName)
@@ -66,14 +70,15 @@ object Manager: Desktop() {
                 currentGame.closeCloudConflict()
             }
 
-            val hwnd = currentGame.getGameHwnd().also {
-                currentGame.setName(it, userModel.steam.accountName)
-                setOffsetHwnd(it)
-            }
+            val hwnd = currentGame.getGameHwnd()
+
+            limitBesByHwnd(hwnd)
+            currentGame.setName(hwnd, userModel.steam.accountName)
+            setOffsetHwnd(hwnd)
 
             closeJob.cancel()
             System.gc()
-        }
+        //}
     }
 
     private fun setOffsetHwnd(hwnd: HWND) {
@@ -89,5 +94,11 @@ object Manager: Desktop() {
         LoggerService.getLogger().info("Changing the Dota2 window position for $currentUserName | X=$offsetX Y=$offsetY")
         User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)
         System.gc()
+    }
+
+    private suspend fun limitBesByHwnd(hwnd: HWND) {
+        val currentPid = IntByReference()
+        User32Ext.INSTANCE.GetWindowThreadProcessId(hwnd, currentPid)
+        besLimit.limit(currentPid.value)
     }
 }

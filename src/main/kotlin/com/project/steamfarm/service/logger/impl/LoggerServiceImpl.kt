@@ -9,20 +9,29 @@ private val PATH = "${System.getProperty("user.dir")}\\logs"
 
 class LoggerServiceImpl: LoggerService {
 
+    init { FileWriter(getLogFile(), true).use { it.write(System.lineSeparator()) } }
+
+    private var level: LogLevel = LogLevel.DEBUG
+
     override fun info(text: String) = log(text, LogLevel.INFO)
     override fun debug(text: String) = log(text, LogLevel.DEBUG)
     override fun warning(text: String) = log(text, LogLevel.WARNING)
     override fun error(text: String) = log(text, LogLevel.ERROR)
 
     private fun log(text: String, logLevel: LogLevel) {
-        val currentDate = OffsetDateTime.now()
-        val logFile = getLogFile()
+        if (level != LogLevel.NONE || (logLevel == LogLevel.DEBUG && level == LogLevel.DEBUG)) {
 
-        val output = String.format("[%02d:%02d:%02d] %s: %s",
-            currentDate.hour, currentDate.minute, currentDate.second, logLevel, text)
+            val currentDate = OffsetDateTime.now()
+            val logFile = getLogFile()
 
-        println(output)
-        FileWriter(logFile, true).use { it.write(output + System.lineSeparator()) }
+            val output = String.format(
+                "[%02d:%02d:%02d] %s: %s",
+                currentDate.hour, currentDate.minute, currentDate.second, logLevel, text
+            )
+
+            println(output)
+            FileWriter(logFile, true).use { it.write(output + System.lineSeparator()) }
+        }
     }
 
     private fun getLogFile(): File {
@@ -38,4 +47,4 @@ class LoggerServiceImpl: LoggerService {
 
 }
 
-private enum class LogLevel { INFO, WARNING, ERROR, DEBUG }
+private enum class LogLevel { NONE, INFO, WARNING, ERROR, DEBUG }
