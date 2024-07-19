@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileNotFoundException
 
-private const val PERCENT = 50
+private const val PERCENT = 65
 private val BES = "${System.getProperty("user.dir")}\\BES\\BES.exe"
 
 class BesLimitImpl: BesLimit {

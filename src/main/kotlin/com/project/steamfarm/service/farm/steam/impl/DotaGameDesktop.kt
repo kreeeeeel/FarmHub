@@ -36,6 +36,7 @@ private val DOTA2_START = "$DOTA2_PATH\\start.png"
 private val DOTA2_NEW_USER = "$DOTA2_PATH\\new_user.png"
 private val DOTA2_MENU = "$DOTA2_PATH\\dota_menu.png"
 private val DOTA2_ACTIVE_MENU = "$DOTA2_PATH\\dota_menu_active.png"
+private val DOTA2_SEARCH_FIELD = "$DOTA2_PATH\\search_field.png"
 private val DOTA2_INVITE_MENU = "$DOTA2_PATH\\invite.png"
 private val DOTA2_NEW_ITEM = "$DOTA2_PATH\\buttons\\accept_item.png"
 private val DOTA2_SKIP_NEWS = "$DOTA2_PATH\\buttons\\skip_news.png"
@@ -50,6 +51,7 @@ class DotaGameDesktop: GameDesktop() {
     private val skipNewsPattern = Pattern(DOTA2_SKIP_NEWS).similar(CURRENT_SIMILAR)
     private val menuActivePattern = Pattern(DOTA2_ACTIVE_MENU).similar(CURRENT_SIMILAR)
     private val menuPattern = Pattern(DOTA2_MENU).similar(CURRENT_SIMILAR)
+    private val searchPattern = Pattern(DOTA2_SEARCH_FIELD).similar(CURRENT_SIMILAR)
     private val invitePattern = Pattern(DOTA2_INVITE_MENU).similar(CURRENT_SIMILAR)
 
     init {
@@ -59,6 +61,7 @@ class DotaGameDesktop: GameDesktop() {
         if (!File(DOTA2_SKIP_NEWS).exists()) throw FileNotFoundException("$DOTA2_SKIP_NEWS is not found!")
         if (!File(DOTA2_ACTIVE_MENU).exists()) throw FileNotFoundException("$DOTA2_ACTIVE_MENU is not found!")
         if (!File(DOTA2_MENU).exists()) throw FileNotFoundException("$DOTA2_MENU is not found!")
+        if (!File(DOTA2_SEARCH_FIELD).exists()) throw FileNotFoundException("$DOTA2_SEARCH_FIELD is not found!")
         if (!File(DOTA2_INVITE_MENU).exists()) throw FileNotFoundException("$DOTA2_INVITE_MENU is not found!")
     }
 
@@ -113,6 +116,12 @@ class DotaGameDesktop: GameDesktop() {
         val offsetFriendY = offsetProperties.offsetY + DOTA_OFFSET_FRIEND_Y
         click(hWnd, offsetFriendX, offsetFriendY)
 
+        if (!isCurrentPage(hWnd, searchPattern, 5.0)) {
+            LoggerService.getLogger().info("Bad invite in lobby, try again..")
+            makeInvite(hWnd, steamId)
+            return
+        }
+
         delay(100)
         val offsetFieldX = offsetProperties.offsetX + DOTA_OFFSET_SEARCH_FIELD_X
         val offsetFieldY = offsetProperties.offsetY + DOTA_OFFSET_SEARCH_FIELD_Y
@@ -126,8 +135,11 @@ class DotaGameDesktop: GameDesktop() {
         click(hWnd, offsetSearchX, offsetSearchY)
 
         delay(100)
+
+        while (!isCurrentPage(hWnd, invitePattern, 1.0)) { continue }
+
         val region = getRegion(hWnd)
-        region.wait(invitePattern, 15.0).click()
+        region.wait(invitePattern).click()
 
         delay(100)
         clickToMainMenu(hWnd)

@@ -51,8 +51,6 @@ object Manager: Desktop() {
 
         val steamDesktop = SteamDesktopImpl(currentGame)
         var hWnd: HWND? = null
-        /*val userModel = userModels[7]
-        val index = 0*/
         userModels.subList(0, 5).forEachIndexed { index, userModel ->
 
             LoggerService.getLogger().info("Start account #${index + 1} for the farm")
@@ -76,14 +74,15 @@ object Manager: Desktop() {
             if (hWnd == null) hWnd = hwnd
             closeJob.cancel()
 
-            limitBesByHwnd(hwnd)
             currentGame.setReadyGame(hwnd)
             currentGame.setName(hwnd, userModel.steam.accountName)
             setOffsetHwnd(hwnd)
+
+            limitBesByHwnd(hwnd)
         }
 
         delay(1000)
-        userModels.subList(1, 5).forEach { currentGame.makeInvite(hWnd!!, "${it.steam.session!!.steamID}") }
+        currentGame.makeInvite(hWnd!!, "76561199653001842")
     }
 
     private fun setOffsetHwnd(hwnd: HWND) {
