@@ -14,7 +14,6 @@ import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.platform.win32.WinDef.WPARAM
 import com.sun.jna.platform.win32.WinUser.WH_MOUSE
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.sikuli.script.Pattern
 import java.io.File
@@ -71,9 +70,8 @@ class SteamDesktopImpl(
     override suspend fun signIn(username: String, password: String) {
 
         LoggerService.getLogger().info("Search steam window for sign in user: $username")
-        var hWnd: HWND? = null
+        var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         while (hWnd == null) {
-            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         }
 
@@ -93,8 +91,6 @@ class SteamDesktopImpl(
         LoggerService.getLogger().info("Entering $password in Steam.")
         postText(widgetHwnd, password)
         postKeyPress(widgetHwnd, VK_ENTER.toLong())
-
-        System.gc()
     }
 
     override suspend fun guard(sharedSecret: String): Boolean {
@@ -112,8 +108,6 @@ class SteamDesktopImpl(
             val code = guardSteam.getCode(sharedSecret)
             LoggerService.getLogger().info("Entering guard in Steam | Guard Code: $code")
             postText(widgetHwnd, code)
-
-            System.gc()
 
             return true
         } catch (ignored: Exception) { return false }

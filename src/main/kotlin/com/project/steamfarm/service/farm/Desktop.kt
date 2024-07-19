@@ -9,7 +9,7 @@ import com.sun.jna.ptr.IntByReference
 import kotlinx.coroutines.delay
 import org.sikuli.script.Pattern
 import org.sikuli.script.Region
-import java.awt.Robot
+import org.sikuli.script.support.RobotDesktop
 import java.awt.event.InputEvent
 
 val PATH_TO_IMG = "${System.getProperty("user.dir")}\\config\\ui"
@@ -22,7 +22,7 @@ open class Desktop {
     protected val currentPid = IntByReference()
     protected val configModel = ConfigModel().fromFile()
 
-    private val robot = Robot()
+    private val robot = RobotDesktop()
     private val rect = RECT()
 
     fun click(hWnd: HWND, offsetX: Int, offsetY: Int) {
@@ -63,7 +63,6 @@ open class Desktop {
 
     suspend fun postKeyPress(hWnd: HWND?, key: Long) {
         User32Ext.INSTANCE.PostMessage(hWnd, WM_KEYDOWN, WPARAM(key), LPARAM(0))
-        //User32Ext.INSTANCE.SendMessage(hWnd, WM_KEYUP, WPARAM(key), LPARAM(0))
         delay(150)
     }
 

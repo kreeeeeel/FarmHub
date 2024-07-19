@@ -3,11 +3,11 @@ package com.project.steamfarm.service.farm.steam
 import com.project.steamfarm.service.farm.Desktop
 import com.project.steamfarm.service.farm.STEAM_PATH
 import com.project.steamfarm.service.farm.User32Ext
+import com.project.steamfarm.service.logger.LoggerService
 import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.platform.win32.WinDef.WPARAM
 import com.sun.jna.platform.win32.WinUser.WM_CLOSE
-import kotlinx.coroutines.delay
 import org.sikuli.script.Pattern
 import java.io.File
 
@@ -34,23 +34,24 @@ abstract class GameDesktop: Desktop() {
     abstract fun getCommand(): List<String>
     abstract suspend fun setName(hWnd: HWND, username: String)
     abstract suspend fun getGameHwnd(): HWND
+    abstract suspend fun setReadyGame(hWnd: HWND)
+    abstract suspend fun makeInvite(hWnd: HWND, steamId: String)
 
-    suspend fun closeSupport() {
+    fun closeSupport() {
+        LoggerService.getLogger().info("Checking for 'Support Message' window")
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, "Support Message")
         while (hWnd == null) {
-            System.gc()
-            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, "Support Message")
         }
 
+        LoggerService.getLogger().info("Closing the 'Support Message' window")
         User32Ext.INSTANCE.PostMessage(hWnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
     }
 
-    suspend fun closeCloudConflict() {
+    fun closeCloudConflict() {
+        LoggerService.getLogger().info("Checking for 'Conflict' window")
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, "Steam Dialog")
         while (hWnd == null) {
-            System.gc()
-            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, "Steam Dialog")
         }
 
@@ -58,11 +59,13 @@ abstract class GameDesktop: Desktop() {
             closeCloudOutOfDate(hWnd)
         } else closeCloud(hWnd)
 
+        LoggerService.getLogger().info("Closing the 'Conflict' window")
         val steamHwnd = User32Ext.INSTANCE.FindWindow(null, "Steam")
         User32Ext.INSTANCE.PostMessage(steamHwnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
     }
 
     private fun closeCloudOutOfDate(hWnd: HWND) {
+        LoggerService.getLogger().info("There is a date conflict")
         val offsetProperties = getOffsetProperties(hWnd)
         val cloudOffsetX = offsetProperties.offsetX + OFFSET_X_CONFLICT_CLOUD_DATE
         val cloudOffsetY = offsetProperties.offsetY + OFFSET_Y_CONFLICT_CLOUD_DATE
@@ -70,6 +73,7 @@ abstract class GameDesktop: Desktop() {
     }
 
     private fun closeCloud(hWnd: HWND) {
+        LoggerService.getLogger().info("There is a conflict on the PC")
         val offsetProperties = getOffsetProperties(hWnd)
         val cloudOffsetX = offsetProperties.offsetX + OFFSET_X_CONFLICT_CLOUD
         val cloudOffsetY = offsetProperties.offsetY + OFFSET_Y_CONFLICT_CLOUD

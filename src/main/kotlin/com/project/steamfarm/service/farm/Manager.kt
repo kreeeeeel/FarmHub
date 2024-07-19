@@ -50,7 +50,10 @@ object Manager: Desktop() {
         if (userModels.size != 10) throw IllegalStateException("Users must be 10!")
 
         val steamDesktop = SteamDesktopImpl(currentGame)
-        userModels.forEachIndexed { index, userModel ->
+        var hWnd: HWND? = null
+        /*val userModel = userModels[7]
+        val index = 0*/
+        userModels.subList(0, 5).forEachIndexed { index, userModel ->
 
             LoggerService.getLogger().info("Start account #${index + 1} for the farm")
 
@@ -70,14 +73,17 @@ object Manager: Desktop() {
             }
 
             val hwnd = currentGame.getGameHwnd()
+            if (hWnd == null) hWnd = hwnd
+            closeJob.cancel()
 
             limitBesByHwnd(hwnd)
+            currentGame.setReadyGame(hwnd)
             currentGame.setName(hwnd, userModel.steam.accountName)
             setOffsetHwnd(hwnd)
-
-            closeJob.cancel()
-            System.gc()
         }
+
+        delay(1000)
+        userModels.subList(1, 5).forEach { currentGame.makeInvite(hWnd!!, "${it.steam.session!!.steamID}") }
     }
 
     private fun setOffsetHwnd(hwnd: HWND) {
@@ -92,7 +98,6 @@ object Manager: Desktop() {
 
         LoggerService.getLogger().info("Changing the Dota2 window position for $currentUserName | X=$offsetX Y=$offsetY")
         User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)
-        System.gc()
     }
 
     private suspend fun limitBesByHwnd(hwnd: HWND) {
@@ -101,3 +106,7 @@ object Manager: Desktop() {
         besLimit.limit(currentPid.value)
     }
 }
+/*
+enum class Status {
+    WAIT_STEAM, BAD_AUTH_STEAM, MAX_ATTEMPT_STEAM, WAIT_GAME, GAME_STARTED, READY_GAME
+}*/
