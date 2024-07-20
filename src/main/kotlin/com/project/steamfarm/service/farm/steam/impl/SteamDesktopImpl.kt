@@ -50,7 +50,7 @@ class SteamDesktopImpl(
             "-language", "english", "-master_ipc_name_override", "$ipcName$random"
         ).apply {
             addAll(gameDesktop.getCommand())
-            addAll(listOf("-allowmultiple", "-swapcores", "-noqueuedload"))
+            add("-allowmultiple")
         }
 
         withContext(Dispatchers.IO) {
