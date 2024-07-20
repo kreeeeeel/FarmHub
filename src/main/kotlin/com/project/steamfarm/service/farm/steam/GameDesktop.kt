@@ -1,6 +1,7 @@
 package com.project.steamfarm.service.farm.steam
 
 import com.project.steamfarm.service.farm.Desktop
+import com.project.steamfarm.service.farm.MAX_ATTEMPTS
 import com.project.steamfarm.service.farm.STEAM_PATH
 import com.project.steamfarm.service.farm.User32Ext
 import com.project.steamfarm.service.logger.LoggerService
@@ -8,6 +9,7 @@ import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.platform.win32.WinDef.WPARAM
 import com.sun.jna.platform.win32.WinUser.WM_CLOSE
+import kotlinx.coroutines.delay
 import org.sikuli.script.Pattern
 import java.io.File
 
@@ -30,7 +32,6 @@ abstract class GameDesktop: Desktop() {
         if (!File(CLOUD_OUT_DATE_PATH).exists()) throw NullPointerException("$CLOUD_OUT_DATE_PATH is not found.")
     }
 
-    abstract fun setConfig()
     abstract fun getCommand(): List<String>
     abstract suspend fun setName(hWnd: HWND, username: String)
     abstract suspend fun getGameHwnd(): HWND
@@ -38,31 +39,40 @@ abstract class GameDesktop: Desktop() {
     abstract suspend fun sendInvite(hWnd: HWND, steamId: String)
     abstract suspend fun acceptInvite(hWnd: HWND): Boolean
 
-    fun closeSupport() {
+    suspend fun closeSupport() {
         LoggerService.getLogger().info("Checking for 'Support Message' window")
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, "Support Message")
-        while (hWnd == null) {
+        var attempts = 0
+        while (hWnd == null && attempts++ < MAX_ATTEMPTS) {
             hWnd = User32Ext.INSTANCE.FindWindow(null, "Support Message")
+            delay(1000)
         }
 
-        LoggerService.getLogger().info("Closing the 'Support Message' window")
-        User32Ext.INSTANCE.PostMessage(hWnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
+        if (hWnd != null) {
+            LoggerService.getLogger().info("Closing the 'Support Message' window")
+            User32Ext.INSTANCE.PostMessage(hWnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
+        }
     }
 
-    fun closeCloudConflict() {
+    suspend fun closeCloudConflict() {
         LoggerService.getLogger().info("Checking for 'Conflict' window")
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, "Steam Dialog")
-        while (hWnd == null) {
+        var attempt = 0
+
+        while (hWnd == null && attempt++ < MAX_ATTEMPTS) {
             hWnd = User32Ext.INSTANCE.FindWindow(null, "Steam Dialog")
+            delay(1000)
         }
 
-        if (isCurrentPage(hWnd, patternCloudOutDate, 5.0)) {
-            closeCloudOutOfDate(hWnd)
-        } else closeCloud(hWnd)
+        if (hWnd != null) {
+            if (isCurrentPage(hWnd, patternCloudOutDate, 5.0)) {
+                closeCloudOutOfDate(hWnd)
+            } else closeCloud(hWnd)
 
-        LoggerService.getLogger().info("Closing the 'Conflict' window")
-        val steamHwnd = User32Ext.INSTANCE.FindWindow(null, "Steam")
-        User32Ext.INSTANCE.PostMessage(steamHwnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
+            LoggerService.getLogger().info("Closing the 'Conflict' window")
+            val steamHwnd = User32Ext.INSTANCE.FindWindow(null, "Steam")
+            User32Ext.INSTANCE.PostMessage(steamHwnd, WM_CLOSE, WPARAM(0), WinDef.LPARAM(0))
+        }
     }
 
     private fun closeCloudOutOfDate(hWnd: HWND) {

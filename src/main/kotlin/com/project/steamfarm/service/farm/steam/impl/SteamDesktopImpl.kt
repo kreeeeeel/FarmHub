@@ -1,9 +1,6 @@
 package com.project.steamfarm.service.farm.steam.impl
 
-import com.project.steamfarm.service.farm.PATH_TO_IMG
-import com.project.steamfarm.service.farm.User32Ext
-import com.project.steamfarm.service.farm.VK_ENTER
-import com.project.steamfarm.service.farm.VK_TAB
+import com.project.steamfarm.service.farm.*
 import com.project.steamfarm.service.farm.steam.GameDesktop
 import com.project.steamfarm.service.farm.steam.STEAM_SIGN_NAME
 import com.project.steamfarm.service.farm.steam.SteamDesktop
@@ -38,8 +35,6 @@ class SteamDesktopImpl(
     init {
         if (!File(GUARD_PATH).exists()) throw NullPointerException("$GUARD_PATH is not found.")
         if (!File(LOGO_PATH).exists()) throw NullPointerException("$LOGO_PATH is not found.")
-
-        gameDesktop.setConfig()
     }
 
     override suspend fun start(ipcName: String) {
@@ -72,10 +67,13 @@ class SteamDesktopImpl(
 
         LoggerService.getLogger().info("Search steam window for sign in user: $username")
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
-        while (hWnd == null) {
+        var attemps = 0
+        while (hWnd == null && attemps++ < MAX_ATTEMPTS) {
             delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         }
+
+        if (hWnd == null) throw IllegalStateException("$STEAM_SIGN_NAME does not exist.")
 
         LoggerService.getLogger().info("Steam is running, waiting for the authorization window to be drawn..")
         while (!isCurrentPage(hWnd, patternLogo)) { delay(1000) }

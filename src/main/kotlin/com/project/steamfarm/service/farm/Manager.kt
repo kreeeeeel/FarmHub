@@ -10,7 +10,6 @@ import com.project.steamfarm.service.logger.LoggerService
 import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.ptr.IntByReference
 import kotlinx.coroutines.*
-import java.util.concurrent.Executors
 
 val STEAM_PATH = "$PATH_TO_IMG\\steam"
 
@@ -18,8 +17,6 @@ const val SWP_NOSIZE = 0x0001
 const val SWP_NOZORDER = 0x0004
 
 object Manager: Desktop() {
-
-    private val coroutineScope = CoroutineScope(Executors.newFixedThreadPool(10).asCoroutineDispatcher())
 
     private val dotaDesktop: GameDesktop = DotaGameDesktop()
     private val besLimit: BesLimit = BesLimitImpl()
@@ -45,7 +42,7 @@ object Manager: Desktop() {
         }
     }
 
-    fun launchGame() = coroutineScope.launch {
+    fun launchGame() = runBlocking {
 
         if (userModels.size != 10) throw IllegalStateException("Users must be 10!")
 
@@ -78,7 +75,7 @@ object Manager: Desktop() {
             currentGame.setName(hwnd, userModel.steam.accountName)
             setOffsetHwnd(hwnd)
 
-            limitBesByHwnd(hwnd)
+            //limitBesByHwnd(hwnd)
         }
 
         delay(1000)

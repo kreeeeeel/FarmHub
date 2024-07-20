@@ -3,6 +3,7 @@ package com.project.steamfarm.service.farm.steam.impl
 import com.project.steamfarm.langApplication
 import com.project.steamfarm.model.HEIGHT_APP
 import com.project.steamfarm.model.WIDTH_APP
+import com.project.steamfarm.service.farm.MAX_ATTEMPTS
 import com.project.steamfarm.service.farm.PATH_TO_IMG
 import com.project.steamfarm.service.farm.User32Ext
 import com.project.steamfarm.service.farm.steam.GameDesktop
@@ -68,8 +69,6 @@ class DotaGameDesktop: GameDesktop() {
         if (!File(DOTA2_ACCEPT_INVITE).exists()) throw FileNotFoundException("$DOTA2_ACCEPT_INVITE is not found!")
     }
 
-    override fun setConfig() {}
-
     override fun getCommand(): List<String> = listOf(
         "-applaunch", "570", "-language", "english", "-w", "$WIDTH_APP", "-h", "$HEIGHT_APP",
         "+map_enable_background_maps", "0", "+fps_max", "40", "-dota_embers", "0", "-autoconfig_level", "0", "-nosound",
@@ -84,13 +83,15 @@ class DotaGameDesktop: GameDesktop() {
     }
 
     override suspend fun getGameHwnd(): HWND {
-        LoggerService.getLogger().info("Search dota2 window")
+        LoggerService.getLogger().info("Search $DOTA_GAME_NAME window")
         var hWnd = User32.INSTANCE.FindWindow(null, DOTA_GAME_NAME)
-        while (hWnd == null) {
+        var attempts = 0
+
+        while (hWnd == null && attempts++ < MAX_ATTEMPTS) {
             delay(1000)
             hWnd = User32.INSTANCE.FindWindow(null, DOTA_GAME_NAME)
         }
-        return hWnd
+        return hWnd ?: throw IllegalStateException("$DOTA_GAME_NAME is not found!")
     }
 
     override suspend fun setReadyGame(hWnd: HWND) {

@@ -17,6 +17,8 @@ val PATH_TO_IMG = "${System.getProperty("user.dir")}\\config\\ui"
 const val VK_TAB = 0x09
 const val VK_ENTER = 0x0D
 
+const val MAX_ATTEMPTS = 60
+
 open class Desktop {
 
     protected val currentPid = IntByReference()
