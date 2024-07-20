@@ -50,7 +50,7 @@ object Manager: Desktop() {
         if (userModels.size != 10) throw IllegalStateException("Users must be 10!")
 
         val steamDesktop = SteamDesktopImpl(currentGame)
-        var hWnd: HWND? = null
+        val hWnd: MutableList<HWND> = mutableListOf()
         userModels.subList(0, 5).forEachIndexed { index, userModel ->
 
             LoggerService.getLogger().info("Start account #${index + 1} for the farm")
@@ -71,7 +71,7 @@ object Manager: Desktop() {
             }
 
             val hwnd = currentGame.getGameHwnd()
-            if (hWnd == null) hWnd = hwnd
+            hWnd.add(hwnd)
             closeJob.cancel()
 
             currentGame.setReadyGame(hwnd)
@@ -82,7 +82,12 @@ object Manager: Desktop() {
         }
 
         delay(1000)
-        currentGame.makeInvite(hWnd!!, "76561199653001842")
+        userModels.subList(1, 5).forEach {
+            currentGame.sendInvite(hWnd[0], "${it.steam.session!!.steamID}")
+            delay(500)
+        }
+
+        hWnd.subList(1, 5).forEach { println(currentGame.acceptInvite(it)) }
     }
 
     private fun setOffsetHwnd(hwnd: HWND) {

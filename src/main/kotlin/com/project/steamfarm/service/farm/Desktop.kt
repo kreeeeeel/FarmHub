@@ -43,9 +43,10 @@ open class Desktop {
         )
     }
 
-    fun isCurrentPage(hwnd: HWND, pattern: Pattern, duration: Double): Boolean = try {
+    fun isCurrentPage(hwnd: HWND, pattern: Pattern, duration: Double? = null): Boolean = try {
         User32Ext.INSTANCE.SetForegroundWindow(hwnd)
-        getRegion(hwnd).wait(pattern, duration)
+        if (duration == null) getRegion(hwnd).find(pattern)
+        else getRegion(hwnd).wait(pattern, duration)
         true
     } catch (ignored: Exception) {false}
 
@@ -67,7 +68,7 @@ open class Desktop {
     }
 
     @Suppress("DEPRECATION")
-    private fun typeChar(hWnd: HWND?, value: Char) {
+    fun typeChar(hWnd: HWND?, value: Char) {
         User32Ext.INSTANCE.SendMessage(hWnd, WinUser.WM_CHAR, WPARAM(value.toLong()), null)
     }
 

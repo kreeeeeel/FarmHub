@@ -14,6 +14,7 @@ import com.sun.jna.platform.win32.WinDef.HWND
 import com.sun.jna.platform.win32.WinDef.WPARAM
 import com.sun.jna.platform.win32.WinUser.WH_MOUSE
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.sikuli.script.Pattern
 import java.io.File
@@ -23,7 +24,7 @@ private val STEAM_PATH = "$PATH_TO_IMG\\steam"
 private val LOGO_PATH = "$STEAM_PATH\\logo.png"
 private val GUARD_PATH = "$STEAM_PATH\\guard.png"
 
-private const val DURATION_WAIT_GUARD = 5.0
+private const val DURATION_WAIT_GUARD = 10.0
 
 class SteamDesktopImpl(
     private val gameDesktop: GameDesktop
@@ -72,11 +73,12 @@ class SteamDesktopImpl(
         LoggerService.getLogger().info("Search steam window for sign in user: $username")
         var hWnd: HWND? = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         while (hWnd == null) {
+            delay(1000)
             hWnd = User32Ext.INSTANCE.FindWindow(null, STEAM_SIGN_NAME)
         }
 
         LoggerService.getLogger().info("Steam is running, waiting for the authorization window to be drawn..")
-        while (!isCurrentPage(hWnd, patternLogo, 1.0)) { continue }
+        while (!isCurrentPage(hWnd, patternLogo)) { delay(1000) }
 
         /* Нужно обязательно кликакать на эту хуйню чтобы ввод работа */
         val cefBrowserHwnd = User32Ext.INSTANCE.FindWindowEx(hWnd, null, "CefBrowserWindow", null)

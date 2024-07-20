@@ -35,7 +35,8 @@ abstract class GameDesktop: Desktop() {
     abstract suspend fun setName(hWnd: HWND, username: String)
     abstract suspend fun getGameHwnd(): HWND
     abstract suspend fun setReadyGame(hWnd: HWND)
-    abstract suspend fun makeInvite(hWnd: HWND, steamId: String)
+    abstract suspend fun sendInvite(hWnd: HWND, steamId: String)
+    abstract suspend fun acceptInvite(hWnd: HWND): Boolean
 
     fun closeSupport() {
         LoggerService.getLogger().info("Checking for 'Support Message' window")

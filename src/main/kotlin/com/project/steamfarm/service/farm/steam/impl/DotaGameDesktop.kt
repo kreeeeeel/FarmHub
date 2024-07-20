@@ -37,7 +37,8 @@ private val DOTA2_NEW_USER = "$DOTA2_PATH\\new_user.png"
 private val DOTA2_MENU = "$DOTA2_PATH\\dota_menu.png"
 private val DOTA2_ACTIVE_MENU = "$DOTA2_PATH\\dota_menu_active.png"
 private val DOTA2_SEARCH_FIELD = "$DOTA2_PATH\\search_field.png"
-private val DOTA2_INVITE_MENU = "$DOTA2_PATH\\invite.png"
+private val DOTA2_INVITE = "$DOTA2_PATH\\invite.png"
+private val DOTA2_ACCEPT_INVITE = "$DOTA2_PATH\\accept_invite.png"
 private val DOTA2_NEW_ITEM = "$DOTA2_PATH\\buttons\\accept_item.png"
 private val DOTA2_SKIP_NEWS = "$DOTA2_PATH\\buttons\\skip_news.png"
 
@@ -52,7 +53,8 @@ class DotaGameDesktop: GameDesktop() {
     private val menuActivePattern = Pattern(DOTA2_ACTIVE_MENU).similar(CURRENT_SIMILAR)
     private val menuPattern = Pattern(DOTA2_MENU).similar(CURRENT_SIMILAR)
     private val searchPattern = Pattern(DOTA2_SEARCH_FIELD).similar(CURRENT_SIMILAR)
-    private val invitePattern = Pattern(DOTA2_INVITE_MENU).similar(CURRENT_SIMILAR)
+    private val invitePattern = Pattern(DOTA2_INVITE).similar(CURRENT_SIMILAR)
+    private val acceptInvitePattern = Pattern(DOTA2_ACCEPT_INVITE).similar(CURRENT_SIMILAR)
 
     init {
         if (!File(DOTA2_START).exists()) throw FileNotFoundException("$DOTA2_START is not found!")
@@ -62,7 +64,8 @@ class DotaGameDesktop: GameDesktop() {
         if (!File(DOTA2_ACTIVE_MENU).exists()) throw FileNotFoundException("$DOTA2_ACTIVE_MENU is not found!")
         if (!File(DOTA2_MENU).exists()) throw FileNotFoundException("$DOTA2_MENU is not found!")
         if (!File(DOTA2_SEARCH_FIELD).exists()) throw FileNotFoundException("$DOTA2_SEARCH_FIELD is not found!")
-        if (!File(DOTA2_INVITE_MENU).exists()) throw FileNotFoundException("$DOTA2_INVITE_MENU is not found!")
+        if (!File(DOTA2_INVITE).exists()) throw FileNotFoundException("$DOTA2_INVITE is not found!")
+        if (!File(DOTA2_ACCEPT_INVITE).exists()) throw FileNotFoundException("$DOTA2_ACCEPT_INVITE is not found!")
     }
 
     override fun setConfig() {}
@@ -84,6 +87,7 @@ class DotaGameDesktop: GameDesktop() {
         LoggerService.getLogger().info("Search dota2 window")
         var hWnd = User32.INSTANCE.FindWindow(null, DOTA_GAME_NAME)
         while (hWnd == null) {
+            delay(1000)
             hWnd = User32.INSTANCE.FindWindow(null, DOTA_GAME_NAME)
         }
         return hWnd
@@ -92,21 +96,22 @@ class DotaGameDesktop: GameDesktop() {
     override suspend fun setReadyGame(hWnd: HWND) {
 
         var isReady = false
-        while (isCurrentPage(hWnd, startPattern, 1.0)) { continue }
+        while (isCurrentPage(hWnd, startPattern)) { delay(1000) }
 
         while (!isReady) {
-            if (isCurrentPage(hWnd, menuPattern, 1.0) || isCurrentPage(hWnd, menuActivePattern, 1.0)) {
+            if (isCurrentPage(hWnd, menuPattern) || isCurrentPage(hWnd, menuActivePattern)) {
                 isReady = true
             }
-            else if (isCurrentPage(hWnd, newUserPattern, 1.0)) skipNewUser(hWnd)
-            else if (isCurrentPage(hWnd, newItemPattern, 1.0)) skipNewItem(hWnd)
-            else if (isCurrentPage(hWnd, skipNewsPattern, 1.0)) skipNews(hWnd)
+            else if (isCurrentPage(hWnd, newUserPattern)) skipNewUser(hWnd)
+            else if (isCurrentPage(hWnd, newItemPattern)) skipNewItem(hWnd)
+            else if (isCurrentPage(hWnd, skipNewsPattern)) skipNews(hWnd)
+            delay(1000)
         }
 
         clickToMainMenu(hWnd)
     }
 
-    override suspend fun makeInvite(hWnd: HWND, steamId: String) {
+    override suspend fun sendInvite(hWnd: HWND, steamId: String) {
         LoggerService.getLogger().info("Start invite in lobby: $steamId")
         clickToMainMenu(hWnd)
 
@@ -118,7 +123,7 @@ class DotaGameDesktop: GameDesktop() {
 
         if (!isCurrentPage(hWnd, searchPattern, 5.0)) {
             LoggerService.getLogger().info("Bad invite in lobby, try again..")
-            makeInvite(hWnd, steamId)
+            sendInvite(hWnd, steamId)
             return
         }
 
@@ -127,22 +132,30 @@ class DotaGameDesktop: GameDesktop() {
         val offsetFieldY = offsetProperties.offsetY + DOTA_OFFSET_SEARCH_FIELD_Y
         click(hWnd, offsetFieldX, offsetFieldY)
 
-        postText(hWnd, steamId)
         delay(100)
+        steamId.toCharArray().forEach {
+            typeChar(hWnd, it)
+            delay(10)
+        }
 
         val offsetSearchX = offsetProperties.offsetX + DOTA_OFFSET_SEARCH_X
         val offsetSearchY = offsetProperties.offsetY + DOTA_OFFSET_SEARCH_Y
         click(hWnd, offsetSearchX, offsetSearchY)
 
         delay(100)
-
-        while (!isCurrentPage(hWnd, invitePattern, 1.0)) { continue }
+        while (!isCurrentPage(hWnd, invitePattern)) { delay(1000) }
 
         val region = getRegion(hWnd)
         region.wait(invitePattern).click()
 
         delay(100)
         clickToMainMenu(hWnd)
+    }
+
+    override suspend fun acceptInvite(hWnd: HWND): Boolean {
+        if (!isCurrentPage(hWnd, acceptInvitePattern)) return false
+        getRegion(hWnd).find(acceptInvitePattern).click()
+        return true
     }
 
     private suspend fun skipNewUser(hWnd: HWND) {

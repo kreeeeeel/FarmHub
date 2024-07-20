@@ -21,6 +21,7 @@ tasks.withType(JavaCompile).configureEach {
 application {
     mainModule = 'com.project.steamfarm'
     mainClass = 'com.project.steamfarm.RunnerKt'
+    applicationDefaultJvmArgs = ["-Xmx500m"]
 }
 
 kotlin {
