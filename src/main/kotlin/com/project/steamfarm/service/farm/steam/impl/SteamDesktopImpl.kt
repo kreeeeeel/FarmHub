@@ -23,9 +23,7 @@ private val GUARD_PATH = "$STEAM_PATH\\guard.png"
 
 private const val DURATION_WAIT_GUARD = 10.0
 
-class SteamDesktopImpl(
-    private val gameDesktop: GameDesktop
-): SteamDesktop() {
+class SteamDesktopImpl: SteamDesktop() {
 
     private val patternLogo = Pattern(LOGO_PATH)
     private val patternGuard = Pattern(GUARD_PATH)
@@ -35,6 +33,10 @@ class SteamDesktopImpl(
     init {
         if (!File(GUARD_PATH).exists()) throw NullPointerException("$GUARD_PATH is not found.")
         if (!File(LOGO_PATH).exists()) throw NullPointerException("$LOGO_PATH is not found.")
+    }
+
+    override suspend fun initGame(gameDesktop: GameDesktop) {
+        this.gameDesktop = gameDesktop
     }
 
     override suspend fun start(ipcName: String) {
