@@ -3,7 +3,7 @@ package com.project.steamfarm.service.farm.steam
 import com.project.steamfarm.service.farm.Desktop
 import com.project.steamfarm.service.farm.MAX_ATTEMPTS
 import com.project.steamfarm.service.farm.STEAM_PATH
-import com.project.steamfarm.service.farm.User32Ext
+import com.project.steamfarm.service.process.User32Ext
 import com.project.steamfarm.service.logger.LoggerService
 import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinDef.HWND

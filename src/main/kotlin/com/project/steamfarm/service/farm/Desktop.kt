@@ -2,6 +2,7 @@ package com.project.steamfarm.service.farm
 
 import com.project.steamfarm.data.WindowData
 import com.project.steamfarm.model.ConfigModel
+import com.project.steamfarm.service.process.User32Ext
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.platform.win32.WinUser.WM_KEYDOWN

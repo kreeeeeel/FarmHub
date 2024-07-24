@@ -12,8 +12,8 @@ import com.project.steamfarm.service.farm.steam.SteamDesktop
 import com.project.steamfarm.service.farm.steam.impl.DotaGameDesktop
 import com.project.steamfarm.service.farm.steam.impl.SteamDesktopImpl
 import com.project.steamfarm.service.logger.LoggerService
+import com.project.steamfarm.service.process.User32Ext
 import com.sun.jna.platform.win32.WinDef.HWND
-import com.sun.jna.ptr.IntByReference
 import kotlinx.coroutines.*
 
 val STEAM_PATH = "$PATH_TO_IMG\\steam"
@@ -31,6 +31,8 @@ object Manager: Desktop() {
     private var teamA: MutableList<LobbyUserData> = mutableListOf()
     private var teamB: MutableList<LobbyUserData> = mutableListOf()
 
+    var limitedPids: MutableSet<Int> = HashSet()
+
     // Variables for position on window
     private var offsetVertical = 0
     private var offsetHorizontal = 0
@@ -40,7 +42,11 @@ object Manager: Desktop() {
         val users = teamA + teamB
         users.forEach { launchGame(it) }
 
-        //delay(5000)
+        delay(5000)
+        teamA.slice(2..3).forEach {
+            steamDesktop.gameDesktop.sendInvite(teamA[0].userHWND, "${it.userModel.steam.session!!.steamID}")
+            steamDesktop.gameDesktop.acceptInvite(it.userHWND)
+        }
         //shuffleLobby()
     }
 
@@ -98,12 +104,12 @@ object Manager: Desktop() {
     }
 
     suspend fun inviteToLobby() {
-        teamA.subList(1, 5).forEach {
+        teamA.slice(2..5).forEach {
             steamDesktop.gameDesktop.sendInvite(teamA[0].userHWND, "${it.userModel.steam.session!!.steamID}")
             steamDesktop.gameDesktop.acceptInvite(it.userHWND)
         }
 
-        teamB.subList(1, 5).forEach {
+        teamB.slice(2..5).forEach {
             steamDesktop.gameDesktop.sendInvite(teamB[0].userHWND, "${it.userModel.steam.session!!.steamID}")
             steamDesktop.gameDesktop.acceptInvite(it.userHWND)
         }
@@ -136,7 +142,7 @@ object Manager: Desktop() {
         steamDesktop.gameDesktop.setName(lobbyUserData.userHWND, lobbyUserData.userModel.steam.accountName)
 
         setOffsetHwnd(lobbyUserData.userHWND)
-        limitBesByHwnd(lobbyUserData.userHWND)
+        lobbyUserData.pids = besLimit.getTargetPids()
 
         searchTeam.first.add(searchTeam.second, lobbyUserData)
     }
@@ -153,12 +159,6 @@ object Manager: Desktop() {
 
         LoggerService.getLogger().info("Changing the Dota2 window position | X=$offsetX Y=$offsetY")
         User32Ext.INSTANCE.SetWindowPos(hwnd, null, offsetX, offsetY, 0, 0, SWP_NOSIZE or SWP_NOZORDER)
-    }
-
-    private suspend fun limitBesByHwnd(hwnd: HWND) {
-        val currentPid = IntByReference()
-        User32Ext.INSTANCE.GetWindowThreadProcessId(hwnd, currentPid)
-        besLimit.limit(currentPid.value)
     }
 
     private fun searchTeam(lobbyUserData: LobbyUserData): Pair<MutableList<LobbyUserData>, Int> {

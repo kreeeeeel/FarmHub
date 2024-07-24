@@ -17,4 +17,5 @@ suspend fun main() {
     Manager.start()
     delay(1000)
     Manager.inviteToLobby()
+
 }

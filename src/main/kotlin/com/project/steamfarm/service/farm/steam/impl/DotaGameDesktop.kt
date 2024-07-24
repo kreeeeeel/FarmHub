@@ -5,7 +5,7 @@ import com.project.steamfarm.model.HEIGHT_APP
 import com.project.steamfarm.model.WIDTH_APP
 import com.project.steamfarm.service.farm.MAX_ATTEMPTS
 import com.project.steamfarm.service.farm.PATH_TO_IMG
-import com.project.steamfarm.service.farm.User32Ext
+import com.project.steamfarm.service.process.User32Ext
 import com.project.steamfarm.service.farm.steam.GameDesktop
 import com.project.steamfarm.service.logger.LoggerService
 import com.sun.jna.platform.win32.User32

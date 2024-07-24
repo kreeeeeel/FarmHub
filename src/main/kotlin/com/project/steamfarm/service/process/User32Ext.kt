@@ -1,4 +1,4 @@
-package com.project.steamfarm.service.farm
+package com.project.steamfarm.service.process
 
 import com.sun.jna.Native
 import com.sun.jna.platform.win32.WinDef.*

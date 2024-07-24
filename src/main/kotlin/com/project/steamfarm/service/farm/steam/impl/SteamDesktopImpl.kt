@@ -5,6 +5,7 @@ import com.project.steamfarm.service.farm.steam.GameDesktop
 import com.project.steamfarm.service.farm.steam.STEAM_SIGN_NAME
 import com.project.steamfarm.service.farm.steam.SteamDesktop
 import com.project.steamfarm.service.logger.LoggerService
+import com.project.steamfarm.service.process.User32Ext
 import com.project.steamfarm.service.steam.GuardSteam
 import com.project.steamfarm.service.steam.impl.DefaultGuardSteam
 import com.sun.jna.platform.win32.WinDef.HWND
