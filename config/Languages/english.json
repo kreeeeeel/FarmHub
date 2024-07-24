@@ -1,0 +1,104 @@
+{
+  "code": "en",
+  "name": "English",
+  "file": "flag/english.png",
+  "text": {
+    "close_section": "Press 'ESC' to close this window.",
+    "description": "Control Panel",
+    "welcome": "Welcome!",
+    "choose_point_menu": "Select an item from the menu",
+    "read_data": "Reading data..",
+    "menu": {
+      "basic": "Basic",
+      "other": "Other",
+      "accounts": "Accounts",
+      "farm": "Farming in games",
+      "sell": "Auto Sell",
+      "subscribe": "Subscribe",
+      "cloud": "Cloud",
+      "settings": "Settings"
+    },
+    "accounts": {
+      "name": "Accounts",
+      "search": "Search account",
+      "import": "Import",
+      "sorting": "Sorting",
+      "selected": "Selected accounts: ",
+      "number_of_accounts": "Number of accounts: ",
+      "not_found": "Nothing found..",
+      "hint_to_import": "To import accounts, click 'Import'",
+      "user_not_active": "User not used",
+      "ma_file": {
+        "name": "Working with .maFile",
+        "drag": "Drag and drop files into this field",
+        "file": "Select files",
+        "hint": "Upload files with the extension .maFile to this field, or select a file by clicking on the button"
+      },
+      "password_file": {
+        "name": "Setting a password",
+        "hint": "You can upload a file with passwords, the contents of which should be in the format login:password"
+      },
+      "action": {
+        "unknown": "Unknown",
+        "your_hero": "Your chosen heroes",
+        "created_date": "Date added",
+        "hours": "hours",
+        "clock_in_game": "Clock in Dota 2",
+        "last_drop_date": "Last drop date",
+        "choose_hero": "Choose hero",
+        "enable_farm_game": "Add for farming",
+        "disable_farm_game": "Remove from farm",
+        "drop_account": "Drop account"
+      },
+      "hero": {
+        "title": "Priority Heroes",
+        "search": "Search for Dota2 heroes",
+        "count": "Heroes available: ",
+        "random": "Random Hero",
+        "not_found": "Nothing found..",
+        "hint": "To change a specific hero, click on it and make a choice. If you want to reset your specific choice, click on the cross, a random hero will be selected"
+      },
+      "drop_account": {
+        "title": "Drop account",
+        "description": "Are you sure you want to delete the selected accounts?",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "farm": {
+      "name": "Farm in games",
+      "service": {
+        "auth": "[%s] | Authorization",
+        "dota": "[%s] | Dota 2"
+      }
+    },
+    "sell": {
+      "name": "Sell items"
+    },
+    "subscribe": {
+      "name": "Subscribe"
+    },
+    "cloud": {
+      "name": "Cloud"
+    },
+    "settings": {
+      "name": "Current Settings",
+      "lang_app": "Application language"
+    },
+    "success": {
+      "name": "Success",
+      "ma_file": "Now you need to set a password for your accounts, please select an action in this window",
+      "import": "Accounts successfully imported! Wait while background authorization and account validation occurs",
+      "auth": "Account '%s' has been successfully authorized! The user is available to work."
+    },
+    "warning": {
+      "name": "Warning!",
+      "not_all_account": "Not all accounts had a password found in the file you provided."
+    },
+    "failure": {
+      "name": "An error has occurred",
+      "ma_file": "The files you selected are not .maFile, please select other files",
+      "passwords_not_found": "No passwords were found in this file for the accounts you are importing."
+    }
+  }
+}

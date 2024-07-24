@@ -19,8 +19,8 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 application {
-    mainModule = 'com.project.steamfarm'
-    mainClass = 'com.project.steamfarm.RunnerKt'
+    mainModule = 'com.project.panel'
+    mainClass = 'com.project.panel.RunnerKt'
     applicationDefaultJvmArgs = ["-Xmx500m"]
 }
 
