@@ -103,44 +103,21 @@ class MaFileModal(
             }
             event.consume()
         }
-
-        drag.setOnDragEntered { event ->
-            if (event.dragboard.hasFiles()) {
-                drag.id = "dragMaFileActive"
-            }
-        }
-        drag.setOnDragExited {
-            drag.id = "dragMaFile"
-        }
+        drag.setOnDragEntered { event -> if (event.dragboard.hasFiles()) drag.id = "dragMaFileActive" }
+        drag.setOnDragExited { drag.id = "dragMaFile" }
     }
 
-    private fun selectFiles() {
-        val fileChooser = FileChooser().also {
-            it.title = "${langApplication.text.accounts.maFile.file} .maFile"
-            it.extensionFilters.add(FileChooser.ExtensionFilter("Ma File", "*.maFile"))
-        }
+    private fun selectFiles() = FileChooser().also {
+        it.title = "${langApplication.text.accounts.maFile.file} .maFile"
+        it.extensionFilters.add(FileChooser.ExtensionFilter("Ma File", "*.maFile"))
+    }.showOpenMultipleDialog(root.scene.window as Stage)?.let { filterFilesAndShowPassword(it) }
 
-        val stage = root.scene.window as Stage
-        val files = fileChooser.showOpenMultipleDialog(stage)
-        if (files != null) {
-            filterFilesAndShowPassword(files)
-        }
-    }
-
-    private fun filterFilesAndShowPassword(files: List<File>) {
-
-        val filterFiles = maFileImport.filterFiles(files)
-        if (filterFiles.isEmpty()) {
-            notifyView.failure(langApplication.text.failure.maFile)
-        } else {
-            root.children.removeIf { it.id == window.id }
-
-            val passwordFileModal: DefaultModal = PasswordFileModal(filterFiles, action)
-            passwordFileModal.show()
-
+    private fun filterFilesAndShowPassword(files: List<File>) = maFileImport.filterFiles(files).let {
+        if (it.isNotEmpty()) {
+            root.children.removeIf { node -> node.id == window.id }
+            PasswordFileModal(it, action).show()
             notifyView.success(langApplication.text.success.maFile)
-        }
-
+        } else notifyView.failure(langApplication.text.failure.maFile)
     }
 
 }

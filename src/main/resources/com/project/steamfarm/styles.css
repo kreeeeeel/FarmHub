@@ -333,6 +333,7 @@
 }
 
 #bag { -fx-image: url("images/bag.png") }
+#bag:disabled { -fx-opacity: 0.8 }
 #time { -fx-image: url("images/time.png") }
 
 #cs { -fx-image: url("images/cs.png") }
@@ -474,8 +475,11 @@
 
 #filter { -fx-image: url("images/filter.png") }
 #selectAll { -fx-image: url("images/selectAll.png") }
+#selectAll:disabled { -fx-opacity: 0.8 }
 #removeAll { -fx-image: url("images/removeAll.png") }
+#removeAll:disabled { -fx-opacity: 0.8 }
 #pencil { -fx-image: url("images/pencil.png") }
+#pencil:disabled { -fx-opacity: 0.8 }
 
 #editMenu {
     -fx-pref-width: 200px;

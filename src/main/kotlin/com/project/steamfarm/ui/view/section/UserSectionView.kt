@@ -12,6 +12,7 @@ import com.project.steamfarm.ui.view.menu.user.UserEditStatusMenuView
 import com.project.steamfarm.ui.view.menu.user.UserInfoMenuView
 import com.project.steamfarm.ui.view.modal.DropUserModal
 import com.project.steamfarm.ui.view.modal.import.MaFileModal
+import com.project.steamfarm.utils.ModeUtils
 import javafx.animation.ScaleTransition
 import javafx.application.Platform
 import javafx.scene.Node
@@ -235,11 +236,9 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
     )
 
     private fun viewUsers(users: List<Pane>, isAnimate: Boolean = false) = Platform.runLater {
-
+        var vertical = 0
         content.children.clear()
         if (users.isNotEmpty()) {
-            var vertical = 0
-
             users.forEach {
                 if (!isAnimate) {
                     it.scaleX = 1.0
@@ -247,13 +246,10 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
                 }
                 it.layoutY = USER_VIEW_Y * vertical++
             }
-
-            changeIdSelect()
             content.children.addAll(users)
             if (isAnimate) animateSequentially(users)
-        } else {
-            notFoundView.view()
-        }
+        } else notFoundView.view()
+        changeIdSelect()
     }
 
     private fun appendUser(userModel: UserModel) = Platform.runLater {
@@ -267,10 +263,7 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
         )
 
         currentUsers[userModel.steam.accountName] = userDataView
-
-        count.text = "${langApplication.text.accounts.numberOfAccounts}${currentUsers.size}"
         if (search.text.isEmpty() || (search.text.isNotEmpty() && userModel.steam.accountName.contains(search.text))) {
-
             content.children.removeIf {
                 it.id == notFoundView.logo.id || it.id == notFoundView.title.id || it.id == notFoundView.hint.id
             }
@@ -280,6 +273,7 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
 
             animateSequentially(listOf(userView))
         }
+        changeIdSelect()
     }
 
     private fun viewUser(userModel: UserModel) = Pane().also { pane ->
@@ -311,7 +305,7 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
 
         val mode = Label().also {
             it.id = USER_MODE_ID
-            it.text = getEnabledMode(userModel.gameStat.enableDota, userModel.gameStat.enableCs)
+            it.text = ModeUtils.getEnabledMode(userModel.gameStat.enableDota, userModel.gameStat.enableCs)
             it.layoutX = 105.0
             it.layoutY = 32.0
         }
@@ -340,21 +334,6 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
         }
 
         pane.children.addAll(select, photo, username, mode, dotaStatus, csStatus)
-    }
-
-    private fun getEnabledMode(isDotaEnabled: Boolean, isCsEnabled: Boolean): String {
-
-        if (!isDotaEnabled && !isCsEnabled) {
-            return langApplication.text.accounts.userNotActive
-        }
-
-        val stringBuilder = StringBuilder()
-        if (isDotaEnabled) stringBuilder.append(DOTA_NAME)
-        if (isCsEnabled) {
-            if (stringBuilder.isNotEmpty()) stringBuilder.append(" | ")
-            stringBuilder.append(CS_NAME)
-        }
-        return stringBuilder.toString()
     }
 
     private fun viewGameStatus(imgId: String, value: Boolean) = Pane().also { pane ->
@@ -437,13 +416,18 @@ class UserSectionView: DefaultSectionView(SectionType.USERS) {
         changeIdSelect()
     }
 
-    private fun changeIdSelect(): Unit = Platform.runLater {
+    private fun changeIdSelect() {
         count.text = "${langApplication.text.accounts.numberOfAccounts}${currentUsers.size}"
         selected.text = "${langApplication.text.accounts.selected} ${selectedUsers.size}"
-        selectAll.children[0].id = if (selectedUsers.size == currentUsers.size) REMOVE_ALL_ID else SELECT_ALL_ID
-
-        trash.isDisable = selectedUsers.isEmpty()
-        edit.isDisable = selectedUsers.isEmpty()
+        selectAll.children[0].id = when (selectedUsers.isEmpty()) {
+            true -> SELECT_ALL_ID
+            else -> REMOVE_ALL_ID
+        }
+        Platform.runLater {
+            selectAll.isDisable = currentUsers.isEmpty()
+            trash.isDisable = selectedUsers.isEmpty()
+            edit.isDisable = selectedUsers.isEmpty()
+        }
     }
 
 }

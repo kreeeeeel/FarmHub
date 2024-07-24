@@ -6,6 +6,7 @@ import com.project.steamfarm.repository.impl.UserRepository
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
 import com.project.steamfarm.ui.view.section.GAME_CS_ID
 import com.project.steamfarm.ui.view.section.GAME_DOTA_ID
+import com.project.steamfarm.utils.ModeUtils
 import javafx.application.Platform
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
@@ -87,7 +88,7 @@ class UserEditStatusMenuView: DefaultUserMenuView() {
             isEnableCs?.let { u.gameStat.enableCs = it }
 
             Platform.runLater {
-                userStatusLabel[value++].text = getStatusGame(u.gameStat.enableDota, u.gameStat.enableCs)
+                userStatusLabel[value++].text = ModeUtils.getEnabledMode(u.gameStat.enableDota, u.gameStat.enableCs)
             }
             UserRepository.save(u)
         }

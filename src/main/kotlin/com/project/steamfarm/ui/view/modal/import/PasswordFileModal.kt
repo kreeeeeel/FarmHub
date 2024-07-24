@@ -8,8 +8,8 @@ import com.project.steamfarm.service.import.impl.DefaultPasswordImport
 import com.project.steamfarm.service.steam.ClientSteam
 import com.project.steamfarm.service.steam.impl.DefaultClientSteam
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
-import com.project.steamfarm.ui.view.notify.NotifyView
 import com.project.steamfarm.ui.view.modal.DefaultModal
+import com.project.steamfarm.ui.view.notify.NotifyView
 import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -18,6 +18,7 @@ import javafx.scene.input.TransferMode
 import javafx.scene.layout.Pane
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
@@ -89,7 +90,7 @@ class PasswordFileModal(
     override fun show() {
         dragFiles()
 
-        file.setOnMouseClicked { selectFile() }
+        file.setOnMouseClicked { runBlocking { selectFile() } }
 
         drag.children.addAll(file)
         block.children.addAll(drag)
@@ -99,9 +100,7 @@ class PasswordFileModal(
 
     private fun dragFiles() {
         drag.setOnDragOver { event ->
-            if (event.dragboard.hasFiles()) {
-                event.acceptTransferModes(TransferMode.COPY)
-            }
+            if (event.dragboard.hasFiles()) event.acceptTransferModes(TransferMode.COPY)
             event.consume()
         }
         drag.setOnDragDropped { event ->
@@ -111,62 +110,39 @@ class PasswordFileModal(
             }
             event.consume()
         }
-
-        drag.setOnDragEntered { event ->
-            if (event.dragboard.hasFiles()) {
-                drag.id = "dragMaFileActive"
-            }
-        }
-        drag.setOnDragExited {
-            drag.id = "dragMaFile"
-        }
+        drag.setOnDragEntered { event -> if (event.dragboard.hasFiles()) drag.id = "dragMaFileActive" }
+        drag.setOnDragExited { drag.id = "dragMaFile" }
     }
 
-    private fun selectFile() {
+    private fun selectFile() = FileChooser().also {
+        it.title = "${langApplication.text.accounts.maFile.file} .txt"
+        it.extensionFilters.add(FileChooser.ExtensionFilter("Txt File", "*.txt"))
+    }.showOpenDialog(root.scene.window as Stage)?.let { filterFileAndAuth(it) }
 
-        val fileChooser = FileChooser().also {
-            it.title = "${langApplication.text.accounts.maFile.file} .txt"
-            it.extensionFilters.add(FileChooser.ExtensionFilter("Txt File", "*.txt"))
-        }
-
-        val stage = root.scene.window as Stage
-        val file = fileChooser.showOpenDialog(stage)
-        if (file != null) {
-            filterFileAndAuth(file)
-        }
-
-    }
-
-    private fun filterFileAndAuth(file: File) {
-
-        val userModels = passwordImport.getPasswordsFromFile(file, maFiles)
-        if (userModels.isEmpty()) {
-            notifyView.failure(langApplication.text.failure.passwordsNotFound)
-
-        } else {
-            authenticate(userModels)
+    private fun filterFileAndAuth(file: File) = passwordImport.getPasswordsFromFile(file, maFiles).let {
+        if (it.isNotEmpty()) {
             root.children.remove(window)
-
-            if (userModels.size != maFiles.size) {
-                notifyView.warning(langApplication.text.warning.notAllAccount)
-            } else notifyView.success(langApplication.text.success.import)
-        }
-    }
-
-    private fun authenticate(userModels: List<UserModel>) = userModels.forEach {
-        CompletableFuture.supplyAsync {
-            it.createdTs = System.currentTimeMillis()
-            if (clientSteam.authentication(it.steam.accountName, it.steam.password, it.steam.sharedSecret)) {
-
-                val data = clientSteam.getProfileData()
-                if (data != null) {
-                    it.photo = data.avatar
-                }
-
-                UserRepository.save(it)
-                Platform.runLater { action.invoke(it) }
+            authenticate(it.toMutableList())
+            when (it.size != maFiles.size) {
+                true -> notifyView.warning(langApplication.text.warning.notAllAccount)
+                else -> notifyView.success(langApplication.text.success.import)
             }
-        }
+        } else notifyView.failure(langApplication.text.failure.passwordsNotFound)
     }
 
+    private fun authenticate(userModels: MutableList<UserModel>) = CompletableFuture.supplyAsync {
+        userModels.mapNotNull { it.steam.session }
+            .mapNotNull { it.steamID }
+            .map { CompletableFuture.supplyAsync { clientSteam.getProfileData(it) } }
+            .forEachIndexed { index, futureData ->
+                futureData.thenAccept { data ->
+                    val currentUserModel = userModels[index]
+                    currentUserModel.createdTs = System.currentTimeMillis()
+                    data?.let { currentUserModel.photo = it.avatar }
+
+                    UserRepository.save(currentUserModel)
+                    Platform.runLater { action.invoke(currentUserModel) }
+                }
+            }
+    }
 }

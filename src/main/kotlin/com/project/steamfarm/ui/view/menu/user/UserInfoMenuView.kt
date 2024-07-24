@@ -12,6 +12,7 @@ import com.project.steamfarm.ui.view.modal.DropUserModal
 import com.project.steamfarm.ui.view.modal.HeroModal
 import com.project.steamfarm.ui.view.section.GAME_CS_ID
 import com.project.steamfarm.ui.view.section.GAME_DOTA_ID
+import com.project.steamfarm.utils.ModeUtils
 import javafx.application.Platform
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
@@ -211,7 +212,7 @@ class UserInfoMenuView(
                 if (isGameDota) userModel.gameStat.enableDota else userModel.gameStat.enableCs
             )
 
-            userStatusLabel.text = getStatusGame(userModel.gameStat.enableDota, userModel.gameStat.enableCs)
+            userStatusLabel.text = ModeUtils.getEnabledMode(userModel.gameStat.enableDota, userModel.gameStat.enableCs)
             UserRepository.save(userModel)
         }
     }

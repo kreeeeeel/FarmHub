@@ -1,9 +1,6 @@
 package com.project.steamfarm.ui.view.menu.user
 
-import com.project.steamfarm.langApplication
 import com.project.steamfarm.ui.controller.BaseController.Companion.root
-import com.project.steamfarm.ui.view.section.CS_NAME
-import com.project.steamfarm.ui.view.section.DOTA_NAME
 import javafx.animation.ScaleTransition
 import javafx.application.Platform
 import javafx.scene.control.Label
@@ -64,20 +61,6 @@ abstract class DefaultUserMenuView {
         }
 
         it.children.addAll(icon, text)
-    }
-
-    fun getStatusGame(isDotaEnabled: Boolean, isCsEnabled: Boolean): String {
-        if (!isDotaEnabled && !isCsEnabled) {
-            return langApplication.text.accounts.userNotActive
-        }
-
-        val stringBuilder = StringBuilder()
-        if (isDotaEnabled) stringBuilder.append(DOTA_NAME)
-        if (isCsEnabled) {
-            if (stringBuilder.isNotEmpty()) stringBuilder.append(" | ")
-            stringBuilder.append(CS_NAME)
-        }
-        return stringBuilder.toString()
     }
 
 }
