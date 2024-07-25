@@ -26,7 +26,6 @@ private const val HEIGHT = 35.0
 private val FLAG_URL = Runner::class.java.getResource("images/flag.png")
     ?: throw NullPointerException("Image 'flag' not found")
 
-
 const val LANGUAGE_ID = "language"
 
 class LanguageBlockView(
@@ -67,12 +66,14 @@ class LanguageBlockView(
     private fun viewAllLanguage() {
 
         val scroll = ScrollPane().also {
-            it.layoutX = currentLang.layoutX - 1
-            it.layoutY = currentLang.layoutY - 1
+            it.layoutX = 566.0
+            it.layoutY = 74.0
             it.prefWidth = 202.0
 
             it.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
             it.vbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+
+            it.toFront()
         }
 
         val content = AnchorPane().also {
@@ -94,10 +95,12 @@ class LanguageBlockView(
             scroll.prefHeight = MAX_COUNTS * HEIGHT
         }
 
-        block.children.add(scroll)
+        scroll.setOnMouseExited { root.children.remove(scroll) }
+
+        root.children.add(scroll)
         root.scene.addEventFilter(MouseEvent.MOUSE_CLICKED) { event ->
             if (!scroll.boundsInParent.contains(event.x, event.y)) {
-                block.children.remove(scroll)
+                root.children.remove(scroll)
             }
         }
     }

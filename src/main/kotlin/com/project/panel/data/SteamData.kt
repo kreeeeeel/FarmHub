@@ -3,7 +3,7 @@ package com.project.panel.data
 import com.google.gson.annotations.SerializedName
 
 data class SteamData(
-    @SerializedName("password") var password: String,
+    @SerializedName("password") var password: String?,
     @SerializedName("shared_secret") val sharedSecret: String,
     @SerializedName("serial_number") val serialNumber: String?,
     @SerializedName("revocation_code") val revocationCode: String?,

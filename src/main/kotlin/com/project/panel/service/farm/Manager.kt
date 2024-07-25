@@ -120,7 +120,7 @@ object Manager: Desktop() {
         val searchTeam = searchTeam(lobbyUserData)
 
         steamDesktop.start(lobbyUserData.userModel.steam.accountName)
-        steamDesktop.signIn(lobbyUserData.userModel.steam.accountName, lobbyUserData.userModel.steam.password)
+        steamDesktop.signIn(lobbyUserData.userModel.steam.accountName, lobbyUserData.userModel.steam.password!!)
 
         val isEntered = steamDesktop.guard(lobbyUserData.userModel.steam.sharedSecret)
         if (!isEntered) {

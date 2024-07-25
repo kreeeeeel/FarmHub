@@ -175,7 +175,7 @@
 
 #currentLang:hover {
     -fx-cursor: hand;
-    -fx-background-color: #1f2227;
+    -fx-background-color: #272b32;
 }
 
 #currentLangSwitch {
@@ -187,7 +187,7 @@
 
 #currentLangSwitch:hover {
     -fx-cursor: hand;
-    -fx-background-color: #1f2227;
+    -fx-background-color: #272b32;
 }
 
 #currentLangText {
@@ -248,21 +248,21 @@
     -fx-pref-height: 600px;
 }
 
-#maFile {
+#importFile {
     -fx-background-color: #181A1E;
     -fx-background-radius: 18px;
     -fx-pref-width: 255px;
     -fx-pref-height: 330px;
 }
 
-#dragMaFile {
+#dragFile {
     -fx-background-color: #131417;
     -fx-background-radius: 8px;
     -fx-pref-width: 200px;
     -fx-pref-height: 200px;
 }
 
-#dragMaFileActive {
+#dragFileActive {
     -fx-background-color: #131417;
     -fx-background-radius: 8px;
     -fx-pref-width: 200px;
@@ -313,13 +313,6 @@
 }
 
 #password { -fx-image: url("images/password.png") }
-
-#passwordFile {
-    -fx-background-color: #181A1E;
-    -fx-background-radius: 18px;
-    -fx-pref-width: 255px;
-    -fx-pref-height: 330px;
-}
 
 #passwordHintFile {
     -fx-wrap-text: true;
@@ -671,4 +664,26 @@
     -fx-background-color: black;
     -fx-background-radius: 8px;
     -fx-alignment: center;
+}
+
+#steam { -fx-image: url("images/steam.png") }
+#steamPath {
+    -fx-pref-width: 260px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #838181;
+}
+
+#steamSpecify {
+    -fx-background-color: #2a2d33;
+    -fx-background-radius: 4px;
+    -fx-text-fill: white;
+    -fx-font-family: "Franklin Gothic Medium";
+    -fx-font-size: 17px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 32px;
+}
+
+#steamSpecify:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #272b32;
 }

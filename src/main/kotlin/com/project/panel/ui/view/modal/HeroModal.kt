@@ -11,6 +11,7 @@ import com.project.panel.ui.controller.BaseController.Companion.root
 import com.project.panel.ui.view.menu.user.STATUA_ID
 import javafx.application.Platform
 import javafx.geometry.Point2D
+import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextField
@@ -191,12 +192,13 @@ class HeroModal: DefaultModal() {
             }
 
             val title = Label(langApplication.text.accounts.hero.notFound).also {
-                it.layoutX = 105.0
+                it.prefWidth = 200.0
+                it.alignment = Pos.CENTER
+                it.layoutX = 65.0
                 it.layoutY = 180.0
             }
 
             content.children.addAll(logo, title)
-
         }
 
     }

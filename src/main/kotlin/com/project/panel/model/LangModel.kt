@@ -79,7 +79,11 @@ data class Cloud(
 
 data class Settings(
     var name: String = "Current Settings",
-    var langApp: String = "Application language"
+    var langApp: String = "Application language",
+    var pathSteam: String = "Location to Steam",
+    var steamNotExist: String = "Specify the path to steam.exe",
+    var specify: String = "Specify",
+    var specifySteamExe: String = "Specify the path to steam.exe"
 )
 
 data class MaFile(
@@ -98,7 +102,7 @@ data class Failure (
     var name: String = "An error has occurred",
     var maFile: String = "The files you selected are not .maFile, please select other files",
     var passwordsNotFound: String = "No passwords were found in this file for the accounts you are importing.",
-    //var auth: String = "An error occurred while authorizing account '%s'! You may have entered the wrong password.."
+    var pathSteam: String = "This file is not Steam, please specify the file steam.exe"
 )
 
 data class Warning(
@@ -108,9 +112,10 @@ data class Warning(
 
 data class Success (
     var name: String = "Success",
-    var maFile: String = "Now you need to set a password for your accounts, please select an action in this window",
+    var maFile: String = "Perhaps these accounts already exist, or the files are not valid!",
     var import: String = "Accounts successfully imported! Wait while background authorization and account validation occurs",
-    var auth: String = "Account '%s' has been successfully authorized! The user is available to work."
+    var auth: String = "Account '%s' has been successfully authorized! The user is available to work.",
+    var pathSteam: String = "You have successfully changed the path to Steam"
 )
 
 data class AccountAction(

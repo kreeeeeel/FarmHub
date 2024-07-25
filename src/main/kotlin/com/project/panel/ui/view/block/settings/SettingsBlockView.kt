@@ -6,7 +6,7 @@ abstract class SettingsBlockView(
     val id: String
 ) {
 
-    val block = Pane().also {
+    open val block = Pane().also {
         it.id = "settingsBlock"
         it.layoutX = 21.0
     }

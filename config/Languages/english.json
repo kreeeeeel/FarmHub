@@ -50,7 +50,7 @@
         "disable_farm_game": "Remove from farm",
         "drop_account": "Drop account"
       },
-      "hero": {
+      "hero_action": {
         "title": "Priority Heroes",
         "search": "Search for Dota2 heroes",
         "count": "Heroes available: ",
@@ -83,11 +83,15 @@
     },
     "settings": {
       "name": "Current Settings",
-      "lang_app": "Application language"
+      "lang_app": "Application language",
+      "path_steam": "Location to Steam",
+      "steam_not_exist": "Specify the path to steam.exe",
+      "specify": "Specify",
+      "specify_steam_exe": "Specify the path to steam.exe"
     },
     "success": {
       "name": "Success",
-      "ma_file": "Now you need to set a password for your accounts, please select an action in this window",
+      "ma_file": "Perhaps these accounts already exist, or the files are not valid!",
       "import": "Accounts successfully imported! Wait while background authorization and account validation occurs",
       "auth": "Account '%s' has been successfully authorized! The user is available to work."
     },

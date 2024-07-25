@@ -3,6 +3,7 @@ package com.project.panel.ui.view.section
 import com.project.panel.ui.view.SectionType
 import com.project.panel.ui.view.block.settings.LANGUAGE_ID
 import com.project.panel.ui.view.block.settings.LanguageBlockView
+import com.project.panel.ui.view.block.settings.SteamBlockView
 import com.project.panel.ui.view.menu.MenuView
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.AnchorPane
@@ -20,7 +21,7 @@ class SettingsSectionView(menu: MenuView): DefaultSectionView(SectionType.SETTIN
     }
 
     private val settingsBlock = listOf(
-        LanguageBlockView(menu)
+        LanguageBlockView(menu), SteamBlockView()
     )
 
     override fun refreshLanguage() {
@@ -43,8 +44,10 @@ class SettingsSectionView(menu: MenuView): DefaultSectionView(SectionType.SETTIN
         scroll.content = content
         section.children.add(scroll)
 
-        settingsBlock.first { it.id == LANGUAGE_ID }.blockView = settingsBlock
-
+        settingsBlock.first { it.id == LANGUAGE_ID }.let {
+            val block = it as LanguageBlockView
+            block.blockView = settingsBlock
+        }
         super.initialize()
     }
 
