@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id "com.gluonhq.gluonfx-gradle-plugin" version "1.0.23"
+}
+
+group 'com.project'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'com.project.panel'
+    mainClass = 'com.project.panel.RunnerKt'
+    applicationDefaultJvmArgs = ["-Xmx500m"]
+}
+
+kotlin {
+    jvmToolchain(22)
+}
+
+javafx {
+    version = '22.0.2'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    implementation("com.sikulix:sikulixapi:2.0.5")
+
+    implementation("net.java.dev.jna:jna:5.14.0")
+    implementation("net.java.dev.jna:jna-platform:5.14.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-simplexml:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+}
+
+tasks.jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass.get()
+        )
+    }
+}
