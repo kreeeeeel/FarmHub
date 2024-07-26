@@ -66,6 +66,7 @@ class LanguageBlockView(
     private fun viewAllLanguage() {
 
         val scroll = ScrollPane().also {
+            it.id = LANGUAGE_ID
             it.layoutX = 566.0
             it.layoutY = 74.0
             it.prefWidth = 202.0

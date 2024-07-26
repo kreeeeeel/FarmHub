@@ -35,7 +35,8 @@ class MaFileModal(
         if (it.isNotEmpty()) {
             root.children.removeIf { node -> node.id == window.id }
             PasswordFileModal(it, action).show()
-            notifyView.success(langApplication.text.success.maFile)
+            if (files.size == it.size) notifyView.success(langApplication.text.success.maFile)
+            else notifyView.warning(langApplication.text.warning.maFile)
         } else notifyView.failure(langApplication.text.failure.maFile)
     }
 

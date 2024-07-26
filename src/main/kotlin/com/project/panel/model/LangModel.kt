@@ -107,12 +107,13 @@ data class Failure (
 
 data class Warning(
     var name: String = "Warning!",
+    var maFile: String = "Some files have already been added to the panel!",
     var notAllAccount: String = "Not all accounts had a password found in the file you provided.",
 )
 
 data class Success (
     var name: String = "Success",
-    var maFile: String = "Perhaps these accounts already exist, or the files are not valid!",
+    var maFile: String = "Great, now you need to specify a file with passwords for accounts.",
     var import: String = "Accounts successfully imported! Wait while background authorization and account validation occurs",
     var auth: String = "Account '%s' has been successfully authorized! The user is available to work.",
     var pathSteam: String = "You have successfully changed the path to Steam"

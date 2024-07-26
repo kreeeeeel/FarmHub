@@ -50,7 +50,7 @@
         "disable_farm_game": "Remove from farm",
         "drop_account": "Drop account"
       },
-      "hero_action": {
+      "hero": {
         "title": "Priority Heroes",
         "search": "Search for Dota2 heroes",
         "count": "Heroes available: ",
@@ -89,20 +89,23 @@
       "specify": "Specify",
       "specify_steam_exe": "Specify the path to steam.exe"
     },
-    "success": {
-      "name": "Success",
-      "ma_file": "Perhaps these accounts already exist, or the files are not valid!",
-      "import": "Accounts successfully imported! Wait while background authorization and account validation occurs",
-      "auth": "Account '%s' has been successfully authorized! The user is available to work."
-    },
-    "warning": {
-      "name": "Warning!",
-      "not_all_account": "Not all accounts had a password found in the file you provided."
-    },
     "failure": {
       "name": "An error has occurred",
       "ma_file": "The files you selected are not .maFile, please select other files",
-      "passwords_not_found": "No passwords were found in this file for the accounts you are importing."
+      "passwords_not_found": "No passwords were found in this file for the accounts you are importing.",
+      "path_steam": "This file is not Steam, please specify the file steam.exe"
+    },
+    "warning": {
+      "name": "Warning!",
+      "ma_file": "Some files have already been added to the panel!",
+      "not_all_account": "Not all accounts had a password found in the file you provided."
+    },
+    "success": {
+      "name": "Success",
+      "ma_file": "Great, now you need to specify a file with passwords for accounts.",
+      "import": "Accounts successfully imported! Wait while background authorization and account validation occurs",
+      "auth": "Account '%s' has been successfully authorized! The user is available to work.",
+      "path_steam": "You have successfully changed the path to Steam"
     }
   }
 }
