@@ -1,0 +1,34 @@
+[
+  {
+    "condition": {
+      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultClientSteam"
+    },
+    "interfaces": [
+      "com.project.steamfarm.retrofit.api.Profile"
+    ]
+  },
+  {
+    "condition": {
+      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultAuthSteam"
+    },
+    "interfaces": [
+      "com.project.steamfarm.retrofit.api.Authentication"
+    ]
+  },
+  {
+    "condition": {
+      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultAuthSteam"
+    },
+    "interfaces": [
+      "com.project.steamfarm.retrofit.api.LoginFinalize"
+    ]
+  },
+  {
+    "condition": {
+      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultAuthSteam"
+    },
+    "interfaces": [
+      "com.project.steamfarm.retrofit.api.Transfer"
+    ]
+  }
+]
