@@ -4,4 +4,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "steamFarm"
+rootProject.name = "panel"

@@ -1,34 +1,34 @@
 [
   {
     "condition": {
-      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultClientSteam"
+      "typeReachable": "com.project.panel.service.steam.impl.DefaultClientSteam"
     },
     "interfaces": [
-      "com.project.steamfarm.retrofit.api.Profile"
+      "com.project.panel.retrofit.api.Profile"
     ]
   },
   {
     "condition": {
-      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultAuthSteam"
+      "typeReachable": "com.project.panel.service.steam.impl.DefaultAuthSteam"
     },
     "interfaces": [
-      "com.project.steamfarm.retrofit.api.Authentication"
+      "com.project.panel.retrofit.api.Authentication"
     ]
   },
   {
     "condition": {
-      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultAuthSteam"
+      "typeReachable": "com.project.panel.service.steam.impl.DefaultAuthSteam"
     },
     "interfaces": [
-      "com.project.steamfarm.retrofit.api.LoginFinalize"
+      "com.project.panel.retrofit.api.LoginFinalize"
     ]
   },
   {
     "condition": {
-      "typeReachable": "com.project.steamfarm.service.steam.impl.DefaultAuthSteam"
+      "typeReachable": "com.project.panel.service.steam.impl.DefaultAuthSteam"
     },
     "interfaces": [
-      "com.project.steamfarm.retrofit.api.Transfer"
+      "com.project.panel.retrofit.api.Transfer"
     ]
   }
 ]

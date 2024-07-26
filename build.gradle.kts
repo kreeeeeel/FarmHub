@@ -17,7 +17,7 @@ repositories {
 }
 
 application {
-    mainClass.set("com.project.steamfarm.RunnerKt")
+    mainClass.set("com.project.panel.RunnerKt")
 }
 
 java {
@@ -34,33 +34,16 @@ javafx {
 }
 
 gluonfx {
-    bundlesList = listOf("com.project.steamfarm")
+    bundlesList = listOf("com.project.panel")
     reflectionList = listOf(
-        "com.project.steamfarm.ui.controller.BaseController",
-        "com.project.steamfarm.ui.controller.MainController",
+        "com.project.panel.ui.controller.BaseController",
+        "com.project.panel.ui.controller.MainController",
 
-        "com.project.steamfarm.data.SteamData",
-        "com.project.steamfarm.data.Session",
+        "com.project.panel.data.SteamData",
+        "com.project.panel.data.Session",
 
-        "com.project.steamfarm.retrofit.api.Profile",
-        "com.project.steamfarm.retrofit.api.Authentication",
-        "com.project.steamfarm.retrofit.api.LoginFinalize",
-        "com.project.steamfarm.retrofit.api.Transfer",
-
-        "com.project.steamfarm.retrofit.response.RefreshResponse",
-        "com.project.steamfarm.retrofit.response.RefreshTokenResponse",
-
-        "com.project.steamfarm.retrofit.response.RSAResponse",
-        "com.project.steamfarm.retrofit.response.RSA",
-
-        "com.project.steamfarm.retrofit.response.SteamAuthResponse",
-        "com.project.steamfarm.retrofit.response.SteamDataResponse",
-
-        "com.project.steamfarm.retrofit.response.SteamProfileResponse",
-
-        "com.project.steamfarm.retrofit.response.TransferResponse",
-        "com.project.steamfarm.retrofit.response.TransferInfoResponse",
-        "com.project.steamfarm.retrofit.response.TransferParams",
+        "com.project.panel.retrofit.api.Profile",
+        "com.project.panel.retrofit.response.SteamProfileResponse",
     )
 }
 
