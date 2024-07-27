@@ -2,6 +2,7 @@ package com.project.panel.repository.impl
 
 import com.project.panel.repository.PATH_REPOSITORY
 import com.project.panel.repository.Repository
+import com.project.panel.service.logger.LoggerService
 import javafx.scene.image.Image
 import java.io.*
 import java.net.URL
@@ -16,6 +17,7 @@ object CacheRepository: Repository<Image> {
 
     // id = username
     override fun findById(id: String): Image? {
+        LoggerService.getLogger().info("Search photo user for $id")
         val file = File("${CACHE_PATH}\\$id.png")
         if (!file.exists()) {
             return getPhotoFromLink(id)
@@ -39,6 +41,7 @@ object CacheRepository: Repository<Image> {
             createNewFile()
         }
 
+        LoggerService.getLogger().info("Write $username photo to cache")
         FileOutputStream(file).use { outputStream -> outputStream.write(bytes) }
         return result
     }
@@ -46,6 +49,7 @@ object CacheRepository: Repository<Image> {
     @Suppress("DEPRECATION")
     private fun getBytesFromUrl(url: String): ByteArray? {
         try {
+            LoggerService.getLogger().info("Download photo user from $url")
             val outputStream = ByteArrayOutputStream()
             URL(url).openStream().use { inputStream ->
                 val buffer = ByteArray(4096)
@@ -56,6 +60,7 @@ object CacheRepository: Repository<Image> {
             }
             return outputStream.toByteArray()
         } catch (e: IOException) {
+            LoggerService.getLogger().error("Failed to download image from $url")
             return null
         }
     }

@@ -1,6 +1,6 @@
 package com.project.panel.ui.view.section
 
-import com.project.panel.Runner
+import com.project.panel.AppRun
 import com.project.panel.langApplication
 import com.project.panel.model.UserModel
 import com.project.panel.repository.impl.CacheRepository
@@ -49,7 +49,7 @@ const val CS_NAME = "Counter-Strike 2"
 private const val USER_VIEW_Y = 60.0
 
 private val DEFAULT_STEAM_PHOTO = Image(
-    Runner::class.java.getResource("images/photo.png")!!
+    AppRun::class.java.getResource("images/photo.png")!!
         .toURI()
         .toString()
 )

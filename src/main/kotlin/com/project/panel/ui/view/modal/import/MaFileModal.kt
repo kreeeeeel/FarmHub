@@ -4,6 +4,7 @@ import com.project.panel.langApplication
 import com.project.panel.model.UserModel
 import com.project.panel.service.import.MaFileImport
 import com.project.panel.service.import.impl.DefaultMaFileImport
+import com.project.panel.service.logger.LoggerService
 import com.project.panel.ui.controller.BaseController.Companion.root
 import com.project.panel.ui.view.notify.NotifyView
 import javafx.stage.FileChooser
@@ -27,17 +28,29 @@ class MaFileModal(
         }
     }.showOpenMultipleDialog(root.scene.window as Stage)?.let { handler(it) }
 
-    override fun handler(files: List<File>) = maFileImport.filterFiles(files).let {
+    override fun handler(files: List<File>) {
+        LoggerService.getLogger().info("Receiving .maFile files: ${files.size} files")
+        maFileImport.filterFiles(files).let {
+            configModel.lastDirectoryChooser = files[0].parentFile.absolutePath
+            configModel.save()
 
-        configModel.lastDirectoryChooser = files[0].parentFile.absolutePath
-        configModel.save()
-
-        if (it.isNotEmpty()) {
-            root.children.removeIf { node -> node.id == window.id }
-            PasswordFileModal(it, action).show()
-            if (files.size == it.size) notifyView.success(langApplication.text.success.maFile)
-            else notifyView.warning(langApplication.text.warning.maFile)
-        } else notifyView.failure(langApplication.text.failure.maFile)
+            if (it.isNotEmpty()) {
+                root.children.removeIf { node -> node.id == window.id }
+                PasswordFileModal(it, action).show()
+                if (files.size == it.size) {
+                    LoggerService.getLogger().info("All received .maFile are valid")
+                    notifyView.success(langApplication.text.success.maFile)
+                }
+                else {
+                    LoggerService.getLogger()
+                        .warning("${files.size - it.size} .maFile files out of ${files.size} turned out to be invalid!")
+                    notifyView.warning(langApplication.text.warning.maFile)
+                }
+            } else {
+                LoggerService.getLogger().error("The .maFile files were not valid!")
+                notifyView.failure(langApplication.text.failure.maFile)
+            }
+        }
     }
 
 }

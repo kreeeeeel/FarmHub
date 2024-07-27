@@ -2,6 +2,7 @@ package com.project.panel.repository.impl
 
 import com.project.panel.model.LangModel
 import com.project.panel.repository.Repository
+import com.project.panel.service.logger.LoggerService
 import java.io.File
 import java.io.FileReader
 
@@ -22,8 +23,10 @@ object LangRepository: Repository<LangModel> {
 
     // id = country code
     override fun findById(id: String): LangModel? {
+        LoggerService.getLogger().info("Searching language for $id")
         val lang = File("$PATH_LANGUAGES\\$id.json")
         if (!lang.exists()) {
+            LoggerService.getLogger().error("Language not found: $lang")
             return null
         }
 

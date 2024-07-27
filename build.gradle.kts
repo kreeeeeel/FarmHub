@@ -17,7 +17,8 @@ repositories {
 }
 
 application {
-    mainClass.set("com.project.panel.RunnerKt")
+    mainClass.set("com.project.panel.AppRunKt")
+    applicationDefaultJvmArgs = listOf("-Xmx500m")
 }
 
 java {
@@ -42,7 +43,7 @@ gluonfx {
         "com.project.panel.data.SteamData",
         "com.project.panel.data.Session",
 
-        "com.project.panel.retrofit.api.Profile",
+        "com.project.panel.retrofit.api.ProfileApi",
         "com.project.panel.retrofit.response.SteamProfileResponse",
     )
 }

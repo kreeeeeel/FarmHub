@@ -2,6 +2,7 @@ package com.project.panel.ui.view.block.settings
 
 import com.project.panel.langApplication
 import com.project.panel.model.ConfigModel
+import com.project.panel.service.logger.LoggerService
 import com.project.panel.ui.controller.BaseController.Companion.root
 import com.project.panel.ui.view.notify.NotifyView
 import javafx.scene.control.Button
@@ -76,12 +77,16 @@ class SteamBlockView: SettingsBlockView(STEAM_ID) {
         configModel.save()
 
         if (file.absolutePath.endsWith("steam.exe")) {
+            LoggerService.getLogger().info("Changing steam path to ${file.absolutePath}")
             configModel.steamExecutor = "\"${file.absolutePath}\""
             configModel.save()
 
             description.text = configModel.steamExecutor
             notifyView.success(langApplication.text.success.pathSteam)
-        } else notifyView.failure(langApplication.text.failure.pathSteam)
+        } else {
+            LoggerService.getLogger().error("Bad changing path steam to ${file.absolutePath}")
+            notifyView.failure(langApplication.text.failure.pathSteam)
+        }
     }
 
 }

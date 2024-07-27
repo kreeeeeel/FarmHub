@@ -1,6 +1,7 @@
 package com.project.panel.ui.controller
 
-import com.project.panel.Runner
+import com.project.panel.AppRun
+import com.project.panel.NAME_APPLICATION
 import com.project.panel.ui.view.menu.MenuView
 import com.project.panel.ui.view.section.SECTION_CLOSE_ID
 import com.project.panel.ui.view.section.SECTION_ID
@@ -19,7 +20,6 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import kotlin.system.exitProcess
 
-const val NAME_APPLICATION = "Steam FarmHub"
 private const val ICON_APPLICATION = "images/logo.png"
 private const val WIDTH_APPLICATION = 800.0
 private const val HEIGHT_APPLICATION = 600.0
@@ -39,7 +39,7 @@ open class BaseController: Application() {
                 getFooterRight(true)
             )
 
-            it.stylesheets.add(Runner::class.java.getResource(STYLESHEETS)!!.toString())
+            it.stylesheets.add(AppRun::class.java.getResource(STYLESHEETS)!!.toString())
         }
 
         private fun getFooterRight(isClosed: Boolean): Pane = Pane().also {
@@ -86,7 +86,7 @@ open class BaseController: Application() {
             }
 
             if (it.icons.isEmpty()) {
-                it.icons.add(Image(Runner::class.java.getResourceAsStream(ICON_APPLICATION)))
+                it.icons.add(Image(AppRun::class.java.getResourceAsStream(ICON_APPLICATION)))
             }
 
             it.scene = Scene(root, WIDTH_APPLICATION, HEIGHT_APPLICATION, Color.TRANSPARENT)

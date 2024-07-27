@@ -1,6 +1,6 @@
 package com.project.panel.ui.view.modal
 
-import com.project.panel.Runner
+import com.project.panel.AppRun
 import com.project.panel.langApplication
 import com.project.panel.model.HeroModel
 import com.project.panel.model.UserModel
@@ -37,7 +37,7 @@ private const val HERO_FIELD_ID = "hero"
 private const val HERO_HINT_ID = "peekHeroHint"
 
 val DEFAULT_RANDOM_PHOTO = Image(
-    Runner::class.java.getResource("images/random.png")!!
+    AppRun::class.java.getResource("images/random.png")!!
         .toURI()
         .toString()
 )

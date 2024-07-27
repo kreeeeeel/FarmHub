@@ -1,11 +1,12 @@
 package com.project.panel.ui.view.block.settings
 
-import com.project.panel.Runner
+import com.project.panel.AppRun
 import com.project.panel.langApplication
 import com.project.panel.model.ConfigModel
 import com.project.panel.model.LangModel
 import com.project.panel.repository.impl.LangRepository
 import com.project.panel.repository.impl.PATH_LANGUAGES
+import com.project.panel.service.logger.LoggerService
 import com.project.panel.ui.controller.BaseController.Companion.root
 import com.project.panel.ui.view.menu.MenuView
 import javafx.application.Platform
@@ -23,7 +24,7 @@ private const val PREF_HEIGHT = 45.0
 private const val MAX_COUNTS = 12
 private const val HEIGHT = 35.0
 
-private val FLAG_URL = Runner::class.java.getResource("images/flag.png")
+private val FLAG_URL = AppRun::class.java.getResource("images/flag.png")
     ?: throw NullPointerException("Image 'flag' not found")
 
 const val LANGUAGE_ID = "language"
@@ -164,6 +165,7 @@ class LanguageBlockView(
                     config.langApp = c
                     config.save()
                 }
+                LoggerService.getLogger().info("Changing language app to ${langModel.name}")
                 updateLang()
             }
         }

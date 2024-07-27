@@ -1,9 +1,9 @@
 package com.project.panel.ui.view.menu
 
+import com.project.panel.NAME_APPLICATION
 import com.project.panel.langApplication
 import com.project.panel.ui.view.DefaultView
 import com.project.panel.ui.controller.BaseController.Companion.root
-import com.project.panel.ui.controller.NAME_APPLICATION
 import com.project.panel.ui.view.section.UserSectionView
 import com.project.panel.ui.view.section.DefaultSectionView
 import com.project.panel.ui.view.section.SettingsSectionView
