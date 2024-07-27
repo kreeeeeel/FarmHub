@@ -4,7 +4,7 @@ plugins {
     java
     application
     id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.openjfx.javafxplugin") version "0.0.13"
     id("com.gluonhq.gluonfx-gradle-plugin") version "1.0.23"
 }
 
@@ -23,6 +23,14 @@ application {
 
 java {
     sourceCompatibility = JavaVersion.VERSION_22
+    targetCompatibility = JavaVersion.VERSION_22
+    modularity.inferModulePath.set(true)
+}
+
+sourceSets {
+    main {
+        java.srcDirs("src/main/kotlin")
+    }
 }
 
 kotlin {
@@ -49,7 +57,8 @@ gluonfx {
 }
 
 dependencies {
-    implementation("com.sikulix:sikulixapi:2.0.5")
+    implementation(kotlin("stdlib-jdk8"))
+    //implementation("com.sikulix:sikulixapi:2.0.5")
 
     implementation("net.java.dev.jna:jna:5.14.0")
     implementation("net.java.dev.jna:jna-platform:5.14.0")

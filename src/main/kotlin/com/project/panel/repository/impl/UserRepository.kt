@@ -21,7 +21,7 @@ object UserRepository: Repository<UserModel> {
     }
 
     override fun findById(id: String): UserModel? {
-        LoggerService.getLogger().info("Search user: $id")
+        LoggerService.getLogger().debug("Search user: $id")
         val file = File("$PATH_REPOSITORY\\$id.json")
         if (!file.exists()) {
             LoggerService.getLogger().warning("User $id does not exist")

@@ -21,7 +21,7 @@ object HeroRepository: Repository<HeroModel> {
     }
 
     override fun findById(id: String): HeroModel? {
-        LoggerService.getLogger().info("Find hero by id: $id")
+        LoggerService.getLogger().debug("Find hero by id: $id")
         val file = File("$PATH_HERO\\$id.json")
         if (!file.exists()) {
             LoggerService.getLogger().warning("Hero $id not found!")
@@ -42,7 +42,7 @@ object HeroImageRepository: Repository<Image> {
     }
 
     override fun findById(id: String): Image? {
-        LoggerService.getLogger().info("Find hero image by id: $id")
+        LoggerService.getLogger().debug("Find hero image by id: $id")
         val file = File(System.getProperty("user.dir") + "\\" +id)
         return if (file.exists()) Image(file.toURI().toString())
         else null
