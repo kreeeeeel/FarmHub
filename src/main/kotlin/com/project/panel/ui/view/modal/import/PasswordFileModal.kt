@@ -21,8 +21,6 @@ class PasswordFileModal(
     private val action: (UserModel) -> Unit
 ): ImportModal(PASSWORD_MODAL_TYPE) {
 
-    private val notifyView = NotifyView()
-
     private val passwordImport: PasswordImport = DefaultPasswordImport()
     private val clientSteam: ClientSteam = DefaultClientSteam()
 
@@ -53,18 +51,18 @@ class PasswordFileModal(
                 when (it.size != maFiles.size) {
                     true -> {
                         LoggerService.getLogger().warning("Not all account passwords have been found!")
-                        notifyView.warning(langApplication.text.warning.notAllAccount)
+                        NotifyView.warning(langApplication.text.warning.notAllAccount)
                     }
 
                     else -> {
                         LoggerService.getLogger().info("Passwords for all accounts have been found!")
-                        notifyView.success(langApplication.text.success.import)
+                        NotifyView.success(langApplication.text.success.import)
                     }
                 }
             } else {
                 LoggerService.getLogger()
                     .error("The file turned out to be invalid or does not contain account passwords")
-                notifyView.failure(langApplication.text.failure.passwordsNotFound)
+                NotifyView.failure(langApplication.text.failure.passwordsNotFound)
             }
         }
     }

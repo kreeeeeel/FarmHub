@@ -45,7 +45,6 @@ class SteamBlockView: SettingsBlockView(STEAM_ID) {
     }
 
     private val configModel = ConfigModel().fromFile()
-    private val notifyView = NotifyView()
 
     override fun setPrefHeight(): Double {
         configModel.steamExecutor?.let { description.text = it }
@@ -82,10 +81,10 @@ class SteamBlockView: SettingsBlockView(STEAM_ID) {
             configModel.save()
 
             description.text = configModel.steamExecutor
-            notifyView.success(langApplication.text.success.pathSteam)
+            NotifyView.success(langApplication.text.success.pathSteam)
         } else {
             LoggerService.getLogger().error("Bad changing path steam to ${file.absolutePath}")
-            notifyView.failure(langApplication.text.failure.pathSteam)
+            NotifyView.failure(langApplication.text.failure.pathSteam)
         }
     }
 

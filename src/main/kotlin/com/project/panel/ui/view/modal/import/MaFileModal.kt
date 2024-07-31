@@ -16,7 +16,6 @@ class MaFileModal(
 ): ImportModal(MAFILE_MODAL_TYPE) {
 
     private val maFileImport: MaFileImport = DefaultMaFileImport()
-    private val notifyView = NotifyView()
 
     override fun fileChooser(): Unit? = FileChooser().also {
         it.title = "${langApplication.text.accounts.maFile.file} .maFile"
@@ -39,16 +38,16 @@ class MaFileModal(
                 PasswordFileModal(it, action).show()
                 if (files.size == it.size) {
                     LoggerService.getLogger().info("All received .maFile are valid")
-                    notifyView.success(langApplication.text.success.maFile)
+                    NotifyView.success(langApplication.text.success.maFile)
                 }
                 else {
                     LoggerService.getLogger()
                         .warning("${files.size - it.size} .maFile files out of ${files.size} turned out to be invalid!")
-                    notifyView.warning(langApplication.text.warning.maFile)
+                    NotifyView.warning(langApplication.text.warning.maFile)
                 }
             } else {
                 LoggerService.getLogger().error("The .maFile files were not valid!")
-                notifyView.failure(langApplication.text.failure.maFile)
+                NotifyView.failure(langApplication.text.failure.maFile)
             }
         }
     }
