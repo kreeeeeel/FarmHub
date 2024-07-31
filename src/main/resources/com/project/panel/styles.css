@@ -113,19 +113,16 @@
 #settings { -fx-image: url("images/settings.png") }
 
 #notifySuccess {
-    -fx-pref-width: 440px;
     -fx-background-color: darkgreen;
     -fx-background-radius: 18px;
 }
 
 #notifyWarning {
-    -fx-pref-width: 440px;
     -fx-background-color: #c36c02;
     -fx-background-radius: 18px;
 }
 
 #notifyFailure {
-    -fx-pref-width: 440px;
     -fx-background-color: darkred;
     -fx-background-radius: 18px;
 }
@@ -138,7 +135,12 @@
 #notifyDesc {
     -fx-text-fill: #e8e8e8;
     -fx-font-size: 14px;
-    -fx-pref-width: 376px;
+    -fx-wrap-text: true;
+}
+
+#notifyTime {
+    -fx-text-fill: #b8b8b8;
+    -fx-font-size: 14px;
     -fx-wrap-text: true;
 }
 
