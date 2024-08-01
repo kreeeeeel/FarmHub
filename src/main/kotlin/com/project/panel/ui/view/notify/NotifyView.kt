@@ -90,6 +90,7 @@ object NotifyView {
         }
 
         val clear = Pane().also { p ->
+            p.isVisible = false
             p.layoutX = notify.prefWidth - 30.0
             p.layoutY = -12.0
             p.prefWidth = 32.0
@@ -108,6 +109,8 @@ object NotifyView {
             p.children.add(clearImg)
         }
 
+        notify.setOnMouseEntered { clear.isVisible = true }
+        notify.setOnMouseExited { clear.isVisible = false }
         notify.children.addAll(icon, label, time, clear)
         return notify
     }
