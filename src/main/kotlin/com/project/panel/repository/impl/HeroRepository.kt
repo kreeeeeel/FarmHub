@@ -11,24 +11,20 @@ private val PATH_HERO = "${System.getProperty("user.dir")}\\config\\Dota 2\\hero
 
 object HeroRepository: Repository<HeroModel> {
 
-    override fun findAll(): List<HeroModel> {
-        val result = File(PATH_HERO).listFiles()?.filter { it.isFile }?.map {
-            FileReader(it.absolutePath).use { reader -> gson.fromJson(reader, HeroModel::class.java) }
-        } ?: listOf()
+    private val heroes: List<HeroModel> = File(PATH_HERO).listFiles()?.filter { it.isFile }?.map {
+        FileReader(it.absolutePath).use { reader -> gson.fromJson(reader, HeroModel::class.java) }
+    } ?: listOf()
 
-        LoggerService.getLogger().info("Search all hero from Dota2, found ${result.size} heroes.")
-        return result
-    }
+    init { LoggerService.getLogger().info("Initializing ${heroes.size} Dota 2 heroes") }
+
+    override fun findAll(): List<HeroModel> = heroes
 
     override fun findById(id: String): HeroModel? {
         LoggerService.getLogger().debug("Find hero by id: $id")
-        val file = File("$PATH_HERO\\$id.json")
-        if (!file.exists()) {
-            LoggerService.getLogger().warning("Hero $id not found!")
-            return null
-        }
 
-        return gson.fromJson(FileReader(file).use { reader -> reader.readText() }, HeroModel::class.java)
+        val hero = heroes.firstOrNull { it.name == id }
+        if (hero == null) { LoggerService.getLogger().warning("Hero $id not found!") }
+        return hero
     }
 
     override fun save(data: HeroModel) {}

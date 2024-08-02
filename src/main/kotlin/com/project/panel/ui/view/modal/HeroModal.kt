@@ -152,7 +152,7 @@ class HeroModal: DefaultModal() {
     fun setUserDate(userModel: UserModel) { this.userModel = userModel }
 
     private fun search(prefix: String) = viewHeroes(
-        currentHeroes.filter { getCorrectHeroName(it.key.name).contains(getCorrectHeroName(prefix)) }
+        currentHeroes.filter { it.key.name.contains(prefix) }
             .map { it.value }
     )
 
@@ -206,7 +206,7 @@ class HeroModal: DefaultModal() {
     private fun getHeroView(heroModel: HeroModel) = Pane().also {
         it.id = HERO_FIELD_ID
 
-        currentPriorityHeroes.firstOrNull { hero -> hero.name == getCorrectHeroName(heroModel.name) }
+        currentPriorityHeroes.firstOrNull { hero -> hero.name == heroModel.name }
             ?.let { v ->
                 it.isDisable = true
                 v.hero = it
@@ -299,7 +299,7 @@ class HeroModal: DefaultModal() {
         currentPriorityHeroes[selectedPriorityHeroIndex].hero.isDisable = true
         currentPriorityHeroes[selectedPriorityHeroIndex].priorityHero = priorityView
 
-        userModel.gameStat.priorityHero[selectedPriorityHeroIndex] = getCorrectHeroName(heroModel.name)
+        userModel.gameStat.priorityHero[selectedPriorityHeroIndex] = heroModel.name
         UserRepository.save(userModel)
     }
 
@@ -359,11 +359,6 @@ class HeroModal: DefaultModal() {
         userModel.gameStat.priorityHero[index] = "default"
         UserRepository.save(userModel)
     }
-
-    private fun getCorrectHeroName(name: String) = name.trim()
-        .replace(" ", "_")
-        .replace("-", "_")
-        .lowercase()
 
 }
 
