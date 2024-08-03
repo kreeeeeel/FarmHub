@@ -15,6 +15,7 @@ data class ConfigModel(
     var langApp: String = DEFAULT_LANGUAGE,
     var lastDirectoryChooser: String? = null,
     var steamExecutor: String? = null,
+    var discordActivity: Boolean = true
 ) {
 
     @Transient

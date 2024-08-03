@@ -689,3 +689,27 @@
     -fx-cursor: hand;
     -fx-background-color: #272b32;
 }
+
+#discord { -fx-image: url("images/discord.png") }
+#toggleEnable {
+    -fx-background-radius: 24px;
+    -fx-background-color: green;
+    -fx-pref-width: 54px;
+    -fx-pref-height: 28px;
+}
+#toggleEnable:hover { -fx-cursor: hand }
+
+#toggleDisable {
+    -fx-background-radius: 24px;
+    -fx-background-color: #2a2d33;
+    -fx-pref-width: 54px;
+    -fx-pref-height: 28px;
+}
+#toggleDisable:hover { -fx-cursor: hand }
+
+#slider {
+    -fx-pref-height: 24px;
+    -fx-pref-width: 24px;
+    -fx-background-color: white;
+    -fx-background-radius: 24px;
+}

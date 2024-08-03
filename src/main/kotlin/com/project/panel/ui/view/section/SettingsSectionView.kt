@@ -1,6 +1,7 @@
 package com.project.panel.ui.view.section
 
 import com.project.panel.ui.view.SectionType
+import com.project.panel.ui.view.block.settings.DiscordBlockView
 import com.project.panel.ui.view.block.settings.LANGUAGE_ID
 import com.project.panel.ui.view.block.settings.LanguageBlockView
 import com.project.panel.ui.view.block.settings.SteamBlockView
@@ -21,7 +22,7 @@ class SettingsSectionView(menu: MenuView): DefaultSectionView(SectionType.SETTIN
     }
 
     private val settingsBlock = listOf(
-        LanguageBlockView(menu), SteamBlockView()
+        LanguageBlockView(menu), SteamBlockView(), DiscordBlockView()
     )
 
     override fun refreshLanguage() {

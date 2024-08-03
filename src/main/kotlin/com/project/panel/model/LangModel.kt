@@ -83,7 +83,8 @@ data class Settings(
     var pathSteam: String = "Location to Steam",
     var steamNotExist: String = "Specify the path to steam.exe",
     var specify: String = "Specify",
-    var specifySteamExe: String = "Specify the path to steam.exe"
+    var specifySteamExe: String = "Specify the path to steam.exe",
+    var showGameActivity: String = "Show game activity in discord",
 )
 
 data class MaFile(

@@ -2,12 +2,14 @@ package com.project.panel.ui.controller
 
 import com.project.panel.AppRun
 import com.project.panel.NAME_APPLICATION
+import com.project.panel.model.ConfigModel
+import com.project.panel.service.discord.activity.DiscordActivityStatus
 import com.project.panel.ui.view.menu.MenuView
+import com.project.panel.ui.view.modal.WINDOW_ID
 import com.project.panel.ui.view.section.SECTION_CLOSE_ID
 import com.project.panel.ui.view.section.SECTION_ID
 import com.project.panel.ui.view.section.SECTION_NAME_ID
 import com.project.panel.ui.view.section.StartSectionView
-import com.project.panel.ui.view.modal.WINDOW_ID
 import javafx.application.Application
 import javafx.scene.Cursor
 import javafx.scene.Scene
@@ -74,6 +76,10 @@ open class BaseController: Application() {
     private var offsetY: Double? = 0.0
 
     override fun start(primaryStage: Stage?) {
+
+        if (ConfigModel().fromFile().discordActivity) {
+            DiscordActivityStatus.initialize()
+        }
 
         primaryStage?.let {
 

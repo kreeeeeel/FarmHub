@@ -1,7 +1,6 @@
 package com.project.panel.ui.view.block.settings
 
 import com.project.panel.langApplication
-import com.project.panel.model.ConfigModel
 import com.project.panel.service.logger.LoggerService
 import com.project.panel.ui.controller.BaseController.Companion.root
 import com.project.panel.ui.view.notify.NotifyView
@@ -43,8 +42,6 @@ class SteamBlockView: SettingsBlockView(STEAM_ID) {
 
         setOnMouseClicked { fileChooser() }
     }
-
-    private val configModel = ConfigModel().fromFile()
 
     override fun setPrefHeight(): Double {
         configModel.steamExecutor?.let { description.text = it }

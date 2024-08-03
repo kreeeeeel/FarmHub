@@ -2,7 +2,6 @@ package com.project.panel.ui.view.block.settings
 
 import com.project.panel.AppRun
 import com.project.panel.langApplication
-import com.project.panel.model.ConfigModel
 import com.project.panel.model.LangModel
 import com.project.panel.repository.impl.LangRepository
 import com.project.panel.repository.impl.PATH_LANGUAGES
@@ -161,7 +160,7 @@ class LanguageBlockView(
         code?.let { c ->
             it.setOnMouseClicked { _ ->
                 langApplication = LangRepository.findById(c) ?: LangModel()
-                ConfigModel().fromFile().let { config ->
+                configModel.let { config ->
                     config.langApp = c
                     config.save()
                 }
