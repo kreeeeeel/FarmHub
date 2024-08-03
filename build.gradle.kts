@@ -14,6 +14,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 application {
@@ -58,6 +59,7 @@ gluonfx {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("com.github.JnCrMx:discord-game-sdk4j:5cdac341e3")
     //implementation("com.sikulix:sikulixapi:2.0.5")
 
     implementation("net.java.dev.jna:jna:5.14.0")
